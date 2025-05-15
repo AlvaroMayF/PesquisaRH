@@ -1,0 +1,33 @@
+<!-- templates/admin.html -->
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Painel de Respostas</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}">
+  <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.ico') }}" type="image/x-icon">
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <ul>
+      <li><a href="{{ url_for('admin') }}">Início</a></li>
+      <li><a href="{{ url_for('pesquisa') }}">Pesquisa</a></li>
+      <li><a class="active" href="{{ url_for('analitico') }}">Analítico</a></li>
+      <li><a href="{{ url_for('logout') }}">Sair</a></li>
+    </ul>
+  </nav>
+  <!-- Conteúdo principal -->
+  <main class="admin-page">
+    <!-- Cabeçalho com degradê -->
+    <header>
+      <h2>Painel de Recursos Humanos</h2>
+    </header>
+    <!-- Card vazio, sem gráficos ou tabelas -->
+    <div class="content-card">
+      <!-- Espaço reservado para controles ou instruções futuras -->
+    </div>
+  </main>
+</body>
+</html>

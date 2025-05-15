@@ -1,0 +1,13 @@
+# ambientes virtuais
+.venv/
+__pycache__/
+*.py[cod]
+
+# configurações IDE
+.idea/
+
+# arquivos de banco de dados, logs etc.
+*.sqlite3
+*.log
+# arquivos do PyCharm
+.idea/
