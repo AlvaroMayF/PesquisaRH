@@ -3,8 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <title>Pesquisa de Clima Organizacional</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='pesquisa.css') }}">
-  <link rel="shortcut icon" href="{{ url_for('static', filename='/img/favicon.ico') }}" type="image/x-icon">
+  <link rel="stylesheet"
+      href="{{ url_for('views.static',
+                       filename='pesquisa/pesquisa.css') }}">
+  <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.ico') }}" type="image/x-icon">
 </head>
 <body class="pesquisa-page">
   <div class="pesquisa-container">
@@ -27,7 +29,7 @@
       </p>
     </div>
 
-    <form id="surveyForm" method="POST" action="{{ url_for('pesquisa') }}">
+    <form id="surveyForm" method="POST" action="{{ url_for('pesquisa.pesquisa_view') }}">
       <!-- Seção 1: Tempo de Empresa -->
       <div class="section">
         <div class="section-header">

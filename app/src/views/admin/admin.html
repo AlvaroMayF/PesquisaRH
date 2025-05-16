@@ -13,7 +13,8 @@
   <nav class="navbar">
     <ul>
       <li><a href="{{ url_for('admin') }}">Início</a></li>
-      <li><a href="{{ url_for('pesquisa') }}">Pesquisa</a></li>
+      <!-- Chamando o endpoint completo pesquisa.pesquisa_view -->
+      <li><a href="{{ url_for('pesquisa.pesquisa_view') }}">Pesquisa</a></li>
       <li><a class="active" href="{{ url_for('analitico') }}">Analítico</a></li>
       <li><a href="{{ url_for('logout') }}">Sair</a></li>
     </ul>

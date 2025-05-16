@@ -4,10 +4,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Analise de Pesquisa</title>
+  <title>Análise de Pesquisa</title>
+
+  <!-- Favicon -->
+  <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.ico') }}" type="image/x-icon">
+
   <!-- Google Fonts: Roboto -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="shortcut icon" href="{{ url_for('static', filename='/img/favicon.ico') }}" type="image/x-icon">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
     href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap"
@@ -22,7 +25,8 @@
   <nav class="navbar">
     <ul>
       <li><a href="{{ url_for('admin') }}">Início</a></li>
-      <li><a href="{{ url_for('pesquisa') }}">Pesquisa</a></li>
+      <!-- Aqui usamos o endpoint completo da pesquisa -->
+      <li><a href="{{ url_for('pesquisa.pesquisa_view') }}">Pesquisa</a></li>
       <li><a class="active" href="{{ url_for('analitico') }}">Analítico</a></li>
       <li><a href="{{ url_for('logout') }}">Sair</a></li>
     </ul>
@@ -76,10 +80,7 @@
               <ul class="legend">
                 {% for item in c.legend %}
                   <li class="legend-item" title="{{ item.label }}">
-                    <span
-                      class="dot"
-                      style="background-color: {{ item.color }}"
-                    ></span>
+                    <span class="dot" style="background-color: {{ item.color }}"></span>
                     <span class="label">{{ item.label }}</span>
                   </li>
                 {% endfor %}
@@ -120,7 +121,7 @@
       });
     });
 
-    // Alternar visualização (implementação futura)
+    // Alternar visualização
     document.getElementById('toggleView').addEventListener('click', function () {
       document.querySelector('.cards-grid').classList.toggle('list-view');
     });

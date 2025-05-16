@@ -1,4 +1,5 @@
-from flask import Flask, render_template, request, redirect, url_for, session, Blueprint
+from flask import Flask, render_template, Blueprint
+from ..config.db import get_db_connection
 
 app = Flask(__name__)
 

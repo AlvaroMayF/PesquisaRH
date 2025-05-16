@@ -1,13 +1,23 @@
-import sqlite3
-import os
-def __init__(self):
-    self.conn = sqlite3.connect('database.db')
-    self.cursor = self.conn.cursor()
+# app/src/config/db.py
 
-BASE_DIR = os.path.abspath(os.path.dirname(__file__))
-DATABASE = os.path.join(BASE_DIR, 'survey.db')
+import os
+from mysql.connector import connect, Error
+from dotenv import load_dotenv
+
+# carrega o .env que fica no root do projeto
+load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '..', '..', '.env'))
 
 def get_db_connection():
-    conn = sqlite3.connect(DATABASE)
-    conn.row_factory = sqlite3.Row
-    return conn
+    try:
+        conn = connect(
+            host=os.getenv("DB_HOST", "127.0.0.1"),
+            port=int(os.getenv("DB_PORT", 3306)),
+            user=os.getenv("DB_USER", "root"),
+            password=os.getenv("DB_PASS", "M@la11122003"),
+            database=os.getenv("DB_NAME", "pesquisa_rh"),
+            autocommit=True
+        )
+        return conn
+    except Error as e:
+        print(f"Erro ao conectar no MySQL: {e}")
+        raise

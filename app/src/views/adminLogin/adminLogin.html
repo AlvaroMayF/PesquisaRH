@@ -1,54 +1,48 @@
-<!-- app/src/views/adminLogin/adminLogin.html -->
-
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login RH – Área do RH</title>
-
-  <!-- CSS específico da área de RH, via views_bp em /views_static/... -->
-  <link
+  <!-- CSS global -->
+  <!-- CSS específico da área de RH -->
+   <link
     rel="stylesheet"
     href="{{ url_for('views.static', filename='adminLogin/admin-login.css') }}"
   />
 
-  <!-- Favicon (app/assets/favicon.ico), via /static/... -->
-  <link
+   <link
     rel="shortcut icon"
-    href="{{ url_for('static', filename='favicon.ico') }}"
+    href="{{ url_for('static', filename='img/favicon.ico') }}"
     type="image/x-icon"
   />
+
 </head>
 <body>
-  <div class="rh-login-container">
-    <div class="logo">
-      <!-- Logo (app/assets/logo.png), via /static/... -->
-      <img
-        src="{{ url_for('static', filename='logo.png') }}"
-        alt="Logo Samar"
-      />
-    </div>
 
+  <div class="rh-login-container">
+  <div class="logo">
+  <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo">
+  </div>
     <h2>Área do RH</h2>
     <form method="POST">
       <label for="username">Usuário:</label>
       <input
         type="text"
-        id="username"
         name="username"
+        id="username"
         placeholder="Digite seu usuário"
         required
-      />
+      >
 
       <label for="password">Senha:</label>
       <input
         type="password"
-        id="password"
         name="password"
+        id="password"
         placeholder="Digite sua senha"
         required
-      />
+      >
 
       <button type="submit">Entrar</button>
     </form>
