@@ -1,34 +1,55 @@
-<!-- templates/admin.html -->
+<!-- app/src/views/admin/admin.html -->
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Painel de Respostas</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}">
-  <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.ico') }}" type="image/x-icon">
+  <title>Painel de Respostas | RH</title>
+
+  <!-- Favicon -->
+  <link
+    rel="shortcut icon"
+    href="{{ url_for('static', filename='img/favicon.ico') }}"
+    type="image/x-icon"
+  />
+
+  <!-- Estilos globais (assets/admin.css) -->
+  <link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='admin.css') }}"
+  />
+
+  <!-- Estilos específicos de view (src/views/admin/admin.css) -->
+  <link
+    rel="stylesheet"
+    href="{{ url_for('views.static', filename='admin/admin.css') }}"
+  />
 </head>
 <body>
   <!-- Navbar -->
   <nav class="navbar">
     <ul>
-      <li><a href="{{ url_for('admin') }}">Início</a></li>
-      <!-- Chamando o endpoint completo pesquisa.pesquisa_view -->
+      <li><a href="{{ url_for('admin.dashboard') }}">Início</a></li>
       <li><a href="{{ url_for('pesquisa.pesquisa_view') }}">Pesquisa</a></li>
-      <li><a class="active" href="{{ url_for('analitico') }}">Analítico</a></li>
-      <li><a href="{{ url_for('logout') }}">Sair</a></li>
+      <li><a class="active" href="{{ url_for('analitico.analitico_view') }}">Analítico</a></li>
+      <li><a href="{{ url_for('logout.logout_view') }}">Sair</a></li>
     </ul>
   </nav>
+
   <!-- Conteúdo principal -->
   <main class="admin-page">
-    <!-- Cabeçalho com degradê -->
-    <header>
+    <!-- Cabeçalho com degradê (definido em admin.css ou admin/admin.css) -->
+    <header class="admin-header">
       <h2>Painel de Recursos Humanos</h2>
     </header>
-    <!-- Card vazio, sem gráficos ou tabelas -->
-    <div class="content-card">
-      <!-- Espaço reservado para controles ou instruções futuras -->
-    </div>
+
+    <!-- Espaço reservado para cards, gráficos ou tabelas -->
+    <section class="content-card">
+      <!--
+        Aqui você pode inserir seus cards, tabelas ou quaisquer
+        componentes que façam parte do seu Dashboard RH.
+      -->
+    </section>
   </main>
 </body>
 </html>

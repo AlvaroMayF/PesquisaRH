@@ -24,14 +24,13 @@ def pesquisa_view():
         flash('Usuário não encontrado.', 'danger')
         session.pop('user_id', None)
         return redirect(url_for('login.login_view'))
-
     if colaborador['respondeu']:
         conn.close()
         flash('Você já respondeu à pesquisa.', 'warning')
         session.pop('user_id', None)
         return redirect(url_for('login.login_view'))
 
-    # 3) Identifica survey ativo (por nome ou flag)
+    # 3) Busca o survey ativo
     cursor.execute(
         'SELECT id FROM surveys WHERE name = %s',
         ('Pesquisa de Clima Organizacional',)
@@ -43,48 +42,60 @@ def pesquisa_view():
         return redirect(url_for('login.login_view'))
     survey_id = survey['id']
 
-    # 4) Carrega todas as perguntas desse survey
-    cursor.execute(
-        'SELECT id FROM form_questions WHERE survey_id = %s ORDER BY id',
-        (survey_id,)
-    )
+    # 4) Carrega perguntas + seção + tipo
+    cursor.execute("""
+      SELECT id, section_title, question_text, question_type
+        FROM form_questions
+       WHERE survey_id = %s
+       ORDER BY order_index
+    """, (survey_id,))
     questions = cursor.fetchall()
-    question_ids = [q['id'] for q in questions]
+
+    # 5) Carrega opções para cada pergunta
+    options = {}
+    for q in questions:
+        cursor.execute("""
+          SELECT option_label, option_value
+            FROM form_options
+           WHERE question_id = %s
+           ORDER BY option_label
+        """, (q['id'],))
+        options[q['id']] = cursor.fetchall()
 
     if request.method == 'POST':
-        # inicia transação
+        # 6) Insere master em responses
         cur = conn.cursor()
-
-        # 5) Insere o master record em responses (sem cpf!)
         cur.execute(
             'INSERT INTO responses (survey_id) VALUES (%s)',
             (survey_id,)
         )
         response_id = cur.lastrowid
 
-        # 6) Insere cada resposta detalhada
-        for qid in question_ids:
-            answer = request.form.get(f'resposta{qid}', '').strip() or None
+        # 7) Insere cada resposta
+        for q in questions:
+            ans = request.form.get(f'resposta{q["id"]}', '').strip() or None
             cur.execute(
                 'INSERT INTO response_answers (response_id, question_id, answer) '
                 'VALUES (%s, %s, %s)',
-                (response_id, qid, answer)
+                (response_id, q['id'], ans)
             )
 
-        # 7) Marca colaborador como “já respondeu”
+        # 8) Marca colaborador como respondeu
         cur.execute(
             'UPDATE colaboradores SET respondeu = 1 WHERE id = %s',
             (user_id,)
         )
 
-        # finaliza
         conn.commit()
         conn.close()
-
         flash('Obrigado por responder à pesquisa!', 'success')
         session.pop('user_id', None)
         return redirect(url_for('login.login_view'))
 
-    # GET: apenas renderiza
+    # GET: renderiza o formulário com perguntas e opções do banco
     conn.close()
-    return render_template('pesquisa/pesquisa.html')
+    return render_template(
+        'pesquisa/pesquisa.html',
+        questions=questions,
+        options=options
+    )

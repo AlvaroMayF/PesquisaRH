@@ -1,13 +1,17 @@
-<!-- templates/analitico.html -->
+<!-- app/src/views/analitico/analitico.html -->
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Análise de Pesquisa</title>
+  <title>Análise de Pesquisa | RH</title>
 
   <!-- Favicon -->
-  <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.ico') }}" type="image/x-icon">
+  <link
+    rel="shortcut icon"
+    href="{{ url_for('static', filename='img/favicon.ico') }}"
+    type="image/x-icon"
+  />
 
   <!-- Google Fonts: Roboto -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -17,18 +21,26 @@
     rel="stylesheet"
   />
 
-  <!-- CSS personalizado -->
-  <link rel="stylesheet" href="{{ url_for('static', filename='analitico.css') }}" />
+  <!-- CSS global -->
+  <link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='analitico.css') }}"
+  />
+
+  <!-- CSS específico de view (src/views/analitico/analitico.css) -->
+  <link
+    rel="stylesheet"
+    href="{{ url_for('views.static', filename='analitico/analitico.css') }}"
+  />
 </head>
 <body>
   <!-- Navbar -->
   <nav class="navbar">
     <ul>
-      <li><a href="{{ url_for('admin') }}">Início</a></li>
-      <!-- Aqui usamos o endpoint completo da pesquisa -->
+      <li><a href="{{ url_for('admin.dashboard') }}">Início</a></li>
       <li><a href="{{ url_for('pesquisa.pesquisa_view') }}">Pesquisa</a></li>
-      <li><a class="active" href="{{ url_for('analitico') }}">Analítico</a></li>
-      <li><a href="{{ url_for('logout') }}">Sair</a></li>
+      <li><a class="active" href="{{ url_for('analitico.analitico_view') }}">Analítico</a></li>
+      <li><a href="{{ url_for('logout.logout_view') }}">Sair</a></li>
     </ul>
   </nav>
 
@@ -104,7 +116,6 @@
         .catch(() => alert('Falha ao copiar.'));
     }
 
-    // Filtrar por número mínimo de respostas
     document.getElementById('minResponses').addEventListener('change', function (e) {
       const min = +e.target.value;
       document.querySelectorAll('.question-card').forEach(card => {
@@ -112,7 +123,6 @@
       });
     });
 
-    // Buscar por texto na pergunta
     document.getElementById('searchInput').addEventListener('input', function (e) {
       const term = e.target.value.toLowerCase();
       document.querySelectorAll('.question-card').forEach(card => {
@@ -121,7 +131,6 @@
       });
     });
 
-    // Alternar visualização
     document.getElementById('toggleView').addEventListener('click', function () {
       document.querySelector('.cards-grid').classList.toggle('list-view');
     });
