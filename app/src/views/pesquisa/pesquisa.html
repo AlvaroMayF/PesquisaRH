@@ -3,6 +3,7 @@
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pesquisa de Clima Organizacional</title>
 
   <!-- CSS principal -->
@@ -41,9 +42,7 @@
       {# --- agrupa perguntas por seção --- #}
       {% set grouped = {} %}
       {% for q in questions %}
-        {# pega lista atual para esta seção (ou lista vazia) #}
         {% set list_for_section = grouped[q.section_title] if q.section_title in grouped else [] %}
-        {# atualiza dicionário: insere a lista antiga + a pergunta atual #}
         {% set _ = grouped.update({ q.section_title: list_for_section + [q] }) %}
       {% endfor %}
 
@@ -51,7 +50,8 @@
       {% for section_title, qs in grouped.items() %}
         <div class="section">
           <div class="section-header">
-            <h3>{{ section_title }}</h3>
+            <!-- adicionado title para mostrar texto completo em tooltip -->
+            <h3 title="{{ section_title }}">{{ section_title }}</h3>
           </div>
 
           {% for q in qs %}
@@ -112,7 +112,7 @@
 
     form.addEventListener('submit', e => {
       e.preventDefault();
-      modal.style.display = 'block';
+      modal.style.display = 'flex'; // exibe o overlay e o modal centralizado
     });
     okBtn.addEventListener('click', () => {
       modal.style.display = 'none';
