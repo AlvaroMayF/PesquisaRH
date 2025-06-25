@@ -10,8 +10,8 @@ def pesquisa_view():
     # 1) Só permite quem está logado
     user_id = session.get('user_id')
     if not user_id:
-        flash('Faça login antes de responder à pesquisa.', 'warning')
-        return redirect(url_for('login.login_view'))
+        flash('Faça home antes de responder à pesquisa.', 'warning')
+        return redirect(url_for('home.login_view'))
 
     conn   = get_db_connection()
     cursor = conn.cursor(dictionary=True)
@@ -23,12 +23,12 @@ def pesquisa_view():
         conn.close()
         flash('Usuário não encontrado.', 'danger')
         session.pop('user_id', None)
-        return redirect(url_for('login.login_view'))
+        return redirect(url_for('home.login_view'))
     if colaborador['respondeu']:
         conn.close()
         flash('Você já respondeu à pesquisa.', 'warning')
         session.pop('user_id', None)
-        return redirect(url_for('login.login_view'))
+        return redirect(url_for('home.login_view'))
 
     # 3) Busca o survey ativo
     cursor.execute(
@@ -39,7 +39,7 @@ def pesquisa_view():
     if not survey:
         conn.close()
         flash('Pesquisa não cadastrada no sistema.', 'danger')
-        return redirect(url_for('login.login_view'))
+        return redirect(url_for('home.login_view'))
     survey_id = survey['id']
 
     # 4) Carrega perguntas + seção + tipo
@@ -90,7 +90,7 @@ def pesquisa_view():
         conn.close()
         flash('Obrigado por responder à pesquisa!', 'success')
         session.pop('user_id', None)
-        return redirect(url_for('login.login_view'))
+        return redirect(url_for('home.login_view'))
 
     # GET: renderiza o formulário com perguntas e opções do banco
     conn.close()

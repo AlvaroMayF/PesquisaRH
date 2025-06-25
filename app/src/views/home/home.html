@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Portal RH | Painel de Recursos Humanos</title>
+
+  <!-- favicon -->
+  <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon" />
+
+  <!-- CSS externo -->
+  <link rel="stylesheet" href="{{ url_for('views.static', filename='home/home.css') }}" />
+</head>
+<body>
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <span class="nav-logo">PAINEL DE RECURSOS HUMANOS</span>
+    <ul class="nav-menu">
+      <li><a href="{{ url_for('home.home_view') }}">Início</a></li>
+      <li><a href="{{ url_for('pesquisa_login.login_pesquisa_view') }}">Pesquisa</a></li>
+      <li><a href="/comunicados">Comunicados</a></li>
+      <li><a href="{{ url_for('adminLogin.admin_login') }}">Administrador</a></li>
+      <li><a href="{{ url_for('logout.logout_view') }}">Sair</a></li>
+    </ul>
+  </nav>
+
+  <main class="admin-page">
+    <!-- 1) Carrossel -->
+    <h2 class="section-title">Destaques</h2>
+    <section class="content-card carousel-card">
+      <div class="carousel">
+        <button class="carousel-button prev">‹</button>
+        <div class="carousel-track">
+          <img src="{{ url_for('static', filename='lideranca.jpg') }}" alt="Liderança">
+          <img src="{{ url_for('static', filename='coleta.jpg') }}" alt="Coleta Laboratorial">
+          <img src="{{ url_for('static', filename='academia.jpg') }}" alt="Academia">
+        </div>
+        <button class="carousel-button next">›</button>
+      </div>
+    </section>
+
+    <!-- 2) Grid de Acesso Rápido -->
+    <h2 class="section-title">Acesso Rápido</h2>
+    <section class="content-card quick-grid">
+      <button type="button" class="grid-item" data-index="0">
+        <img src="{{ url_for('static', filename='lideranca.jpg') }}" alt="Liderança">
+        <span>Banco de Currículos</span>
+      </button>
+      <button type="button" class="grid-item" data-index="1">
+        <img src="{{ url_for('static', filename='coleta.jpg') }}" alt="Coleta Laboratorial">
+        <span>Coleta Laboratorial</span>
+      </button>
+      <button type="button" class="grid-item" data-index="2">
+        <img src="{{ url_for('static', filename='academia.jpg') }}" alt="Academia">
+        <span>Academia CAIA</span>
+      </button>
+    </section>
+
+    <!-- 3) KPI Cards -->
+    <h2 class="section-title">Indicadores</h2>
+    <section class="content-card kpi-panel">
+      <div class="kpi-card">
+        <img src="{{ url_for('static', filename='icons/colaboradores.svg') }}" alt="Colaboradores">
+        <h3>1.245</h3>
+        <p>Total de Colaboradores</p>
+      </div>
+      <div class="kpi-card">
+        <img src="{{ url_for('static', filename='icons/pesquisas.svg') }}" alt="Pesquisas Respondidas">
+        <h3>320</h3>
+        <p>Pesquisas Respondidas</p>
+      </div>
+      <div class="kpi-card">
+        <img src="{{ url_for('static', filename='icons/treinamentos.svg') }}" alt="Treinamentos Agendados">
+        <h3>05</h3>
+        <p>Treinamentos Agendados</p>
+      </div>
+      <div class="kpi-card">
+        <img src="{{ url_for('static', filename='icons/aniversariantes.svg') }}" alt="Aniversariantes">
+        <h3>12</h3>
+        <p>Aniversariantes (este mês)</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- Script: Carousel + Quick Access -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const track = document.querySelector('.carousel-track');
+      const slides = Array.from(track.children);
+      const prevButton = document.querySelector('.carousel-button.prev');
+      const nextButton = document.querySelector('.carousel-button.next');
+      const quickItems = Array.from(document.querySelectorAll('.quick-grid .grid-item'));
+      let currentIndex = 0;
+
+      function updateCarousel(i) {
+        currentIndex = i;
+        track.style.transform = 'translateX(-' + (i * 100) + '%)';
+      }
+
+      prevButton.addEventListener('click', () => {
+        updateCarousel((currentIndex - 1 + slides.length) % slides.length);
+      });
+      nextButton.addEventListener('click', () => {
+        updateCarousel((currentIndex + 1) % slides.length);
+      });
+      quickItems.forEach(item => {
+        item.addEventListener('click', () => {
+          updateCarousel(parseInt(item.dataset.index, 10));
+        });
+      });
+    });
+  </script>
+</body>
+</html>

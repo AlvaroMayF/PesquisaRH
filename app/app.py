@@ -1,5 +1,3 @@
-# app/app.py
-
 import os
 from flask import Flask, Blueprint, send_from_directory
 
@@ -17,12 +15,13 @@ views_bp = Blueprint(
 # ----------------------------------------------------------------------
 # Import dos seus blueprints de rota
 # ----------------------------------------------------------------------
-from src.routers.admin         import admin           # /admin
-from src.routers.adminLogin    import adminLogin      # /admin-login
-from src.routers.loginPesquisa import login           # /
-from src.routers.logout        import logout          # /logout
-from src.routers.analitico     import analitico       # /analitico
-from src.routers.pesquisa      import pesquisa_bp     # /pesquisa
+from src.routers.admin          import admin            # /admin
+from src.routers.adminLogin     import adminLogin       # /admin-home
+from src.routers.homeView       import home as home_bp  # /
+from src.routers.logout         import logout           # /logout
+from src.routers.analitico      import analitico        # /analitico
+from src.routers.pesquisaLogin  import pesquisa_login   # /pesquisa (login)
+from src.routers.pesquisa       import pesquisa_bp      # /pesquisa (resultados)
 
 # ----------------------------------------------------------------------
 # Factory para criar e configurar a aplicação
@@ -46,19 +45,24 @@ def create_app():
     app.register_blueprint(views_bp)
 
     # Registra todos os seus blueprints de rota
-    app.register_blueprint(admin)        # Dashboard Admin → /admin
-    app.register_blueprint(adminLogin)   # Login Admin     → /admin-login
-    app.register_blueprint(login)        # Login Colaborador → /
-    app.register_blueprint(logout)       # Logout → /logout
-    app.register_blueprint(analitico)    # Visão Analítica → /analitico
-    app.register_blueprint(pesquisa_bp)  # Pesquisa → /pesquisa
+    app.register_blueprint(admin)            # Dashboard Admin → /admin
+    app.register_blueprint(adminLogin)       # Login Admin     → /admin-home
+    app.register_blueprint(home_bp)          # Home            → /
+    app.register_blueprint(logout)           # Logout          → /logout
+    app.register_blueprint(analitico)        # Analítico       → /analitico
+    app.register_blueprint(pesquisa_login)   # Login Pesquisa  → /pesquisa
+    app.register_blueprint(pesquisa_bp)      # Pesquisa        → /pesquisa/resultados (ou rota definida)
+
     from src.routers.NovoColaborador import novo_colaborador_bp
     app.register_blueprint(novo_colaborador_bp)
 
-    # Rota para servir o admin.css da pasta views/admin/aaaaaaaaaa
+    # Rota para servir o admin.css da pasta views/admin/
     @app.route('/admin/admin.css')
     def admin_css():
-        return send_from_directory(os.path.join(template_dir, 'admin'), 'admin.css')
+        return send_from_directory(
+            os.path.join(template_dir, 'admin'),
+            'admin.css'
+        )
 
     # Chave para sessão; troque em produção por algo secreto
     app.secret_key = os.getenv('FLASK_SECRET_KEY', 'troque_em_producao')
