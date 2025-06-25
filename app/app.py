@@ -55,7 +55,7 @@ def create_app():
     from src.routers.NovoColaborador import novo_colaborador_bp
     app.register_blueprint(novo_colaborador_bp)
 
-    # Rota para servir o admin.css da pasta views/admin/
+    # Rota para servir o admin.css da pasta views/admin/aaaaaaaaaa
     @app.route('/admin/admin.css')
     def admin_css():
         return send_from_directory(os.path.join(template_dir, 'admin'), 'admin.css')
