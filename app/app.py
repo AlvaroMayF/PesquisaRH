@@ -1,7 +1,7 @@
 # app/app.py
 
 import os
-from flask import Flask, Blueprint
+from flask import Flask, Blueprint, send_from_directory
 
 # ----------------------------------------------------------------------
 # Blueprint “views” para servir os seus templates estáticos (CSS, HTML, etc)
@@ -52,6 +52,13 @@ def create_app():
     app.register_blueprint(logout)       # Logout → /logout
     app.register_blueprint(analitico)    # Visão Analítica → /analitico
     app.register_blueprint(pesquisa_bp)  # Pesquisa → /pesquisa
+    from src.routers.NovoColaborador import novo_colaborador_bp
+    app.register_blueprint(novo_colaborador_bp)
+
+    # Rota para servir o admin.css da pasta views/admin/
+    @app.route('/admin/admin.css')
+    def admin_css():
+        return send_from_directory(os.path.join(template_dir, 'admin'), 'admin.css')
 
     # Chave para sessão; troque em produção por algo secreto
     app.secret_key = os.getenv('FLASK_SECRET_KEY', 'troque_em_producao')

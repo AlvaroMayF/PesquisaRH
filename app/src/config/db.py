@@ -1,23 +1,38 @@
 # app/src/config/db.py
 
 import os
-from mysql.connector import connect, Error
+import mysql.connector
+from mysql.connector import Error
 from dotenv import load_dotenv
 
-# carrega o .env que fica no root do projeto
-load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '..', '..', '.env'))
+# Carrega variáveis do .env
+load_dotenv()
 
-def get_db_connection():
+def conectar():
     try:
-        conn = connect(
-            host=os.getenv("DB_HOST", "127.0.0.1"),
-            port=int(os.getenv("DB_PORT", 3306)),
-            user=os.getenv("DB_USER", "root"),
-            password=os.getenv("DB_PASS", ""),
-            database=os.getenv("DB_NAME", "pesquisa_rh"),
-            autocommit=True
+        conexao = mysql.connector.connect(
+            host=os.getenv('DB_HOST'),
+            user=os.getenv('DB_USER'),
+            password=os.getenv('DB_PASSWORD'),
+            database=os.getenv('DB_NAME')
         )
-        return conn
-    except Error as e:
-        print(f"Erro ao conectar no MySQL: {e}")
-        raise
+
+        if conexao.is_connected():
+            print("✅ Conexão estabelecida com sucesso!")
+            return conexao
+
+    except Error as erro:
+        print(f"❌ Erro ao conectar ao banco de dados: {erro}")
+        return None
+
+    return None
+
+# Alias opcional para compatibilidade com outras partes do código
+get_db_connection = conectar
+
+# Teste direto
+if __name__ == '__main__':
+    conn = conectar()
+    if conn:
+        print("✔️ Teste de conexão finalizado com sucesso.")
+        conn.close()
