@@ -5,110 +5,198 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Portal RH | Painel de Recursos Humanos</title>
 
-  <!-- favicon -->
-  <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon" />
+  <link rel="shortcut icon"
+        href="{{ url_for('static', filename='favicon.ico') }}"
+        type="image/x-icon" />
 
-  <!-- CSS externo -->
-  <link rel="stylesheet" href="{{ url_for('views.static', filename='home/home.css') }}" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+
+  <link rel="stylesheet"
+        href="{{ url_for('views.static', filename='home/home.css') }}" />
 </head>
 <body>
-  <!-- NAVBAR -->
-  <nav class="navbar">
-    <span class="nav-logo">PAINEL DE RECURSOS HUMANOS</span>
-    <ul class="nav-menu">
-      <li><a href="{{ url_for('home.home_view') }}">Início</a></li>
-      <li><a href="{{ url_for('pesquisa_login.login_pesquisa_view') }}">Pesquisa</a></li>
-      <li><a href="/comunicados">Comunicados</a></li>
-      <li><a href="{{ url_for('adminLogin.admin_login') }}">Administrador</a></li>
-      <li><a href="{{ url_for('logout.logout_view') }}">Sair</a></li>
-    </ul>
-  </nav>
+  <header>
+    <nav class="navbar">
+      <div class="nav-container">
+        <div class="navbar-left">
 
-  <main class="admin-page">
-    <!-- 1) Carrossel -->
-    <h2 class="section-title">Destaques</h2>
-    <section class="content-card carousel-card">
-      <div class="carousel">
-        <button class="carousel-button prev">‹</button>
-        <div class="carousel-track">
-          <img src="{{ url_for('static', filename='lideranca.jpg') }}" alt="Liderança">
-          <img src="{{ url_for('static', filename='coleta.jpg') }}" alt="Coleta Laboratorial">
-          <img src="{{ url_for('static', filename='academia.jpg') }}" alt="Academia">
+          <label class="theme-switch" title="Alternar tema claro/escuro">
+            <input type="checkbox"
+                   id="theme-toggle"
+                   class="theme-checkbox"
+                   aria-label="Alternar tema claro/escuro" />
+            <div class="slider">
+                <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+            </div>
+          </label>
+          <span class="nav-logo">PAINEL DE RECURSOS HUMANOS</span>
         </div>
-        <button class="carousel-button next">›</button>
+
+        <ul class="nav-menu">
+          <li>
+            <a href="{{ url_for('home.home_view') }}"
+               class="{{ 'active' if active_endpoint=='home.home_view' else '' }}">
+              Início
+            </a>
+          </li>
+          <li>
+            <a href="{{ url_for('pesquisa_login.login_pesquisa_view') }}"
+               class="{{ 'active' if active_endpoint=='pesquisa_login.login_pesquisa_view' else '' }}">
+              Pesquisa
+            </a>
+          </li>
+          <li>
+            <a href="/comunicados"
+               class="{{ 'active' if active_endpoint=='comunicacao.interna_view' else '' }}">
+              Comunicados
+            </a>
+          </li>
+          <li>
+            <a href="{{ url_for('adminLogin.admin_login') }}"
+               class="{{ 'active' if active_endpoint=='adminLogin.admin_login' else '' }}">
+              Administrador
+            </a>
+          </li>
+          <li>
+            <a href="{{ url_for('logout.logout_view') }}">
+              Sair
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="carousel-card" aria-roledescription="carousel">
+      <h2 class="section-title">Destaques</h2>
+      <div class="carousel">
+        <button class="carousel-button prev" aria-label="Slide anterior">‹</button>
+        <div class="carousel-track">
+          <div class="carousel-slide">
+            <img src="{{ url_for('static', filename='lideranca.jpg') }}"
+                 alt="Rede Hospitalar Samar" loading="lazy">
+            <div class="carousel-caption">
+              <h3>Rede Hospitalar Samar</h3>
+              <p>Veja o Relatório de Pesquisas</p>
+              <a href="/relatorio" class="btn-cta">Ver relatório</a>
+            </div>
+          </div>
+          <div class="carousel-slide">
+            <img src="{{ url_for('static', filename='comunicados.jpg') }}"
+                 alt="Coleta Laboratorial" loading="lazy">
+            <div class="carousel-caption">
+              <h3>Coleta Laboratorial</h3>
+              <p>Agende seu exame agora</p>
+              <a href="/coleta" class="btn-cta">Agendar</a>
+            </div>
+          </div>
+          <div class="carousel-slide">
+            <img src="{{ url_for('static', filename='academia.jpg') }}"
+                 alt="Academia CAIA" loading="lazy">
+            <div class="carousel-caption">
+              <h3>Academia CAIA</h3>
+              <p>Conheça nossos treinamentos</p>
+              <a href="#" class="btn-cta">Saiba mais</a>
+            </div>
+          </div>
+        </div>
+        <button class="carousel-button next" aria-label="Próximo slide">›</button>
+        <div class="carousel-indicators" role="tablist">
+          <button class="indicator active" data-index="0" aria-label="Slide 1" tabindex="0"></button>
+          <button class="indicator"       data-index="1" aria-label="Slide 2" tabindex="0"></button>
+          <button class="indicator"       data-index="2" aria-label="Slide 3" tabindex="0"></button>
+        </div>
       </div>
     </section>
 
-    <!-- 2) Grid de Acesso Rápido -->
-    <h2 class="section-title">Acesso Rápido</h2>
-    <section class="content-card quick-grid">
-      <button type="button" class="grid-item" data-index="0">
-        <img src="{{ url_for('static', filename='lideranca.jpg') }}" alt="Liderança">
-        <span>Banco de Currículos</span>
-      </button>
-      <button type="button" class="grid-item" data-index="1">
-        <img src="{{ url_for('static', filename='coleta.jpg') }}" alt="Coleta Laboratorial">
-        <span>Coleta Laboratorial</span>
-      </button>
-      <button type="button" class="grid-item" data-index="2">
-        <img src="{{ url_for('static', filename='academia.jpg') }}" alt="Academia">
-        <span>Academia CAIA</span>
-      </button>
+    <section class="quick-access-section">
+      <h2 class="section-title">Acesso Rápido</h2>
+      <div class="content-card">
+        <div class="quick-grid">
+          <a href="{{ url_for('pesquisa_login.login_pesquisa_view') }}"
+             class="grid-item" tabindex="0">
+            <img src="{{ url_for('static', filename='lideranca.jpg') }}"
+                 alt="Pesquisa Organizacional" loading="lazy">
+            <span>Pesquisa Organizacional</span>
+          </a>
+
+          <a href="/comunicados"
+             class="grid-item" tabindex="0">
+            <img src="{{ url_for('static', filename='comunicados.jpg') }}"
+                 alt="Comunicados" loading="lazy">
+            <span>Comunicados</span>
+          </a>
+
+          <div class="grid-item" tabindex="0">
+            <img src="{{ url_for('static', filename='academia.jpg') }}"
+                 alt="Academia CAIA" loading="lazy">
+            <span>Academia CAIA</span>
+          </div>
+        </div>
+      </div>
     </section>
 
-    <!-- 3) KPI Cards -->
-    <h2 class="section-title">Indicadores</h2>
-    <section class="content-card kpi-panel">
-      <div class="kpi-card">
-        <img src="{{ url_for('static', filename='icons/colaboradores.svg') }}" alt="Colaboradores">
-        <h3>1.245</h3>
-        <p>Total de Colaboradores</p>
+    <section class="indicators-section">
+      <h2 class="section-title">Indicadores</h2>
+      <div class="content-card">
+        <div class="kpi-panel">
+          <div class="kpi-card" tabindex="0">
+            <p>Total de Colaboradores</p>
+            <h3>{{ total_colaboradores }}</h3>
+            <canvas id="spark-colab"
+                    data-labels='{{ sparkline_labels|tojson }}'
+                    data-data='{{ sparkline_data|tojson }}'></canvas>
+          </div>
+          <div class="kpi-card" tabindex="0">
+            <p>Pesquisas Respondidas</p>
+            <h3>{{ total_respondidas }}</h3>
+            <canvas id="spark-respondidas"
+                    data-labels='{{ sparkline_labels|tojson }}'
+                    data-data='{{ sparkline_data|tojson }}'></canvas>
+          </div>
+          <div class="kpi-card" tabindex="0">
+            <p>Pesquisas Pendentes</p>
+            <h3>{{ total_pendentes }}</h3>
+            <canvas id="spark-pendentes"
+                    data-labels='{{ sparkline_labels|tojson }}'
+                    data-data='{{ sparkline_data|tojson }}'></canvas>
+          </div>
+          <div class="kpi-card" tabindex="0">
+            <p>Aniversariantes (mês)</p>
+            <h3>{{ total_aniversariantes }}</h3>
+            <canvas id="spark-aniv"
+                    data-labels='{{ sparkline_labels|tojson }}'
+                    data-data='{{ sparkline_data|tojson }}'></canvas>
+          </div>
+        </div>
       </div>
-      <div class="kpi-card">
-        <img src="{{ url_for('static', filename='icons/pesquisas.svg') }}" alt="Pesquisas Respondidas">
-        <h3>320</h3>
-        <p>Pesquisas Respondidas</p>
-      </div>
-      <div class="kpi-card">
-        <img src="{{ url_for('static', filename='icons/treinamentos.svg') }}" alt="Treinamentos Agendados">
-        <h3>05</h3>
-        <p>Treinamentos Agendados</p>
-      </div>
-      <div class="kpi-card">
-        <img src="{{ url_for('static', filename='icons/aniversariantes.svg') }}" alt="Aniversariantes">
-        <h3>12</h3>
-        <p>Aniversariantes (este mês)</p>
-      </div>
+    </section>
+
+    <section class="birthday-table">
+      <h2 class="section-title">Aniversariantes de Hoje</h2>
+      {% if aniversariantes %}
+        <table>
+          <thead>
+            <tr><th>Nome Completo</th><th>Departamento</th></tr>
+          </thead>
+          <tbody>
+            {% for c in aniversariantes %}
+              <tr tabindex="0">
+                <td>{{ c.nome_completo }}</td>
+                <td>{{ c.departamento }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <p>Nenhum colaborador faz aniversário hoje.</p>
+      {% endif %}
     </section>
   </main>
 
-  <!-- Script: Carousel + Quick Access -->
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      const track = document.querySelector('.carousel-track');
-      const slides = Array.from(track.children);
-      const prevButton = document.querySelector('.carousel-button.prev');
-      const nextButton = document.querySelector('.carousel-button.next');
-      const quickItems = Array.from(document.querySelectorAll('.quick-grid .grid-item'));
-      let currentIndex = 0;
-
-      function updateCarousel(i) {
-        currentIndex = i;
-        track.style.transform = 'translateX(-' + (i * 100) + '%)';
-      }
-
-      prevButton.addEventListener('click', () => {
-        updateCarousel((currentIndex - 1 + slides.length) % slides.length);
-      });
-      nextButton.addEventListener('click', () => {
-        updateCarousel((currentIndex + 1) % slides.length);
-      });
-      quickItems.forEach(item => {
-        item.addEventListener('click', () => {
-          updateCarousel(parseInt(item.dataset.index, 10));
-        });
-      });
-    });
-  </script>
+  <script src="{{ url_for('views.static', filename='home/carousel-spark.js') }}" defer></script>
+  <script src="{{ url_for('views.static', filename='home/theme-toggle.js') }}" defer></script>
 </body>
 </html>
