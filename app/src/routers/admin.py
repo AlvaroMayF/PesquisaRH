@@ -11,7 +11,7 @@ def dashboard():
     Painel principal do administrador.
     Só acessível se a sessão 'admin_logged_in' estiver definida.
     """
-    # Se não estiver logado, manda para o formulário de login
+    # Se não estiver logado, manda para o formulário de home
     if not session.get('admin_logged_in'):
         return redirect(url_for('adminLogin.admin_login'))
     # Renderiza o template em app/views/admin/admin.html

@@ -1,0 +1,380 @@
+/* ========== VARIÁVEIS ========= */
+:root {
+  --container-max-width: 1200px;
+  --section-gap: 2rem;
+  --card-padding: 1.5rem;
+  --accent: #0d6efd;
+  --bg-light: #f4f7fa;
+  --bg-card: #ffffff;
+  --text-color: #444444;
+}
+html.dark {
+  --bg-light: #121212;
+  --bg-card: #1e1e1e;
+  --accent: #4ea8de;
+  --text-color: #dddddd;
+}
+
+/* ========== RESET ========= */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+body {
+  font-family: "Segoe UI", Tahoma, sans-serif;
+  background: var(--bg-light);
+  color: var(--text-color);
+  line-height: 1.5;
+  transition: background 0.3s, color 0.3s;
+}
+
+/* ========== HEADER / NAV ========= */
+header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: var(--bg-card);
+  border-bottom: 1px solid #e3e7ed;
+}
+
+.nav-container {
+  max-width: var(--container-max-width);
+  margin: 0 auto;
+  padding: 0.75rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.navbar-left {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.nav-logo {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.nav-menu {
+  display: flex;
+  gap: 1.5rem;
+  list-style: none;
+}
+.nav-menu a {
+  text-decoration: none;
+  color: var(--text-color);
+  padding: 0.4rem 0.8rem;
+  border-radius: 4px;
+  transition: background 0.2s, color 0.2s;
+}
+.nav-menu a:hover,
+.nav-menu a:focus,
+.nav-menu a.active {
+  background: var(--accent);
+  color: #fff;
+  outline: none;
+}
+
+/* ====================================================== */
+/* INÍCIO DAS REGRAS CSS ATUALIZADAS PARA O BOTÃO DE TEMA */
+/* ====================================================== */
+.theme-switch {
+  display: inline-block;
+  position: relative;
+  width: 52px;
+  height: 28px;
+  cursor: pointer;
+}
+
+.theme-switch .theme-checkbox {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  border-radius: 28px;
+  transition: background-color 0.4s;
+}
+
+.slider::before {
+  content: "";
+  position: absolute;
+  height: 20px;
+  width: 20px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  border-radius: 50%;
+  transition: transform 0.4s;
+
+  /* Adiciona display flex para centralizar os ícones SVG dentro dele */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Posicionamento dos ícones SVG */
+.slider svg {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transition: opacity 0.4s, transform 0.4s;
+    pointer-events: none; /* Para não interferir no clique */
+}
+
+.icon-sun {
+    /* Cor do ícone de sol */
+    stroke: #f39c12;
+    transform: translate(-50%, -50%) rotate(0deg);
+    opacity: 1;
+}
+
+.icon-moon {
+    /* Cor do ícone de lua */
+    stroke: #f1c40f;
+    transform: translate(-50%, -50%) rotate(-90deg);
+    opacity: 0;
+}
+
+
+/* Lógica de troca quando o input está checado (TEMA ESCURO) */
+.theme-checkbox:checked + .slider {
+  background-color: var(--accent);
+}
+
+.theme-checkbox:checked + .slider::before {
+  transform: translateX(24px);
+}
+
+.theme-checkbox:checked + .slider .icon-sun {
+    transform: translate(-50%, -50%) rotate(90deg);
+    opacity: 0;
+}
+
+.theme-checkbox:checked + .slider .icon-moon {
+    transform: translate(-50%, -50%) rotate(0deg);
+    opacity: 1;
+}
+/* ====================================================== */
+/* FIM DAS REGRAS CSS ATUALIZADAS */
+/* ====================================================== */
+
+
+/* ========== MAIN CONTENT ========= */
+main {
+  max-width: var(--container-max-width);
+  margin: var(--section-gap) auto;
+  padding: 0 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: var(--section-gap);
+}
+
+/* Section titles */
+.section-title {
+  text-align: center;
+  font-size: 1.6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--accent);
+  position: relative;
+  margin-bottom: var(--section-gap);
+}
+.section-title::after {
+  content: "";
+  display: block;
+  width: 60px;
+  height: 4px;
+  background: var(--accent);
+  border-radius: 2px;
+  margin: 0.5rem auto 0;
+}
+
+/* Content cards */
+.content-card {
+  background: var(--bg-card);
+  border-radius: 10px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+  padding: var(--card-padding);
+  transition: background 0.3s;
+}
+a:focus, button:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ========== CAROUSEL ========= */
+.carousel-card {
+  position: relative;
+  overflow: hidden;
+  height: 350px;
+  margin-bottom: var(--section-gap);
+}
+.carousel-track {
+  display: flex;
+  transition: transform 0.5s ease-in-out;
+  height: 100%;
+}
+.carousel-slide {
+  flex: 0 0 100%;
+  position: relative;
+  height: 100%;
+}
+.carousel-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.carousel-caption {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  background: rgba(0,0,0,0.6);
+  color: #fff;
+  padding: 1rem;
+  border-radius: 6px;
+  max-width: 35%;
+}
+.btn-cta {
+  display: inline-block;
+  margin-top: 0.5rem;
+  background: var(--accent);
+  color: #fff;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+.btn-cta:hover, .btn-cta:focus {
+  background: #0b5ed7;
+  outline: none;
+}
+.carousel-button {
+  position: absolute;
+  top: 50%; transform: translateY(-50%);
+  background: rgba(0,0,0,0.2);
+  border: 2px solid rgba(255,255,255,0.8);
+  color: #fff;
+  font-size: 1.5rem;
+  width: 2.8rem; height: 2.8rem;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background 0.2s, border 0.2s;
+}
+.carousel-button:hover, .carousel-button:focus {
+  background: rgba(0,0,0,0.4);
+  border-color: #fff;
+  outline: none;
+}
+.carousel-button.prev { left: 1rem; }
+.carousel-button.next { right: 1rem; }
+.carousel-indicators {
+  position: absolute;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+}
+.indicator {
+  width: 10px; height: 10px;
+  border: none; border-radius: 50%;
+  background: rgba(255,255,255,0.6);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.indicator.active, .indicator:focus {
+  background: #fff;
+  outline: 2px solid var(--accent);
+}
+
+/* ========== QUICK ACCESS ========= */
+.quick-access-section .content-card {
+  padding: 1rem var(--card-padding) var(--card-padding);
+}
+.quick-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px,1fr));
+  gap: var(--section-gap);
+  justify-content: center;
+}
+.grid-item {
+  background: var(--bg-card);
+  border: 1px solid #e3e7ed;
+  border-radius: 12px;
+  display: flex; flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  transition: transform 0.2s, box-shadow 0.2s;
+  max-width: 280px;
+}
+.grid-item:hover, .grid-item:focus {
+  transform: scale(1.03);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+.grid-item img {
+  width: 100%; height: 140px;
+  object-fit: cover;
+}
+.grid-item span {
+  margin: 0.75rem 1rem;
+  font-size: 1rem; font-weight: 600;
+  color: var(--text-color);
+  text-align: center;
+  flex-grow: 1;
+}
+
+/* ========== INDICADORES ========= */
+.kpi-panel {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px,1fr));
+  gap: var(--section-gap);
+}
+.kpi-card {
+  background: var(--bg-card);
+  border-radius: 8px;
+  padding: 1rem 1.5rem;
+  box-shadow: 0 1px 8px rgba(0,0,0,0.04);
+  display: flex; flex-direction: column; align-items: center;
+  text-align: center; transition: box-shadow 0.2s;
+}
+.kpi-card:hover, .kpi-card:focus {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+}
+.kpi-card p {
+  font-size: 1rem;
+  color: var(--text-color);
+}
+.kpi-card h3 {
+  font-size: 2.5rem; color: var(--accent);
+}
+
+/* ========== TABELA ANIVERSÁRIOS ========= */
+.birthday-table {
+  margin-bottom: var(--section-gap);
+}
+.birthday-table table {
+  width: 100%; border-collapse: collapse;
+}
+.birthday-table th, .birthday-table td {
+  padding: 0.75rem 1rem; border-bottom: 1px solid #e3e7ed;
+  text-align: left;
+}
+.birthday-table thead {
+  background: var(--bg-light);
+  color: var(--text-color);
+}
+.birthday-table p {
+  text-align: center; color: #666;
+}

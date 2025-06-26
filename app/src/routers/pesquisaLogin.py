@@ -1,16 +1,18 @@
-# app/src/routers/loginPesquisa.py
+# app/src/routers/pesquisaLogin.py
 
 from datetime import datetime
 from flask import Blueprint, render_template, request, redirect, url_for, session
 from src.config.db import get_db_connection
 
-# Definição do Blueprint de login (rota raiz '/')
-login = Blueprint('login', __name__, url_prefix='')
+pesquisa_login = Blueprint('pesquisa_login', __name__, url_prefix='/pesquisa')
 
-@login.route('/', methods=['GET', 'POST'])
-def login_view():
+@pesquisa_login.route('/', methods=['GET', 'POST'])
+def login_pesquisa_view():
     """
-    Exibe o formulário de login (GET) e processa o POST de CPF + data de nascimento.
+    Exibe o formulário de login da pesquisa (GET)
+    e processa o POST de CPF + data de nascimento.
+    Só segue para a pesquisa se o colaborador existir e
+    não tiver respondido ainda.
     """
     error = None
 
@@ -18,24 +20,22 @@ def login_view():
         raw_cpf  = request.form.get('cpf', '').strip()
         raw_date = request.form.get('data_nascimento', '').strip()
 
-        # 1) Extrai apenas dígitos e garante exatamente 11 caracteres (zero-padding à esquerda)
+        # 1) Extrai apenas dígitos e garante 11 caracteres
         digits = ''.join(filter(str.isdigit, raw_cpf))
         cpf    = digits.zfill(11)
         if len(cpf) != 11:
             error = 'CPF inválido. Deve conter 11 dígitos.'
-            return render_template('login/login.html', error=error)
+            return render_template('LoginPesquisa/LoginPesquisa.html', error=error)
 
         # 2) Converte a string de data para objeto date
         try:
             if '/' in raw_date:
-                # Formato DD/MM/AAAA
-                data_nascimento = datetime.strptime(raw_date, '%d/%m/%Y').date()
+                data_nasc = datetime.strptime(raw_date, '%d/%m/%Y').date()
             else:
-                # Formato ISO YYYY-MM-DD (quando usado <input type="date">)
-                data_nascimento = datetime.fromisoformat(raw_date).date()
+                data_nasc = datetime.fromisoformat(raw_date).date()
         except ValueError:
             error = 'Data inválida. Use DD/MM/AAAA ou selecione pelo calendário.'
-            return render_template('login/login.html', error=error)
+            return render_template('LoginPesquisa/LoginPesquisa.html', error=error)
 
         # 3) Consulta no banco
         conn   = get_db_connection()
@@ -44,20 +44,21 @@ def login_view():
             'SELECT id, respondeu '
             'FROM colaboradores '
             'WHERE cpf = %s AND data_nascimento = %s',
-            (cpf, data_nascimento)
+            (cpf, data_nasc)
         )
         user = cursor.fetchone()
         cursor.close()
         conn.close()
 
-        # 4) Lógica de sucesso/erro
+        # 4) Validações finais
         if not user:
-            error = 'Dados inválidos.'
+            error = 'Dados não encontrados.'
         elif user['respondeu']:
-            error = 'Você já respondeu à pesquisa e não pode entrar novamente.'
+            error = 'Você já respondeu à pesquisa.'
         else:
             session['user_id'] = user['id']
+            # Redireciona para o blueprint de pesquisa propriamente dito
             return redirect(url_for('pesquisa.pesquisa_view'))
 
-    # Renderiza o template de login (GET ou POST com erro)
-    return render_template('login/login.html', error=error)
+    # GET ou POST com erro
+    return render_template('LoginPesquisa/LoginPesquisa.html', error=error)
