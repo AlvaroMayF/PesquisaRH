@@ -1,138 +1,202 @@
-<!-- app/src/views/analitico/analitico.html -->
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Análise de Pesquisa | RH</title>
+  <title>Análise de Pesquisa | Portal RH</title>
 
   <!-- Favicon -->
   <link
     rel="shortcut icon"
-    href="{{ url_for('static', filename='img/favicon.ico') }}"
+    href="{{ url_for('static', filename='favicon.ico') }}"
     type="image/x-icon"
   />
 
-  <!-- Google Fonts: Roboto -->
+  <!-- Google Fonts: Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
-    href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
     rel="stylesheet"
   />
 
-  <!-- CSS global -->
-  <link
-    rel="stylesheet"
-    href="{{ url_for('static', filename='analitico.css') }}"
-  />
+  <!-- Chart.js (Necessário para os gráficos) -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
 
-  <!-- CSS específico de view (src/views/analitico/analitico.css) -->
+  <!-- CSS específico da página -->
   <link
     rel="stylesheet"
     href="{{ url_for('views.static', filename='analitico/analitico.css') }}"
   />
 </head>
 <body>
-  <!-- Navbar -->
-  <nav class="navbar">
-    <ul>
-      <li><a href="{{ url_for('admin.dashboard') }}">Início</a></li>
-      <li><a href="{{ url_for('pesquisa.pesquisa_view') }}">Pesquisa</a></li>
-      <li><a class="active" href="{{ url_for('analitico.analitico_view') }}">Analítico</a></li>
-      <li><a href="{{ url_for('logout.logout_view') }}">Sair</a></li>
-    </ul>
-  </nav>
+  <!-- Cabeçalho e Barra de Navegação -->
+  <header>
+    <nav class="navbar">
+      <div class="nav-container">
+        <div class="navbar-center">
+          <label class="theme-switch" title="Alternar tema claro/escuro">
+            <input type="checkbox"
+                   id="theme-toggle"
+                   class="theme-checkbox"
+                   aria-label="Alternar tema claro/escuro" />
+            <div class="slider">
+                <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+            </div>
+          </label>
+          <span class="nav-logo">REDE HOSPITAL SAMAR</span>
+        </div>
+        <ul class="nav-menu">
+          <li><a href="{{ url_for('home.home_view') }}">Início</a></li>
+          <li><a href="{{ url_for('pesquisa_login.login_pesquisa_view') }}">Pesquisa</a></li>
+          <li><a href="{{ url_for('comunicados.view_comunicados') }}">Comunicados</a></li>
+
+          <li class="nav-item dropdown">
+            <a href="#" class="nav-link dropdown-toggle active">Administrador</a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="{{ url_for('analitico.analitico_view') }}">Analítico</a></li>
+              <li><a class="dropdown-item" href="#">Novo Colaborador</a></li>
+              <li><a class="dropdown-item" href="#">Novo Comunicado</a></li>
+            </ul>
+          </li>
+          <li><a href="{{ url_for('logout.logout_view') }}">Sair</a></li>
+        </ul>
+      </div>
+    </nav>
+  </header>
 
   <!-- Conteúdo principal -->
-  <main class="container">
-    <h1 class="page-title">Visão Analítica</h1>
+  <main>
+    <div class="page-container">
+      <section class="page-header">
+        <h1 class="page-title">Visão Analítica da Pesquisa</h1>
+        <p class="page-subtitle">Resultados consolidados das respostas dos colaboradores.</p>
+      </section>
 
-    <!-- Barra de controles -->
-    <div class="controls">
-      <input
-        type="search"
-        id="searchInput"
-        placeholder="🔍 Buscar pergunta..."
-        aria-label="Buscar pergunta"
-      />
-      <select id="minResponses" aria-label="Filtrar pelo número mínimo de respostas">
-        <option value="0">Todas as perguntas</option>
-        <option value="5">≥ 5 respostas</option>
-        <option value="10">≥ 10 respostas</option>
-      </select>
-      <button id="toggleView" title="Alternar visualização" aria-label="Alternar visualização">
-        ☰
-      </button>
-    </div>
+      <!-- Barra de controles -->
+      <div class="controls">
+        <input
+          type="search"
+          id="searchInput"
+          placeholder="🔍 Buscar pergunta..."
+          aria-label="Buscar pergunta"
+        />
+        <select id="minResponses" aria-label="Filtrar pelo número mínimo de respostas">
+          <option value="0">Todas as perguntas</option>
+          <option value="5">≥ 5 respostas</option>
+          <option value="10">≥ 10 respostas</option>
+        </select>
+      </div>
 
-    {% if charts %}
-      <!-- Lista de cards -->
-      <div class="cards-grid">
-        {% for c in charts %}
-          <div class="question-card" data-count="{{ c.count }}">
-            <div class="card-header">
-              <div class="question-text">{{ c.question_text }}</div>
-              <div class="meta">
-                <span class="response-count">{{ c.count }} respostas</span>
-                <button
-                  class="copy-btn"
-                  onclick="copyQuestion({{ loop.index0 }})"
-                  title="Copiar pergunta"
-                  aria-label="Copiar pergunta"
-                >📋</button>
+      {% if charts %}
+        <!-- Grelha de cards -->
+        <div class="cards-grid">
+          {% for c in charts %}
+            <div class="question-card" data-count="{{ c.total_responses }}">
+              <div class="card-header">
+                <div class="question-text">{{ c.question_text }}</div>
+                <div class="meta">
+                  <span class="response-count">{{ c.total_responses }} respostas</span>
+                  <button
+                    class="copy-btn"
+                    onclick="copyQuestion(this)"
+                    title="Copiar pergunta"
+                    aria-label="Copiar pergunta"
+                  >📋</button>
+                </div>
+              </div>
+              <div class="card-body">
+                <!-- Canvas para o gráfico e dados embutidos -->
+                <div class="chart-container">
+                    <canvas class="chart-canvas" data-chart-data='{{ c.chart_data | tojson }}'></canvas>
+                </div>
               </div>
             </div>
-            <div class="card-body">
-              <img
-                class="chart-img"
-                src="data:image/png;base64,{{ c.img_b64 }}"
-                alt="Gráfico da pergunta {{ loop.index }}"
-              />
-              <ul class="legend">
-                {% for item in c.legend %}
-                  <li class="legend-item" title="{{ item.label }}">
-                    <span class="dot" style="background-color: {{ item.color }}"></span>
-                    <span class="label">{{ item.label }}</span>
-                  </li>
-                {% endfor %}
-              </ul>
-            </div>
-          </div>
-        {% endfor %}
-      </div>
-    {% else %}
-      <p class="no-data">Nenhum gráfico disponível.</p>
-    {% endif %}
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="content-card no-data">
+            <p>Nenhum gráfico disponível para exibição no momento.</p>
+        </div>
+      {% endif %}
+    </div>
   </main>
+
+  <!-- Rodapé -->
+  <footer class="site-footer">
+    <!-- O seu rodapé aqui -->
+  </footer>
 
   <!-- Scripts de interação -->
   <script>
-    function copyQuestion(idx) {
-      const txt = document.querySelectorAll('.question-text')[idx].innerText;
-      navigator.clipboard
-        .writeText(txt)
-        .then(() => alert('Pergunta copiada!'))
-        .catch(() => alert('Falha ao copiar.'));
-    }
+    document.addEventListener('DOMContentLoaded', function() {
+        // Renderiza todos os gráficos
+        document.querySelectorAll('.chart-canvas').forEach(canvas => {
+            const chartData = JSON.parse(canvas.dataset.chartData);
+            new Chart(canvas, {
+                type: 'pie',
+                data: chartData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'right',
+                            labels: {
+                                boxWidth: 12,
+                                padding: 15,
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed !== null) {
+                                        const total = context.chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
+                                        const percentage = total > 0 ? (context.parsed / total * 100).toFixed(0) : 0;
+                                        label += `${context.raw} (${percentage}%)`;
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
 
-    document.getElementById('minResponses').addEventListener('change', function (e) {
-      const min = +e.target.value;
-      document.querySelectorAll('.question-card').forEach(card => {
-        card.style.display = +card.dataset.count >= min ? '' : 'none';
-      });
-    });
+        // Funções de filtro e cópia
+        function copyQuestion(button) {
+          const card = button.closest('.question-card');
+          const txt = card.querySelector('.question-text').innerText;
+          navigator.clipboard
+            .writeText(txt)
+            .then(() => alert('Pergunta copiada!'))
+            .catch(() => alert('Falha ao copiar.'));
+        }
 
-    document.getElementById('searchInput').addEventListener('input', function (e) {
-      const term = e.target.value.toLowerCase();
-      document.querySelectorAll('.question-card').forEach(card => {
-        const text = card.querySelector('.question-text').innerText.toLowerCase();
-        card.style.display = text.includes(term) ? '' : 'none';
-      });
-    });
+        document.getElementById('minResponses').addEventListener('change', function (e) {
+          const min = +e.target.value;
+          document.querySelectorAll('.question-card').forEach(card => {
+            card.style.display = +card.dataset.count >= min ? '' : 'none';
+          });
+        });
 
-    document.getElementById('toggleView').addEventListener('click', function () {
-      document.querySelector('.cards-grid').classList.toggle('list-view');
+        document.getElementById('searchInput').addEventListener('input', function (e) {
+          const term = e.target.value.toLowerCase();
+          document.querySelectorAll('.question-card').forEach(card => {
+            const text = card.querySelector('.question-text').innerText.toLowerCase();
+            card.style.display = text.includes(term) ? '' : 'none';
+          });
+        });
     });
   </script>
 </body>

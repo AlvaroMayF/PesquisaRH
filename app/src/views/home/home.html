@@ -9,6 +9,10 @@
         href="{{ url_for('static', filename='favicon.ico') }}"
         type="image/x-icon" />
 
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
   <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
 
   <link rel="stylesheet"
@@ -18,8 +22,7 @@
   <header>
     <nav class="navbar">
       <div class="nav-container">
-        <div class="navbar-left">
-
+        <div class="navbar-center">
           <label class="theme-switch" title="Alternar tema claro/escuro">
             <input type="checkbox"
                    id="theme-toggle"
@@ -30,39 +33,19 @@
                 <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
             </div>
           </label>
-          <span class="nav-logo">PAINEL DE RECURSOS HUMANOS</span>
+          <span class="nav-logo">REDE HOSPITAL SAMAR</span>
         </div>
-
         <ul class="nav-menu">
-          <li>
-            <a href="{{ url_for('home.home_view') }}"
-               class="{{ 'active' if active_endpoint=='home.home_view' else '' }}">
-              Início
-            </a>
-          </li>
-          <li>
-            <a href="{{ url_for('pesquisa_login.login_pesquisa_view') }}"
-               class="{{ 'active' if active_endpoint=='pesquisa_login.login_pesquisa_view' else '' }}">
-              Pesquisa
-            </a>
-          </li>
-          <li>
-            <a href="/comunicados"
-               class="{{ 'active' if active_endpoint=='comunicacao.interna_view' else '' }}">
-              Comunicados
-            </a>
-          </li>
-          <li>
-            <a href="{{ url_for('adminLogin.admin_login') }}"
-               class="{{ 'active' if active_endpoint=='adminLogin.admin_login' else '' }}">
-              Administrador
-            </a>
-          </li>
-          <li>
-            <a href="{{ url_for('logout.logout_view') }}">
-              Sair
-            </a>
-          </li>
+          <li><a href="{{ url_for('home.home_view') }}" class="active">Início</a></li>
+          <li><a href="{{ url_for('pesquisa_login.login_pesquisa_view') }}">Pesquisa</a></li>
+          <li><a href="{{ url_for('comunicados.view_comunicados') }}">Comunicados</a></li>
+          <!-- Lógica Dinâmica para Admin/Sair -->
+          {% if session.get('admin_logged_in') %}
+            <li><a href="{{ url_for('admin.admin_panel') }}">Administrador</a></li>
+            <li><a href="{{ url_for('logout.logout_view') }}">Sair</a></li>
+          {% else %}
+            <li><a href="{{ url_for('adminLogin.admin_login') }}">Administrador</a></li>
+          {% endif %}
         </ul>
       </div>
     </nav>
@@ -73,40 +56,16 @@
       <h2 class="section-title">Destaques</h2>
       <div class="carousel">
         <button class="carousel-button prev" aria-label="Slide anterior">‹</button>
-        <div class="carousel-track">
-          <div class="carousel-slide">
-            <img src="{{ url_for('static', filename='lideranca.jpg') }}"
-                 alt="Rede Hospitalar Samar" loading="lazy">
-            <div class="carousel-caption">
-              <h3>Rede Hospitalar Samar</h3>
-              <p>Veja o Relatório de Pesquisas</p>
-              <a href="/relatorio" class="btn-cta">Ver relatório</a>
-            </div>
-          </div>
-          <div class="carousel-slide">
-            <img src="{{ url_for('static', filename='comunicados.jpg') }}"
-                 alt="Coleta Laboratorial" loading="lazy">
-            <div class="carousel-caption">
-              <h3>Coleta Laboratorial</h3>
-              <p>Agende seu exame agora</p>
-              <a href="/coleta" class="btn-cta">Agendar</a>
-            </div>
-          </div>
-          <div class="carousel-slide">
-            <img src="{{ url_for('static', filename='academia.jpg') }}"
-                 alt="Academia CAIA" loading="lazy">
-            <div class="carousel-caption">
-              <h3>Academia CAIA</h3>
-              <p>Conheça nossos treinamentos</p>
-              <a href="#" class="btn-cta">Saiba mais</a>
-            </div>
-          </div>
-        </div>
         <button class="carousel-button next" aria-label="Próximo slide">›</button>
+        <div class="carousel-track">
+          <div class="carousel-slide"><img src="{{ url_for('static', filename='lideranca.jpg') }}" alt="Rede Hospitalar Samar" loading="lazy"></div>
+          <div class="carousel-slide"><img src="{{ url_for('static', filename='comunicados.jpg') }}" alt="Coleta Laboratorial" loading="lazy"></div>
+          <div class="carousel-slide"><img src="{{ url_for('static', filename='academia.jpg') }}" alt="Academia CAIA" loading="lazy"></div>
+        </div>
         <div class="carousel-indicators" role="tablist">
           <button class="indicator active" data-index="0" aria-label="Slide 1" tabindex="0"></button>
-          <button class="indicator"       data-index="1" aria-label="Slide 2" tabindex="0"></button>
-          <button class="indicator"       data-index="2" aria-label="Slide 3" tabindex="0"></button>
+          <button class="indicator" data-index="1" aria-label="Slide 2" tabindex="0"></button>
+          <button class="indicator" data-index="2" aria-label="Slide 3" tabindex="0"></button>
         </div>
       </div>
     </section>
@@ -115,60 +74,44 @@
       <h2 class="section-title">Acesso Rápido</h2>
       <div class="content-card">
         <div class="quick-grid">
-          <a href="{{ url_for('pesquisa_login.login_pesquisa_view') }}"
-             class="grid-item" tabindex="0">
-            <img src="{{ url_for('static', filename='lideranca.jpg') }}"
-                 alt="Pesquisa Organizacional" loading="lazy">
-            <span>Pesquisa Organizacional</span>
-          </a>
-
-          <a href="/comunicados"
-             class="grid-item" tabindex="0">
-            <img src="{{ url_for('static', filename='comunicados.jpg') }}"
-                 alt="Comunicados" loading="lazy">
-            <span>Comunicados</span>
-          </a>
-
-          <div class="grid-item" tabindex="0">
-            <img src="{{ url_for('static', filename='academia.jpg') }}"
-                 alt="Academia CAIA" loading="lazy">
-            <span>Academia CAIA</span>
-          </div>
+          <a href="{{ url_for('pesquisa_login.login_pesquisa_view') }}" class="grid-item" tabindex="0"><img src="{{ url_for('static', filename='lideranca.jpg') }}" alt="Pesquisa Organizacional" loading="lazy"><span>Pesquisa Organizacional</span></a>
+          <a href="{{ url_for('comunicados.view_comunicados') }}" class="grid-item" tabindex="0"><img src="{{ url_for('static', filename='comunicados.jpg') }}" alt="Comunicados" loading="lazy"><span>Comunicados</span></a>
+          <div class="grid-item" tabindex="0"><img src="{{ url_for('static', filename='academia.jpg') }}" alt="Academia CAIA" loading="lazy"><span>Academia CAIA</span></div>
         </div>
       </div>
     </section>
 
-    <section class="indicators-section">
-      <h2 class="section-title">Indicadores</h2>
-      <div class="content-card">
-        <div class="kpi-panel">
-          <div class="kpi-card" tabindex="0">
-            <p>Total de Colaboradores</p>
-            <h3>{{ total_colaboradores }}</h3>
-            <canvas id="spark-colab"
-                    data-labels='{{ sparkline_labels|tojson }}'
-                    data-data='{{ sparkline_data|tojson }}'></canvas>
+    <section class="notice-board-section">
+      <h2 class="section-title">Mural de Avisos</h2>
+      <div class="notice-board-grid">
+        <div class="notice-card">
+          <div class="notice-card-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
           </div>
-          <div class="kpi-card" tabindex="0">
-            <p>Pesquisas Respondidas</p>
-            <h3>{{ total_respondidas }}</h3>
-            <canvas id="spark-respondidas"
-                    data-labels='{{ sparkline_labels|tojson }}'
-                    data-data='{{ sparkline_data|tojson }}'></canvas>
+          <div class="notice-card-content">
+            <h3 class="notice-card-title">Nova Política de Férias</h3>
+            <p class="notice-card-body">A partir de Agosto, a nova política de agendamento de férias entrará em vigor. Confira as mudanças e planeje-se.</p>
+            <a href="#" class="notice-card-link">Ler comunicado completo</a>
           </div>
-          <div class="kpi-card" tabindex="0">
-            <p>Pesquisas Pendentes</p>
-            <h3>{{ total_pendentes }}</h3>
-            <canvas id="spark-pendentes"
-                    data-labels='{{ sparkline_labels|tojson }}'
-                    data-data='{{ sparkline_data|tojson }}'></canvas>
+        </div>
+
+        <div class="notice-card">
+          <div class="notice-card-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
           </div>
-          <div class="kpi-card" tabindex="0">
-            <p>Aniversariantes (mês)</p>
-            <h3>{{ total_aniversariantes }}</h3>
-            <canvas id="spark-aniv"
-                    data-labels='{{ sparkline_labels|tojson }}'
-                    data-data='{{ sparkline_data|tojson }}'></canvas>
+          <div class="notice-card-content">
+            <h3 class="notice-card-title">Próximo Feriado: Proclamação da República</h3>
+            <p class="notice-card-body">Lembramos que no dia 15 de Novembro não haverá expediente. Desejamos a todos um ótimo feriado!</p>
+          </div>
+        </div>
+
+        <div class="notice-card">
+          <div class="notice-card-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
+          </div>
+          <div class="notice-card-content">
+            <h3 class="notice-card-title">Reconhecimento</h3>
+            <p class="notice-card-body">Parabéns à equipe de Enfermagem do 3º andar pela excelência no atendimento e dedicação, que resultou na maior nota de satisfação do mês.</p>
           </div>
         </div>
       </div>
@@ -177,26 +120,32 @@
     <section class="birthday-table">
       <h2 class="section-title">Aniversariantes de Hoje</h2>
       {% if aniversariantes %}
-        <table>
-          <thead>
-            <tr><th>Nome Completo</th><th>Departamento</th></tr>
-          </thead>
-          <tbody>
-            {% for c in aniversariantes %}
-              <tr tabindex="0">
-                <td>{{ c.nome_completo }}</td>
-                <td>{{ c.departamento }}</td>
-              </tr>
-            {% endfor %}
-          </tbody>
-        </table>
+      <table>
+        <thead><tr><th>Nome Completo</th><th>Departamento</th></tr></thead>
+        <tbody>
+          {% for c in aniversariantes %}<tr tabindex="0"><td>{{ c.nome_completo }}</td><td>{{ c.departamento }}</td></tr>{% endfor %}
+        </tbody>
+      </table>
       {% else %}
-        <p>Nenhum colaborador faz aniversário hoje.</p>
+      <p>Nenhum colaborador faz aniversário hoje.</p>
       {% endif %}
     </section>
   </main>
 
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-main">
+        <div class="footer-column"><h4 class="footer-heading">Samar Ji-Paraná</h4><address class="footer-address"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg><span>R. Padre Adolfo Rhol, 1267 - Casa Preta, Ji-Paraná - RO, 76907-554</span></address></div>
+        <div class="footer-column"><h4 class="footer-heading">Samar Cacoal</h4><address class="footer-address"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg><span>Av. São Paulo, 2326 - Centro, Cacoal - RO, 76963-970</span></address></div>
+        <div class="footer-column"><h4 class="footer-heading">Samar Porto Velho</h4><address class="footer-address"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg><span>Av. Calama, 2585 - Liberdade, Porto Velho - RO, 76803-883</span></address></div>
+        <div class="footer-column"><h4 class="footer-heading">Contato</h4><a href="tel:08000330393" class="footer-link"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg> 0800 033 0393</a><h4 class="footer-heading" style="margin-top: 1.5rem;">Siga nossas redes</h4><ul class="social-links"><li><a href="https://www.facebook.com/hospitalsamar/?locale=pt_BR" target="_blank" rel="noopener noreferrer" class="footer-link"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg> Facebook</a></li><li><a href="https://www.instagram.com/hospitalsamar/" target="_blank" rel="noopener noreferrer" class="footer-link"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg> Instagram</a></li><li><a href="https://www.linkedin.com/company/hospital-samar/posts/?feedView=all" target="_blank" rel="noopener noreferrer" class="footer-link"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg> LinkedIn</a></li></ul></div>
+      </div>
+      <div class="footer-bottom"><p class="copyright-text"> Copyright © 2025. Todos os direitos reservados. </p><a href="#" class="footer-link"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline></svg> Política de acesso</a></div>
+    </div>
+  </footer>
+
   <script src="{{ url_for('views.static', filename='home/carousel-spark.js') }}" defer></script>
   <script src="{{ url_for('views.static', filename='home/theme-toggle.js') }}" defer></script>
+  <script src="{{ url_for('views.static', filename='home/animations.js') }}" defer></script>
 </body>
 </html>

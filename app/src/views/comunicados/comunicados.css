@@ -1,8 +1,4 @@
-/* ================================================== */
-/* CSS COMPLETO PARA A PÁGINA DO PAINEL DE ADMIN      */
-/* ================================================== */
-
-/* ========== VARIÁVEIS DE TEMA (Claro e Escuro) ========= */
+/* ========== VARIÁVEIS (Paleta de cores refinada) ========= */
 :root {
   --container-max-width: 1200px;
   --section-gap: 2rem;
@@ -25,7 +21,7 @@ html.dark {
   --border-color: #30363d;
 }
 
-/* ========== RESET E LAYOUT GERAL DA PÁGINA ========= */
+/* ========== RESET E NOVA FONTE ========= */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -146,18 +142,32 @@ header {
     transform: translate(-50%, -50%) rotate(-90deg);
     opacity: 0;
 }
-html.dark .theme-switch .slider { background-color: #555; }
-.theme-checkbox:checked + .slider { background-color: var(--accent); }
-.theme-checkbox:checked + .slider::before { transform: translateX(24px); }
-.theme-checkbox:checked + .slider .icon-sun { opacity: 0; transform: translate(-50%, -50%) rotate(90deg); }
-.theme-checkbox:checked + .slider .icon-moon { opacity: 1; transform: translate(-50%, -50%) rotate(0deg); }
+.theme-checkbox:checked + .slider {
+  background-color: var(--accent);
+}
+.theme-checkbox:checked + .slider::before {
+  transform: translateX(24px);
+}
+.theme-checkbox:checked + .slider .icon-sun {
+    transform: translate(-50%, -50%) rotate(90deg);
+    opacity: 0;
+}
+.theme-checkbox:checked + .slider .icon-moon {
+    transform: translate(-50%, -50%) rotate(0deg);
+    opacity: 1;
+}
 
-/* ========== CONTEÚDO PRINCIPAL E CARDS ========= */
+/* ========== MAIN CONTENT ========= */
 main {
   max-width: var(--container-max-width);
   margin: var(--section-gap) auto;
   padding: 0 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: var(--section-gap);
 }
+
+/* ========== ESTILOS PARA PÁGINA DE COMUNICADOS ========= */
 .page-container {
   max-width: 900px;
   margin: 0 auto;
@@ -178,66 +188,115 @@ main {
   max-width: 600px;
   margin: 0 auto;
 }
-.content-card {
-  background: var(--bg-card);
-  border-radius: 16px;
-  border: 1px solid var(--border-color);
-  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -2px rgba(0,0,0,0.05);
-  padding: var(--card-padding);
-  transition: background 0.3s, border-color 0.3s, box-shadow 0.3s;
+.comunicados-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
 }
-
-/* ========== ESTILOS DO DROPDOWN DO ADMINISTRADOR ========= */
-.nav-item.dropdown {
-  position: relative;
-}
-.nav-link.dropdown-toggle::after {
-  content: ' ▾';
-  font-size: 0.8em;
-  display: inline-block;
-  margin-left: 0.25rem;
-  transition: transform 0.2s ease-in-out;
-}
-.dropdown-menu {
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  margin-top: 0.5rem;
-  min-width: 200px;
+.comunicado-card {
   background-color: var(--bg-card);
   border: 1px solid var(--border-color);
-  border-radius: 8px;
-  box-shadow: 0 8px 16px rgba(0,0,0,0.1);
-  list-style: none;
-  padding: 0.5rem 0;
-  z-index: 1001;
-  opacity: 0;
-  visibility: hidden;
-  transform: translateX(-50%) translateY(-10px);
-  transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
+  border-radius: 16px;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.03), 0 2px 4px -2px rgba(0,0,0,0.03);
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
-.nav-item.dropdown:hover .dropdown-menu {
-  opacity: 1;
-  visibility: visible;
-  transform: translateX(-50%) translateY(0);
+.comunicado-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 15px -3px rgba(0,0,0,0.07), 0 4px 6px -4px rgba(0,0,0,0.07);
 }
-.nav-item.dropdown:hover .dropdown-toggle::after {
-  transform: rotate(180deg);
-}
-.dropdown-item {
+.comunicado-image-wrapper img {
+  width: 100%;
+  height: auto;
+  max-height: 400px;
+  object-fit: cover;
   display: block;
-  padding: 0.75rem 1.5rem;
-  color: var(--text-color-secondary);
-  text-decoration: none;
-  font-weight: 500;
-  transition: background-color 0.2s, color 0.2s;
+  border-bottom: 1px solid var(--border-color);
 }
-.dropdown-item:hover,
-.dropdown-item:focus {
-  background-color: rgba(128, 128, 128, 0.1);
+.comunicado-content {
+  padding: 1.5rem 2rem 2rem;
+}
+.comunicado-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+.comunicado-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--text-color-secondary);
+}
+.meta-dot {
+  color: var(--text-color-secondary);
+}
+.comunicado-tag {
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.tag-aviso {
+  background-color: #ffc10720;
+  color: #ffc107;
+}
+.tag-evento {
+  background-color: #17a2b820;
+  color: #17a2b8;
+}
+html.dark .tag-aviso { color: #ffd65c; }
+html.dark .tag-evento { color: #29b6f6; }
+
+.comunicado-body {
+  color: var(--text-color-secondary);
+  line-height: 1.7;
+}
+.comunicado-title {
+  font-size: 1.75rem;
+  font-weight: 600;
+  margin: 0 0 1rem 0;
+}
+.comunicado-title a {
+  text-decoration: none;
   color: var(--text-color);
-  outline: none;
+  transition: color 0.2s;
+}
+.comunicado-title a:hover {
+  color: var(--accent);
+}
+.comunicado-body h4 {
+  font-weight: 600;
+  color: var(--text-color);
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+.comunicado-body ul {
+  padding-left: 20px;
+  margin-top: 0.5rem;
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.comunicado-body li::marker {
+  color: var(--accent);
+}
+
+/* ========== ANIMAÇÃO DE FADE-IN AO ROLAR ========= */
+.fade-in-section {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+.fade-in-section.is-visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 /* ========== FOOTER ========= */
@@ -250,7 +309,7 @@ main {
   transition: background-color 0.3s, color 0.3s, border-top-color 0.3s;
 }
 .footer-container {
-  max-width: 1200px;
+  max-width: var(--container-max-width);
   margin: 0 auto;
   padding: 0 1rem;
 }
@@ -316,6 +375,7 @@ main {
 .copyright-text {
   margin: 0;
 }
+
 @media (max-width: 768px) {
   .footer-bottom {
     flex-direction: column-reverse;

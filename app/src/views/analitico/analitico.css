@@ -1,240 +1,69 @@
-/*========================================================
-   analitico.css – Estilo completo com barra de filtros
-=========================================================*/
+/* ... (todo o seu CSS da página, como variáveis, reset, navbar, etc.) ... */
 
-/*=== Variáveis de tema ===*/
-:root {
-  --color-bg:            #f4f7fa;
-  --color-surface:       #ffffff;
-  --color-primary:       #1a73e8;
-  --color-primary-alt:   #1967d2;
-  --color-secondary:     #3dc4df;
-  --color-text:          #202124;
-  --color-text-light:    #5f6368;
-  --color-border:        #dadce0;
-  --shadow-light:        0 2px 6px rgba(0,0,0,0.08);
-  --shadow-medium:       0 4px 12px rgba(0,0,0,0.12);
-  --radius:              8px;
-  --spacing:             16px;
-  --transition-fast:     0.2s ease;
-  --transition-smooth:   0.4s ease;
-  --primaryColor:#00164a;
-  --secondaryColor:#3dc4df;
-}
-
-/*=== Reset / Base ===*/
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-html, body {
-  height: 100%;
-  font-family: 'Roboto', sans-serif;
-  background: var(--color-surface);
-  color: var(--color-text);
-  line-height: 1.5;
-}
-
-/*=== Navbar ===*/
-.navbar {
-  background: var(--color-surface);
-  border-bottom: 1px solid var(--color-border);
-  box-shadow: var(--shadow-medium);
-}
-.navbar ul {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  padding: 0 var(--spacing);
-  list-style: none;
-  gap: 1.5rem;
-  height: 56px;
-}
-.navbar a {
-  text-decoration: none;
-  color: var(--color-text-light);
-  font-weight: 500;
-  padding: 0.5rem 0.75rem;
-  border-radius: var(--radius);
-  transition: background var(--transition-fast), color var(--transition-fast);
-}
-.navbar a:hover,
-.navbar a.active {
-  background: var(--color-primary-alt);
-  color: var(--color-surface);
-}
-
-/*=== Container e Título ===*/
-.container {
-  max-width: 900px;
-  margin: 2rem auto;
-  padding: 0 var(--spacing);
-}
-.page-title {
-  position: relative;
-  display: inline-block;
-  font-size: 2rem;
-  font-weight: 500;
-  margin-bottom: 1.5rem;
-  color: var(--color-text-light);
-}
-.page-title::after {
-  content: '';
-  position: absolute;
-  left: 50%;
-  bottom: -6px;
-  transform: translateX(-50%);
-  width: 80px;
-  height: 4px;
-  border-radius: 2px;
-}
-
-/*=== Barra de controles ===*/
-.controls {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  margin-bottom: 2rem;
-  align-items: center;
-}
-.controls input[type="search"],
-.controls select {
-  flex: 1 1 200px;
-  padding: 0.5rem 1rem;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius);
-  font-size: 0.9rem;
-  transition: border-color var(--transition-fast);
-}
-.controls input[type="search"]:focus,
-.controls select:focus {
-  border-color: var(--color-primary);
-  outline: none;
-}
-.controls button {
-  background: var(--color-primary);
-  color: #fff;
-  border: none;
-  padding: 0.5rem 0.75rem;
-  border-radius: var(--radius);
-  cursor: pointer;
-  font-size: 1.2rem;
-  transition: background var(--transition-fast);
-}
-.controls button:hover {
-  background: var(--color-primary-alt);
-}
-
-/*=== Lista vertical de cards ===*/
+/* ========== ESTILOS DOS CARDS DE GRÁFICO (ATUALIZADO) ========= */
 .cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 1.5rem;
+}
+.question-card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.04);
   display: flex;
   flex-direction: column;
-  gap: 2rem;
 }
-
-/*=== Cards de pergunta ===*/
-.question-card {
-  background: var(--color-surface);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-medium);
-  overflow: hidden;
-  transition: transform var(--transition-smooth), box-shadow var(--transition-smooth);
-  opacity: 0;
-  transform: translateY(10px);
-  animation: fadeInUp 0.5s forwards;
-}
-.question-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 24px rgba(0,0,0,0.12);
-}
-
-/* Animação de fade-in */
-@keyframes fadeInUp {
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Header do card */
 .card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  padding: var(--spacing);
-  border-bottom: 1px solid var(--color-border);
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--border-color);
 }
 .question-text {
-  font-size: 1rem;
-  font-weight: 500;
-  line-height: 1.4;
-  flex: 1;
+  font-weight: 600;
+  color: var(--text-color);
+  margin-bottom: 0.5rem;
 }
 .meta {
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 0.5rem;
-  margin-left: 1rem;
-}
-.response-count {
+  justify-content: space-between;
+  align-items: center;
   font-size: 0.875rem;
-  color: var(--color-text-light);
+  color: var(--text-color-secondary);
 }
 .copy-btn {
   background: none;
   border: none;
   cursor: pointer;
-  font-size: 1.25rem;
-  color: var(--color-text-light);
-  transition: color var(--transition-fast);
+  font-size: 1.2rem;
+  opacity: 0.6;
+  transition: opacity 0.2s;
 }
 .copy-btn:hover {
-  color: var(--color-text);
+  opacity: 1;
 }
-
-/* Corpo do card */
 .card-body {
+  padding: 1.5rem;
+  flex-grow: 1; /* Faz o corpo do card crescer */
   display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  padding: var(--spacing);
-  gap: 1.5rem;
+  justify-content: center;
+  align-items: center;
 }
-.chart-img {
-  flex: 1 1 240px;
-  max-width: 300px;
+.chart-container {
+  position: relative;
   width: 100%;
-  display: block;
-  margin: 0 auto;
+  max-width: 400px;
+  height: 250px; /* Altura fixa para os gráficos */
+}
+.chart-canvas {
+    max-width: 100%;
+    max-height: 100%;
+}
+.no-data {
+    text-align: center;
+    padding: 3rem;
+    color: var(--text-color-secondary);
+    background-color: var(--bg-card);
+    border-radius: 12px;
 }
 
-/* Legenda */
-.legend {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  flex: 1 1 200px;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-.legend-item {
-  display: flex;
-  align-items: center;
-  font-size: 0.875rem;
-  color: var(--color-text);
-}
-.legend-item .dot {
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  margin-right: 0.75rem;
-}
-/*=== Mensagem sem dados ===*/
-.no-data {
-  text-align: center;
-  color: var(--color-text-light);
-  margin-top: 3rem;
-}
+/* ... (resto do seu CSS, como footer, etc.) ... */
