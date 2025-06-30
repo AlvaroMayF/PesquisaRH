@@ -1,23 +1,21 @@
 # app/src/routers/adminLogin.py
 
-from flask import Blueprint, render_template, request, redirect, url_for, session
+from flask import Blueprint, render_template, request, redirect, url_for, session, flash
 from ..config.db import get_db_connection
 
-# Blueprint para o home do administrador
-adminLogin = Blueprint('adminLogin', __name__, url_prefix='/admin-home')
+# Blueprint para o login do administrador.
+adminLogin = Blueprint('adminLogin', __name__)
 
-@adminLogin.route('/', methods=['GET', 'POST'])
+
+@adminLogin.route('/admin-login', methods=['GET', 'POST'])
 def admin_login():
     """
-    Exibe o formulário de home de administrador (GET) e processa o home (POST).
+    Exibe o formulário de login de administrador (GET) e processa o login (POST).
     """
-    error = None
-
     if request.method == 'POST':
         username = request.form.get('username', '').strip()
         password = request.form.get('password', '').strip()
 
-        # 1) Pega um cursor, não chama conn.execute() diretamente
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
         cursor.execute(
@@ -29,15 +27,17 @@ def admin_login():
         conn.close()
 
         if user:
-            # marca sessão de admin
             session['admin_logged_in'] = True
             session['admin_id'] = user['id']
+            session['username'] = user['username']
 
-            # 2) Redireciona para o dashboard do admin
-            #    Em admin.py o endpoint padrão é 'admin.dashboard'
-            return redirect(url_for('admin.dashboard'))
+            # Redireciona para o painel de admin.
+            # Certifique-se de que a rota em admin.py se chama 'admin_panel'.
+            return redirect(url_for('admin.admin_panel'))
         else:
-            error = 'Usuário ou senha incorretos.'
+            flash('Usuário ou senha incorretos.', 'error')
+            return redirect(url_for('adminLogin.admin_login'))
 
-    # GET ou POST com erro: renderiza a tela de home de admin
-    return render_template('adminLogin/adminLogin.html', error=error)
+    # CORREÇÃO DEFINITIVA: O caminho e o nome do ficheiro foram ajustados
+    # para corresponder exatamente à sua estrutura de projeto.
+    return render_template('adminLogin/adminLogin.html')

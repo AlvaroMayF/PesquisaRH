@@ -1,18 +1,26 @@
-# src/routers/admin.py
+from flask import Blueprint, render_template, session, redirect, url_for
 
-from flask import Blueprint, render_template, redirect, url_for, session
-from ..config.db import get_db_connection
-# Cria o blueprint para as rotas de administração
-admin = Blueprint('admin', __name__, url_prefix='/admin')
+# Nome do blueprint
+admin = Blueprint('admin', __name__)
 
-@admin.route('/', methods=['GET'])
-def dashboard():
+# CORREÇÃO: A rota foi alterada de '/admin' para '/admin/'.
+# A barra no final é a forma padrão para URLs que representam um "diretório".
+@admin.route('/admin/', methods=['GET'])
+def admin_panel():
     """
-    Painel principal do administrador.
-    Só acessível se a sessão 'admin_logged_in' estiver definida.
+    Exibe o painel de administração.
+    Verifica se o usuário tem uma sessão de admin ativa antes de mostrar a página.
     """
-    # Se não estiver logado, manda para o formulário de home
-    if not session.get('admin_logged_in'):
+    # Verifica se o administrador está logado
+    if 'admin_logged_in' not in session or not session['admin_logged_in']:
+        # Se não estiver logado, redireciona para a página de login
         return redirect(url_for('adminLogin.admin_login'))
-    # Renderiza o template em app/views/admin/admin.html
-    return render_template('admin/admin.html')
+
+    # Se estiver logado, mostra o painel do administrador
+    username = session.get('username', 'Admin')
+    return render_template('admin/admin.html', username=username)
+
+# Você pode adicionar outras rotas do painel de admin aqui abaixo
+# Ex: @admin.route('/usuarios') -> acessível em /admin/usuarios
+#     def gerenciar_usuarios():
+#         ...

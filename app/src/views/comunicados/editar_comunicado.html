@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Editar Comunicado | Portal RH</title>
+  <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <!-- Reutiliza o CSS da página de Novo Comunicado -->
+  <link rel="stylesheet" href="{{ url_for('views.static', filename='NovoComunicado/NovoComunicado.css') }}" />
+</head>
+<body>
+  <header>
+    <!-- Sua Navbar Padrão -->
+    <nav class="navbar">
+      <div class="nav-container">
+        <div class="navbar-center">
+          <label class="theme-switch" title="Alternar tema claro/escuro">
+            <input type="checkbox" id="theme-toggle" class="theme-checkbox" aria-label="Alternar tema claro/escuro" />
+            <div class="slider">
+                <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+            </div>
+          </label>
+          <span class="nav-logo">REDE HOSPITAL SAMAR</span>
+        </div>
+        <ul class="nav-menu">
+          <li><a href="{{ url_for('home.home_view') }}">Início</a></li>
+          <li><a href="{{ url_for('pesquisa_login.login_pesquisa_view') }}">Pesquisa</a></li>
+          <li><a href="{{ url_for('comunicados.view_comunicados') }}">Comunicados</a></li>
+          <li class="nav-item dropdown">
+            <a href="#" class="nav-link dropdown-toggle active">Administrador</a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="{{ url_for('analitico.analitico_view') }}">Analítico</a></li>
+              <li><a class="dropdown-item" href="{{ url_for('novo_colaborador.novo_colaborador_view') }}">Novo Colaborador</a></li>
+              <li><a class="dropdown-item" href="{{ url_for('novo_comunicado.novo_comunicado_view') }}">Novo Comunicado</a></li>
+            </ul>
+          </li>
+          <li><a href="{{ url_for('logout.logout_view') }}">Sair</a></li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <div class="page-container">
+      <section class="page-header">
+        <h1 class="page-title">Editar Comunicado</h1>
+        <p class="page-subtitle">Ajuste o título, conteúdo, categoria ou imagem do comunicado.</p>
+      </section>
+
+      <form method="POST" action="{{ url_for('comunicados.editar_comunicado', comunicado_id=comunicado.id) }}" enctype="multipart/form-data">
+        <div class="comunicado-preview-card">
+          <div id="image-upload-area" class="{% if comunicado.imagem_url %}has-image{% endif %}">
+            <img id="image-preview" src="{% if comunicado.imagem_url %}{{ url_for('uploaded_file', filename=comunicado.imagem_url) }}{% else %}#}{% endif %}" alt="Preview da imagem" style="display: {% if comunicado.imagem_url %}block{% else %}none{% endif %};" />
+            <label for="imagem" class="image-upload-label">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+              <span>Alterar Imagem de Destaque</span>
+            </label>
+            <input type="file" name="imagem" id="imagem" accept="image/*" onchange="previewImage(event)">
+          </div>
+          <div class="comunicado-header">
+            <div class="comunicado-meta">
+              Postado por: {{ admin_username }} - RH
+            </div>
+            <div class="form-group-categoria">
+              <label for="categoria">Categoria:</label>
+              <select name="categoria" id="categoria" required>
+                <option value="Aviso Interno" {% if comunicado.categoria == 'Aviso Interno' %}selected{% endif %}>Aviso Interno</option>
+                <option value="Datas Comemorativas" {% if comunicado.categoria == 'Datas Comemorativas' %}selected{% endif %}>Datas Comemorativas</option>
+                <option value="Eventos" {% if comunicado.categoria == 'Eventos' %}selected{% endif %}>Eventos</option>
+                <option value="Benefícios" {% if comunicado.categoria == 'Benefícios' %}selected{% endif %}>Benefícios</option>
+              </select>
+            </div>
+          </div>
+          <div class="comunicado-body">
+            <input type="text" name="titulo" class="comunicado-title-input" placeholder="Digite o título..." value="{{ comunicado.titulo }}" required>
+            <textarea name="conteudo" class="comunicado-content-textarea" rows="10" placeholder="Comece a escrever..." required>{{ comunicado.conteudo }}</textarea>
+          </div>
+        </div>
+        <button type="submit" class="btn-publish">Salvar Alterações</button>
+      </form>
+    </div>
+  </main>
+
+  <footer class="site-footer"></footer>
+  <script>
+      function previewImage(event) {
+          const reader = new FileReader();
+          reader.onload = function(){
+              const preview = document.getElementById('image-preview');
+              const uploadArea = document.getElementById('image-upload-area');
+              preview.src = reader.result;
+              preview.style.display = 'block';
+              uploadArea.classList.add('has-image');
+          };
+          reader.readAsDataURL(event.target.files[0]);
+      }
+  </script>
+  <script src="{{ url_for('views.static', filename='home/theme-toggle.js') }}" defer></script>
+</body>
+</html>
