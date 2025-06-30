@@ -1,5 +1,6 @@
 import os
 from flask import Flask, send_from_directory, Blueprint
+from markupsafe import escape, Markup
 
 # ----------------------------------------------------------------------
 # Blueprint “views” para servir templates estáticos (CSS, HTML, etc)
@@ -22,6 +23,8 @@ from src.routers.analitico import analitico
 from src.routers.pesquisaLogin import pesquisa_login
 from src.routers.pesquisa import pesquisa_bp
 from src.routers.comunicados import comunicados_bp
+from src.routers.novo_colaborador import novo_colaborador_bp
+from src.routers.novo_comunicado import novo_comunicado_bp
 
 
 # ----------------------------------------------------------------------
@@ -33,6 +36,8 @@ def create_app():
     # Diretórios de templates e estáticos
     template_dir = os.path.join(base, 'src', 'views')
     static_dir = os.path.join(base, 'assets')
+    upload_dir = os.path.join(base, 'src', 'uploads')
+    os.makedirs(upload_dir, exist_ok=True)  # Cria a pasta se não existir
 
     app = Flask(
         __name__,
@@ -40,6 +45,15 @@ def create_app():
         static_folder=static_dir,
         static_url_path='/static'
     )
+
+    app.config['UPLOAD_FOLDER'] = upload_dir
+
+    # Função e registo do filtro nl2br para formatar texto nos templates
+    def nl2br(value):
+        """Converte quebras de linha em texto para tags <br> em HTML."""
+        return Markup(escape(value).replace('\n', '<br>\n'))
+
+    app.jinja_env.filters['nl2br'] = nl2br
 
     # Configura cache para assets estáticos (1 ano)
     app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 31536000
@@ -55,10 +69,7 @@ def create_app():
     app.register_blueprint(views_bp)
 
     # Registra todos os blueprints de rota
-    # CORREÇÃO: Adicionando o url_prefix para o painel de admin.
-    # Isto agrupa todas as rotas de 'admin.py' sob a URL /admin.
     app.register_blueprint(admin, url_prefix='/admin')
-
     app.register_blueprint(adminLogin)
     app.register_blueprint(home_bp)
     app.register_blueprint(logout)
@@ -66,9 +77,13 @@ def create_app():
     app.register_blueprint(pesquisa_login)
     app.register_blueprint(pesquisa_bp)
     app.register_blueprint(comunicados_bp)
-
-    from src.routers.NovoColaborador import novo_colaborador_bp
     app.register_blueprint(novo_colaborador_bp)
+    app.register_blueprint(novo_comunicado_bp)
+
+    # Nova rota para servir as imagens enviadas
+    @app.route('/uploads/<path:filename>')
+    def uploaded_file(filename):
+        return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
     # Rota para servir admin.css de /views/admin/
     @app.route('/admin/admin.css')

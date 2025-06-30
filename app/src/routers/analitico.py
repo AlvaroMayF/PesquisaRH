@@ -1,27 +1,12 @@
 # src/routers/analitico.py
 
-import json
-from itertools import cycle
 from flask import Blueprint, render_template, redirect, url_for, session
-
 from ..config.db import get_db_connection
-
-# Cores para os gráficos
-FIXED_COLORS = {
-    'Menos de 12 meses': '#3366CC',
-    'De 1 ano a 2 anos': '#FF9900',
-    'De 3 anos a 4 anos': '#DC3912',
-    'Acima de 5 anos': '#109618'
-}
-DEFAULT_COLORS = [
-    '#3366CC', '#FF9900', '#DC3912', '#109618', '#990099', '#0099C6',
-    '#DD4477', '#66AA00', '#B82E2E', '#316395', '#994499', '#22AA99'
-]
 
 analitico = Blueprint('analitico', __name__, url_prefix='/analitico')
 
 
-@analitico.route('/', methods=['GET'])
+@analitico.route('/')
 def analitico_view():
     if not session.get('admin_logged_in'):
         return redirect(url_for('adminLogin.admin_login'))
@@ -29,55 +14,67 @@ def analitico_view():
     conn = get_db_connection()
     cur = conn.cursor(dictionary=True)
 
-    # Otimização: Busca todas as respostas de uma só vez
-    query = """
-        SELECT 
-            q.id AS question_id,
-            q.question_text,
-            ra.answer,
-            COUNT(ra.id) AS count
-        FROM form_questions q
-        JOIN response_answers ra ON q.id = ra.question_id
-        GROUP BY q.id, q.question_text, ra.answer
-        ORDER BY q.order_index, count DESC;
-    """
-    cur.execute(query)
-    results = cur.fetchall()
+    # --- ATUALIZAÇÃO DOS INDICADORES ---
+    cur.execute("SELECT COUNT(id) AS total_colaboradores FROM colaboradores")
+    total_colaboradores = cur.fetchone()['total_colaboradores']
+
+    cur.execute("SELECT COUNT(id) AS pesquisas_respondidas FROM colaboradores WHERE respondeu = 1")
+    pesquisas_respondidas = cur.fetchone()['pesquisas_respondidas']
+
+    # Cálculo da taxa de participação
+    taxa_participacao = 0
+    if total_colaboradores > 0:
+        taxa_participacao = round((pesquisas_respondidas / total_colaboradores) * 100)
+
+    indicadores = {
+        'total_colaboradores': total_colaboradores,
+        'pesquisas_respondidas': pesquisas_respondidas,
+        'taxa_participacao': taxa_participacao  # Novo indicador
+    }
+    # --- FIM DA ATUALIZAÇÃO ---
+
+    cur.execute("SELECT id, question_text, question_type FROM form_questions ORDER BY order_index")
+    questions = cur.fetchall()
+
+    cur.execute("SELECT question_id, answer FROM response_answers WHERE answer IS NOT NULL AND answer != ''")
+    all_answers = cur.fetchall()
     cur.close()
     conn.close()
 
-    # Processa os resultados em Python
-    charts_data = {}
-    for row in results:
-        qid = row['question_id']
-        if qid not in charts_data:
-            charts_data[qid] = {
-                'question_text': row['question_text'],
-                'labels': [],
-                'values': [],
-                'total_responses': 0
-            }
-        charts_data[qid]['labels'].append(row['answer'])
-        charts_data[qid]['values'].append(row['count'])
-        charts_data[qid]['total_responses'] += row['count']
+    answers_by_qid = {}
+    for answer_row in all_answers:
+        qid = answer_row['question_id']
+        if qid not in answers_by_qid:
+            answers_by_qid[qid] = []
+        answers_by_qid[qid].append(answer_row['answer'])
 
-    # Prepara os dados finais para o template
     charts = []
-    for qid, data in charts_data.items():
-        color_cycle = cycle(DEFAULT_COLORS)
-        colors = [FIXED_COLORS.get(label, next(color_cycle)) for label in data['labels']]
+    for question in questions:
+        qid = question['id']
+        answers = answers_by_qid.get(qid, [])
+        total_responses = len(answers)
+        q_type = question.get('question_type', 'multiple_choice')
 
-        charts.append({
-            'question_text': data['question_text'],
-            'total_responses': data['total_responses'],
-            # Converte os dados para JSON para serem usados pelo JavaScript
-            'chart_data': json.dumps({
-                'labels': data['labels'],
-                'datasets': [{
-                    'data': data['values'],
-                    'backgroundColor': colors
-                }]
+        if q_type == 'text':
+            charts.append({
+                'question_text': question['question_text'],
+                'total_responses': total_responses,
+                'is_discursive': True,
+                'answers': answers
             })
-        })
+        elif total_responses > 0:
+            answer_counts = {}
+            for answer in answers:
+                answer_counts[answer] = answer_counts.get(answer, 0) + 1
 
-    return render_template('analitico/analitico.html', charts=charts)
+            charts.append({
+                'question_text': question['question_text'],
+                'total_responses': total_responses,
+                'is_discursive': False,
+                'chart_data': {
+                    'labels': list(answer_counts.keys()),
+                    'datasets': [{'data': list(answer_counts.values())}]
+                }
+            })
+
+    return render_template('analitico/analitico.html', charts=charts, indicadores=indicadores)

@@ -91,8 +91,66 @@ header {
   background: var(--accent);
   color: #fff;
 }
+html.dark .nav-menu a.active {
+    color: var(--bg-card);
+}
 
-/* ========== BOTÃO DE TEMA (sem alterações) ========== */
+
+/* ========== DROPDOWN (Estilo Padrão) ========= */
+.nav-item.dropdown {
+  position: relative;
+}
+.nav-link.dropdown-toggle::after {
+  content: ' ▾';
+  font-size: 0.8em;
+  display: inline-block;
+  margin-left: 0.25rem;
+  transition: transform 0.2s ease-in-out;
+}
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: 0.5rem;
+  min-width: 200px;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+  list-style: none;
+  padding: 0.5rem 0;
+  z-index: 1001;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(-50%) translateY(-10px);
+  transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
+}
+.nav-item.dropdown:hover .dropdown-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+}
+.nav-item.dropdown:hover .dropdown-toggle::after {
+  transform: rotate(180deg);
+}
+.dropdown-item {
+  display: block;
+  padding: 0.75rem 1.5rem;
+  color: var(--text-color-secondary);
+  text-decoration: none;
+  font-weight: 500;
+  transition: background-color 0.2s, color 0.2s;
+}
+.dropdown-item:hover,
+.dropdown-item:focus {
+  background-color: rgba(128, 128, 128, 0.1);
+  color: var(--text-color);
+  outline: none;
+}
+
+
+/* ========== BOTÃO DE TEMA ========== */
 .theme-switch {
   display: inline-block;
   position: relative;
@@ -169,6 +227,9 @@ main {
   display: flex;
   flex-direction: column;
   gap: var(--section-gap);
+  /* --- CORREÇÃO ADICIONADA AQUI --- */
+  position: relative; /* Cria um contexto de empilhamento para o main */
+  z-index: 1;       /* Define uma camada inferior à do header */
 }
 
 /* ========== TÍTULOS DE SEÇÃO (Estilo moderno) ========= */
@@ -199,7 +260,7 @@ a:focus, button:focus {
   outline-offset: 2px;
 }
 
-/* ========== CAROUSEL (sem alterações funcionais) ========= */
+/* ========== CAROUSEL ========= */
 .carousel-card {
   overflow: hidden;
   height: auto;

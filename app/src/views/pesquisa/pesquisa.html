@@ -1,107 +1,105 @@
-<!-- templates/pesquisa/pesquisa.html -->
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pesquisa de Clima Organizacional</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pesquisa de Clima Organizacional | Samar</title>
 
-  <!-- CSS principal -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <link
+    rel="shortcut icon"
+    href="{{ url_for('static', filename='favicon.ico') }}"
+    type="image/x-icon"
+  />
+
   <link
     rel="stylesheet"
     href="{{ url_for('views.static', filename='pesquisa/pesquisa.css') }}"
   />
-  <link
-    rel="shortcut icon"
-    href="{{ url_for('static', filename='img/favicon.ico') }}"
-    type="image/x-icon"
-  />
 </head>
 <body class="pesquisa-page">
-  <div class="pesquisa-container">
-    <form id="surveyForm" method="post">
-      <!-- cabeçalho e introdução -->
-      <div class="form-header">
+  <main class="pesquisa-container">
+    <form id="surveyForm" method="post" novalidate>
+      <header class="form-header">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo Samar" class="form-logo" />
         <h2>Pesquisa de Clima Organizacional</h2>
         <p class="intro">
           Prezado colaborador,<br>
           O preenchimento <strong>consciente e sincero</strong> da Pesquisa de Clima Organizacional é <strong>essencial</strong> para impulsionarmos juntos a excelência da nossa instituição. Esta ferramenta é o canal direto para captarmos suas percepções, anseios e desafios, que refletem não apenas no seu dia a dia, mas também na qualidade do atendimento aos nossos pacientes.
         </p>
-        <p class="intro">
-          <strong>Por que sua participação faz a diferença?</strong><br>
-          ✓ Identifica oportunidades de melhoria concretas;<br>
-          ✓ Fortalece a transparência e a comunicação interna;<br>
-          ✓ Orienta a gestão na tomada de decisões alinhadas às suas necessidades;<br>
-          ✓ Promove um ambiente de trabalho mais saudável e produtivo para todos.
-        </p>
+        <div class="intro-details">
+          <h4>Por que sua participação faz a diferença?</h4>
+          <ul>
+            <li>✓ Identifica oportunidades de melhoria concretas;</li>
+            <li>✓ Fortalece a transparência e a comunicação interna;</li>
+            <li>✓ Orienta a gestão na tomada de decisões alinhadas às suas necessidades;</li>
+            <li>✓ Promove um ambiente de trabalho mais saudável e produtivo para todos.</li>
+          </ul>
+        </div>
         <p class="intro">
           <strong>Dedique alguns minutos</strong> para responder com autenticidade – cada contribuição é um passo rumo a uma Rede Hospitalar Samar ainda melhor. Juntos, construímos o futuro da nossa equipe e da saúde que entregamos à sociedade!
         </p>
-      </div>
+      </header>
 
-      {# --- agrupa perguntas por seção --- #}
+      {# --- Agrupa perguntas por seção --- #}
       {% set grouped = {} %}
       {% for q in questions %}
         {% set list_for_section = grouped[q.section_title] if q.section_title in grouped else [] %}
         {% set _ = grouped.update({ q.section_title: list_for_section + [q] }) %}
       {% endfor %}
 
-      {# --- renderiza cada seção apenas uma vez --- #}
+      {# --- Renderiza cada seção e suas perguntas --- #}
       {% for section_title, qs in grouped.items() %}
-        <div class="section">
-          <div class="section-header">
-            <!-- adicionado title para mostrar texto completo em tooltip -->
-            <h3 title="{{ section_title }}">{{ section_title }}</h3>
-          </div>
+      <section class="form-section">
 
-          {% for q in qs %}
-            <div class="content-card">
-              <div class="question-block">
-                <legend>
-                  {{ q.question_text }} <span class="required">*</span>
-                </legend>
+        <h3 class="section-title" style="width: auto !important; white-space: normal !important;">{{ section_title }}</h3>
 
-                {% if q.question_type == 'radio' %}
-                  <div class="radio-group">
-                    {% for opt in options[q.id] %}
-                      <label class="radio-label">
-                        <input
-                          type="radio"
-                          name="resposta{{ q.id }}"
-                          value="{{ opt.option_value }}"
-                          required
-                        />
-                        {{ opt.option_label }}
-                      </label>
-                    {% endfor %}
-                  </div>
-                {% else %}
-                  <textarea
-                    name="resposta{{ q.id }}"
-                    rows="4"
-                    required
-                  ></textarea>
-                {% endif %}
-              </div>
+        {% for q in qs %}
+        <div class="question-block">
+          <legend class="question-text">
+            {{ q.question_text }} <span class="required-asterisk">*</span>
+          </legend>
+
+          {% if q.question_type == 'radio' %}
+            <div class="options-group">
+              {% for opt in options[q.id] %}
+              <label class="radio-label">
+                <input type="radio" name="resposta{{ q.id }}" value="{{ opt.option_value }}" required />
+                <span class="option-text">{{ opt.option_label }}</span>
+              </label>
+              {% endfor %}
             </div>
-          {% endfor %}
+          {% else %}
+            <textarea
+              name="resposta{{ q.id }}"
+              rows="4"
+              placeholder="Sua resposta..."
+              required
+              class="textarea-input"
+            ></textarea>
+          {% endif %}
         </div>
+        {% endfor %}
+      </section>
       {% endfor %}
 
       <div class="submit-block">
         <button type="submit" class="btn-submit">Enviar Respostas</button>
       </div>
     </form>
-  </div>
+  </main>
 
-  <!-- modal de confirmação -->
-  <div id="submitModal" class="modal">
+  <div id="submitModal" class="modal-overlay">
     <div class="modal-content">
-      <p>
-        Obrigado por enviar sua pesquisa!<br/>
-        Você será redirecionado para a página de login.
-      </p>
-      <button id="modalOk">OK</button>
+      <h4>Pesquisa Enviada!</h4>
+      <p>Obrigado pela sua contribuição. Sua participação é muito importante para nós.</p>
+      <button id="modalOk" class="btn-modal-ok">OK</button>
     </div>
   </div>
 
@@ -110,10 +108,16 @@
     const modal = document.getElementById('submitModal');
     const okBtn = document.getElementById('modalOk');
 
-    form.addEventListener('submit', e => {
-      e.preventDefault();
-      modal.style.display = 'flex'; // exibe o overlay e o modal centralizado
+    form.addEventListener('submit', (event) => {
+      if (!form.checkValidity()) {
+        event.preventDefault();
+        alert('Por favor, responda todas as perguntas antes de enviar.');
+        return;
+      }
+      event.preventDefault();
+      modal.style.display = 'flex';
     });
+
     okBtn.addEventListener('click', () => {
       modal.style.display = 'none';
       form.submit();

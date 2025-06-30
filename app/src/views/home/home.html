@@ -39,9 +39,17 @@
           <li><a href="{{ url_for('home.home_view') }}" class="active">Início</a></li>
           <li><a href="{{ url_for('pesquisa_login.login_pesquisa_view') }}">Pesquisa</a></li>
           <li><a href="{{ url_for('comunicados.view_comunicados') }}">Comunicados</a></li>
-          <!-- Lógica Dinâmica para Admin/Sair -->
+
+          <!-- Lógica Dinâmica para Admin/Sair com Dropdown -->
           {% if session.get('admin_logged_in') %}
-            <li><a href="{{ url_for('admin.admin_panel') }}">Administrador</a></li>
+            <li class="nav-item dropdown">
+              <a href="#" class="nav-link dropdown-toggle">Administrador</a>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="{{ url_for('analitico.analitico_view') }}">Analítico</a></li>
+                <li><a class="dropdown-item" href="{{ url_for('novo_colaborador.novo_colaborador_view') }}">Novo Colaborador</a></li>
+                <li><a class="dropdown-item" href="{{ url_for('novo_comunicado.novo_comunicado_view') }}">Novo Comunicado</a></li>
+              </ul>
+            </li>
             <li><a href="{{ url_for('logout.logout_view') }}">Sair</a></li>
           {% else %}
             <li><a href="{{ url_for('adminLogin.admin_login') }}">Administrador</a></li>
@@ -84,27 +92,41 @@
     <section class="notice-board-section">
       <h2 class="section-title">Mural de Avisos</h2>
       <div class="notice-board-grid">
+
+        <!-- CARD DINÂMICO COM O ÚLTIMO COMUNICADO -->
         <div class="notice-card">
           <div class="notice-card-icon">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
           </div>
           <div class="notice-card-content">
-            <h3 class="notice-card-title">Nova Política de Férias</h3>
-            <p class="notice-card-body">A partir de Agosto, a nova política de agendamento de férias entrará em vigor. Confira as mudanças e planeje-se.</p>
-            <a href="#" class="notice-card-link">Ler comunicado completo</a>
+            {% if ultimo_comunicado %}
+              <h3 class="notice-card-title">{{ ultimo_comunicado.titulo }}</h3>
+              <p class="notice-card-body">{{ ultimo_comunicado.conteudo | truncate(120, true) }}</p>
+              <a href="{{ url_for('comunicados.view_comunicados') }}" class="notice-card-link">Ler comunicado completo</a>
+            {% else %}
+              <h3 class="notice-card-title">Nenhum Comunicado Recente</h3>
+              <p class="notice-card-body">Fique atento a este espaço para futuras novidades e informações importantes da empresa.</p>
+            {% endif %}
           </div>
         </div>
 
+        <!-- CARD DE FERIADO DINÂMICO -->
         <div class="notice-card">
           <div class="notice-card-icon">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
           </div>
           <div class="notice-card-content">
-            <h3 class="notice-card-title">Próximo Feriado: Proclamação da República</h3>
-            <p class="notice-card-body">Lembramos que no dia 15 de Novembro não haverá expediente. Desejamos a todos um ótimo feriado!</p>
+            {% if proximo_feriado %}
+              <h3 class="notice-card-title">Próximo Feriado: {{ proximo_feriado.descricao }}</h3>
+              <p class="notice-card-body">Lembramos que no dia {{ proximo_feriado.data.strftime('%d de %B') }} não haverá expediente na unidade {{ proximo_feriado.unidade }}. Desejamos a todos um ótimo feriado!</p>
+            {% else %}
+              <h3 class="notice-card-title">Feriados</h3>
+              <p class="notice-card-body">Nenhum feriado se aproximando. Consulte os calendários completos na página de comunicados.</p>
+            {% endif %}
           </div>
         </div>
 
+        <!-- Card Fixo 3 (Reconhecimento) -->
         <div class="notice-card">
           <div class="notice-card-icon">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
@@ -121,9 +143,10 @@
       <h2 class="section-title">Aniversariantes de Hoje</h2>
       {% if aniversariantes %}
       <table>
-        <thead><tr><th>Nome Completo</th><th>Departamento</th></tr></thead>
+        <!-- CORREÇÃO APLICADA AQUI -->
+        <thead><tr><th>Nome Completo</th></tr></thead>
         <tbody>
-          {% for c in aniversariantes %}<tr tabindex="0"><td>{{ c.nome_completo }}</td><td>{{ c.departamento }}</td></tr>{% endfor %}
+          {% for c in aniversariantes %}<tr tabindex="0"><td>{{ c.nome }}</td></tr>{% endfor %}
         </tbody>
       </table>
       {% else %}

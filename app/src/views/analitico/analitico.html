@@ -5,14 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Análise de Pesquisa | Portal RH</title>
 
-  <!-- Favicon -->
   <link
     rel="shortcut icon"
     href="{{ url_for('static', filename='favicon.ico') }}"
     type="image/x-icon"
   />
 
-  <!-- Google Fonts: Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
@@ -20,17 +18,14 @@
     rel="stylesheet"
   />
 
-  <!-- Chart.js (Necessário para os gráficos) -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-  <!-- CSS específico da página -->
   <link
     rel="stylesheet"
     href="{{ url_for('views.static', filename='analitico/analitico.css') }}"
   />
 </head>
 <body>
-  <!-- Cabeçalho e Barra de Navegação -->
   <header>
     <nav class="navbar">
       <div class="nav-container">
@@ -56,8 +51,9 @@
             <a href="#" class="nav-link dropdown-toggle active">Administrador</a>
             <ul class="dropdown-menu">
               <li><a class="dropdown-item" href="{{ url_for('analitico.analitico_view') }}">Analítico</a></li>
-              <li><a class="dropdown-item" href="#">Novo Colaborador</a></li>
-              <li><a class="dropdown-item" href="#">Novo Comunicado</a></li>
+              <!-- CORREÇÃO APLICADA AQUI -->
+              <li><a class="dropdown-item" href="{{ url_for('novo_colaborador.novo_colaborador_view') }}">Novo Colaborador</a></li>
+              <li><a class="dropdown-item" href="{{ url_for('novo_comunicado.novo_comunicado_view') }}">Novo Comunicado</a></li>
             </ul>
           </li>
           <li><a href="{{ url_for('logout.logout_view') }}">Sair</a></li>
@@ -66,7 +62,6 @@
     </nav>
   </header>
 
-  <!-- Conteúdo principal -->
   <main>
     <div class="page-container">
       <section class="page-header">
@@ -74,26 +69,35 @@
         <p class="page-subtitle">Resultados consolidados das respostas dos colaboradores.</p>
       </section>
 
-      <!-- Barra de controles -->
-      <div class="controls">
-        <input
-          type="search"
-          id="searchInput"
-          placeholder="🔍 Buscar pergunta..."
-          aria-label="Buscar pergunta"
-        />
-        <select id="minResponses" aria-label="Filtrar pelo número mínimo de respostas">
-          <option value="0">Todas as perguntas</option>
-          <option value="5">≥ 5 respostas</option>
-          <option value="10">≥ 10 respostas</option>
-        </select>
-      </div>
+      <section class="indicators-section">
+        <h2 class="section-title">INDICADORES GERAIS</h2>
+        <div class="indicators-grid">
+          <div class="indicator-card">
+            <div class="indicator-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </div>
+            <div class="indicator-content">
+              <span class="indicator-value">{{ indicadores.total_colaboradores }}</span>
+              <span class="indicator-label">Total de Colaboradores</span>
+            </div>
+          </div>
+          <div class="indicator-card">
+            <div class="indicator-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="m9 15 2 2 4-4"/></svg>
+            </div>
+            <div class="indicator-content">
+              <span class="indicator-value">{{ indicadores.pesquisas_respondidas }}</span>
+              <span class="indicator-label">Pesquisas Respondidas</span>
+              <span class="indicator-sub-value">{{ indicadores.taxa_participacao }}% de participação</span>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {% if charts %}
-        <!-- Grelha de cards -->
         <div class="cards-grid">
           {% for c in charts %}
-            <div class="question-card" data-count="{{ c.total_responses }}">
+            <div class="question-card {% if c.is_discursive %}discursive-full-width{% endif %}" data-count="{{ c.total_responses }}">
               <div class="card-header">
                 <div class="question-text">{{ c.question_text }}</div>
                 <div class="meta">
@@ -107,97 +111,99 @@
                 </div>
               </div>
               <div class="card-body">
-                <!-- Canvas para o gráfico e dados embutidos -->
-                <div class="chart-container">
-                    <canvas class="chart-canvas" data-chart-data='{{ c.chart_data | tojson }}'></canvas>
-                </div>
+                {% if c.is_discursive %}
+                  <div class="answers-list-container">
+                    <ul class="answers-list">
+                      {% if c.answers %}
+                        {% for answer in c.answers %}
+                          <li class="answer-card">
+                            <span class="answer-number">#{{ loop.index }}</span>
+                            <p class="answer-text">{{ answer }}</p>
+                          </li>
+                        {% endfor %}
+                      {% else %}
+                        <li class="answer-card-empty">
+                          Nenhuma resposta registrada para esta pergunta.
+                        </li>
+                      {% endif %}
+                    </ul>
+                  </div>
+                {% else %}
+                  <div class="chart-container">
+                      <canvas class="chart-canvas" data-chart-data='{{ c.chart_data | tojson | safe }}'></canvas>
+                  </div>
+                {% endif %}
               </div>
             </div>
           {% endfor %}
         </div>
       {% else %}
         <div class="content-card no-data">
-            <p>Nenhum gráfico disponível para exibição no momento.</p>
+            <p>Nenhum dado disponível para exibição no momento.</p>
         </div>
       {% endif %}
     </div>
   </main>
 
-  <!-- Rodapé -->
-  <footer class="site-footer">
-    <!-- O seu rodapé aqui -->
-  </footer>
+  <footer class="site-footer"></footer>
 
-  <!-- Scripts de interação -->
   <script>
+    function copyQuestion(button) {
+      const card = button.closest('.question-card');
+      const txt = card.querySelector('.question-text').innerText;
+      navigator.clipboard
+        .writeText(txt)
+        .then(() => alert('Pergunta copiada!'))
+        .catch(() => alert('Falha ao copiar.'));
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
-        // Renderiza todos os gráficos
         document.querySelectorAll('.chart-canvas').forEach(canvas => {
-            const chartData = JSON.parse(canvas.dataset.chartData);
-            new Chart(canvas, {
-                type: 'pie',
-                data: chartData,
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: true,
-                            position: 'right',
-                            labels: {
-                                boxWidth: 12,
-                                padding: 15,
-                                font: {
-                                    size: 12
+            try {
+                const chartData = JSON.parse(canvas.dataset.chartData);
+                new Chart(canvas, {
+                    type: 'pie',
+                    data: chartData,
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'right',
+                                labels: {
+                                    boxWidth: 12,
+                                    padding: 15,
+                                    font: {
+                                        size: 12,
+                                        family: 'Inter',
+                                    },
+                                    color: getComputedStyle(document.documentElement).getPropertyValue('--text-color-secondary').trim()
                                 }
-                            }
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    let label = context.label || '';
-                                    if (label) {
-                                        label += ': ';
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        let label = context.label || '';
+                                        if (label) { label += ': '; }
+                                        if (context.parsed !== null) {
+                                            const total = context.chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
+                                            const percentage = total > 0 ? (context.parsed / total * 100).toFixed(0) : 0;
+                                            label += `${context.raw} (${percentage}%)`;
+                                        }
+                                        return label;
                                     }
-                                    if (context.parsed !== null) {
-                                        const total = context.chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
-                                        const percentage = total > 0 ? (context.parsed / total * 100).toFixed(0) : 0;
-                                        label += `${context.raw} (${percentage}%)`;
-                                    }
-                                    return label;
                                 }
                             }
                         }
                     }
-                }
-            });
-        });
-
-        // Funções de filtro e cópia
-        function copyQuestion(button) {
-          const card = button.closest('.question-card');
-          const txt = card.querySelector('.question-text').innerText;
-          navigator.clipboard
-            .writeText(txt)
-            .then(() => alert('Pergunta copiada!'))
-            .catch(() => alert('Falha ao copiar.'));
-        }
-
-        document.getElementById('minResponses').addEventListener('change', function (e) {
-          const min = +e.target.value;
-          document.querySelectorAll('.question-card').forEach(card => {
-            card.style.display = +card.dataset.count >= min ? '' : 'none';
-          });
-        });
-
-        document.getElementById('searchInput').addEventListener('input', function (e) {
-          const term = e.target.value.toLowerCase();
-          document.querySelectorAll('.question-card').forEach(card => {
-            const text = card.querySelector('.question-text').innerText.toLowerCase();
-            card.style.display = text.includes(term) ? '' : 'none';
-          });
+                });
+            } catch (e) {
+                console.error("Erro ao renderizar o gráfico:", e);
+            }
         });
     });
   </script>
+  <script src="{{ url_for('views.static', filename='home/theme-toggle.js') }}" defer></script>
 </body>
 </html>
