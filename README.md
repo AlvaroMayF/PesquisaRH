@@ -1,100 +1,100 @@
-Sistema de Pesquisa de Clima Organizacional - Rede Hospitalar Samar
-Este repositório contém o código-fonte da aplicação web desenvolvida para automatizar a coleta, o processamento e a análise da Pesquisa de Clima Organizacional da Rede Hospitalar Samar.
+Organizational Climate Survey System - Rede Hospitalar Samar
+This repository contains the source code for the web application developed to automate the collection, processing, and analysis of the Organizational Climate Survey at Rede Hospitalar Samar.
 
-Status do Projeto: Versão 1.0 - Em Produção
+Project Status: Version 1.0 - In Production
 
-📜 Sobre o Projeto
-O Sistema de Pesquisa de Clima Organizacional é uma ferramenta estratégica que visa substituir processos manuais, garantir o total anonimato dos colaboradores e fornecer à gestão dados estruturados e visuais para apoiar a tomada de decisões.
+📜 About the Project
+The Organizational Climate Survey System is a strategic tool aimed at replacing manual processes, ensuring the total anonymity of employees, and providing management with structured and visual data to support decision-making.
 
-Confira a documentação interativa completa: Clique aqui para ver a apresentação do sistema
-(Nota: Substitua os placeholders acima após hospedar a apresentação HTML com o GitHub Pages)
+Check out the full interactive documentation: Click here to see the system presentation
+(Note: Replace the placeholders above after hosting the HTML presentation with GitHub Pages)
 
-✨ Funcionalidades Principais (v1.0)
-O sistema é dividido em dois fluxos principais:
+✨ Key Features (v1.0)
+The system is divided into two main user flows:
 
-👤 Fluxo do Colaborador
-Autenticação Segura: Login via CPF e Data de Nascimento.
+👤 Employee Flow
+Secure Authentication: Login via CPF (Brazilian individual taxpayer registry) and Date of Birth.
 
-Validação de Acesso: Permite o acesso apenas para colaboradores cadastrados que ainda não responderam.
+Access Validation: Allows access only to registered employees who have not yet responded.
 
-Formulário Dinâmico: As perguntas são carregadas diretamente do banco de dados.
+Dynamic Form: Questions are loaded directly from the database.
 
-Garantia de Anonimato: As respostas são salvas sem qualquer vínculo com a identidade do colaborador.
+Anonymity Guaranteed: Responses are saved without any link to the employee's identity.
 
-ադ Fluxo do Administrador
-Dashboard Analítico: Painel com a taxa de adesão em tempo real e resultados agregados.
+ադ Administrator Flow
+Analytics Dashboard: A panel showing the real-time participation rate and aggregated results.
 
-Visualização de Dados: Gráficos interativos (pizza, barras) para análise quantitativa.
+Data Visualization: Interactive charts (pie, bar) for quantitative analysis.
 
-Análise Qualitativa: Listagem anônima das respostas de texto aberto.
+Qualitative Analysis: Anonymous listing of open-text responses.
 
-Gerenciamento de Colaboradores (CRUD): Interface completa para adicionar, editar e desativar participantes.
+Employee Management (CRUD): A complete interface to add, edit, and deactivate participants.
 
-🚀 Tecnologias Utilizadas
-Backend: Python 3 com Flask
+🚀 Technologies Used
+Backend: Python 3 with Flask
 
-Frontend: HTML5, CSS3 (com Tailwind CSS), JavaScript
+Frontend: HTML5, CSS3 (with Tailwind CSS), JavaScript
 
-Banco de Dados: MySQL
+Database: MySQL
 
-Ambiente Virtual: venv
+Virtual Environment: venv
 
-Dependências: (Listadas em requirements.txt)
+Dependencies: (Listed in requirements.txt)
 
-⚙️ Como Rodar o Projeto Localmente
-Siga os passos abaixo para configurar e executar o projeto em sua máquina.
+⚙️ How to Run the Project Locally
+Follow the steps below to set up and run the project on your machine.
 
-Pré-requisitos
-Python 3.x instalado
+Prerequisites
+Python 3.x installed
 
-Git instalado
+Git installed
 
-Um servidor de banco de dados MySQL rodando
+A running MySQL database server
 
-1. Clonar o Repositório
-git clone https://github.com/[SEU-USUARIO-GITHUB]/[NOME-DO-REPOSITORIO].git
-cd [NOME-DO-REPOSITORIO]
+1. Clone the Repository
+git clone https://github.com/[YOUR-GITHUB-USERNAME]/[REPOSITORY-NAME].git
+cd [REPOSITORY-NAME]
 
-2. Configurar o Ambiente Virtual
-É uma boa prática usar um ambiente virtual para isolar as dependências do projeto.
+2. Set Up the Virtual Environment
+It is good practice to use a virtual environment to isolate project dependencies.
 
-# Criar o ambiente virtual
+# Create the virtual environment
 python -m venv venv
 
-# Ativar o ambiente virtual
-# No Windows:
+# Activate the virtual environment
+# On Windows:
 venv\Scripts\activate
-# No macOS/Linux:
+# On macOS/Linux:
 source venv/bin/activate
 
-3. Instalar as Dependências
-Com o ambiente virtual ativado, instale todas as bibliotecas necessárias.
+3. Install Dependencies
+With the virtual environment activated, install all necessary libraries.
 
 pip install -r requirements.txt
 
-(Nota: Certifique-se de que você tem um arquivo requirements.txt com todas as dependências, como Flask, mysql-connector-python, etc.)
+(Note: Make sure you have a requirements.txt file with all dependencies, such as Flask, mysql-connector-python, etc.)
 
-4. Configurar o Banco de Dados
-Crie um banco de dados no seu servidor MySQL (ex: pesquisa_rh).
+4. Configure the Database
+Create a database on your MySQL server (e.g., pesquisa_rh).
 
-Importe a estrutura das tabelas (você pode usar um script SQL de dump do seu banco de desenvolvimento).
+Import the table structure (you can use an SQL dump script from your development database).
 
-Configure as variáveis de ambiente. Crie um arquivo .env na raiz do projeto com as suas credenciais:
+Set up the environment variables. Create a .env file in the project root with your credentials:
 
 DB_HOST=localhost
-DB_USER=seu_usuario_mysql
-DB_PASSWORD=sua_senha_mysql
+DB_USER=your_mysql_user
+DB_PASSWORD=your_mysql_password
 DB_NAME=pesquisa_rh
 
-5. Executar a Aplicação
-Execute o comando abaixo para iniciar o servidor de desenvolvimento do Flask.
+5. Run the Application
+Execute the command below to start the Flask development server.
 
 flask run
 
-A aplicação estará disponível em http://127.0.0.1:5000 (ou o endereço que aparecer no seu terminal).
+The application will be available at http://127.0.0.1:5000 (or the address shown in your terminal).
 
-🤝 Contribuições
-Este projeto está atualmente em desenvolvimento ativo. Para contribuir, por favor, crie uma nova branch, faça suas alterações e abra um Pull Request para revisão.
+🤝 Contributions
+This project is currently under active development. To contribute, please create a new branch, make your changes, and open a Pull Request for review.
 
-📄 Licença
-Este projeto é de propriedade da Rede Hospitalar Samar. Todos os direitos reservados.
+📄 License
+This project is the property of Rede Hospitalar Samar. All rights reserved.git add README.md
