@@ -66,9 +66,9 @@
         <button class="carousel-button prev" aria-label="Slide anterior">‹</button>
         <button class="carousel-button next" aria-label="Próximo slide">›</button>
         <div class="carousel-track">
-          <div class="carousel-slide"><img src="{{ url_for('static', filename='lideranca.jpg') }}" alt="Rede Hospitalar Samar" loading="lazy"></div>
-          <div class="carousel-slide"><img src="{{ url_for('static', filename='comunicados.jpg') }}" alt="Coleta Laboratorial" loading="lazy"></div>
-          <div class="carousel-slide"><img src="{{ url_for('static', filename='academia.jpg') }}" alt="Academia CAIA" loading="lazy"></div>
+          <div class="carousel-slide"><img src="{{ url_for('static', filename='bannerPesquisa.svg') }}" alt="Participe da Pesquisa de Clima" loading="lazy"></div>
+          <div class="carousel-slide"><img src="{{ url_for('static', filename='bannerComunicado.svg') }}" alt="Comunicados Importantes" loading="lazy"></div>
+          <div class="carousel-slide"><img src="{{ url_for('static', filename='bannerBeneficio.svg') }}" alt="Conheça seus Benefícios" loading="lazy"></div>
         </div>
         <div class="carousel-indicators" role="tablist">
           <button class="indicator active" data-index="0" aria-label="Slide 1" tabindex="0"></button>
@@ -82,9 +82,9 @@
       <h2 class="section-title">Acesso Rápido</h2>
       <div class="content-card">
         <div class="quick-grid">
-          <a href="{{ url_for('pesquisa_login.login_pesquisa_view') }}" class="grid-item" tabindex="0"><img src="{{ url_for('static', filename='lideranca.jpg') }}" alt="Pesquisa Organizacional" loading="lazy"><span>Pesquisa Organizacional</span></a>
-          <a href="{{ url_for('comunicados.view_comunicados') }}" class="grid-item" tabindex="0"><img src="{{ url_for('static', filename='comunicados.jpg') }}" alt="Comunicados" loading="lazy"><span>Comunicados</span></a>
-          <div class="grid-item" tabindex="0"><img src="{{ url_for('static', filename='academia.jpg') }}" alt="Academia CAIA" loading="lazy"><span>Academia CAIA</span></div>
+          <a href="{{ url_for('pesquisa_login.login_pesquisa_view') }}" class="grid-item" tabindex="0"><img src="{{ url_for('static', filename='pesquisa.svg') }}" alt="Pesquisa Rede Samar" loading="lazy"><span>Pesquisa Rede Samar</span></a>
+          <a href="{{ url_for('comunicados.view_comunicados') }}" class="grid-item" tabindex="0"><img src="{{ url_for('static', filename='comunicados.svg') }}" alt="Comunicados" loading="lazy"><span>Comunicados</span></a>
+          <div class="grid-item" tabindex="0"><img src="{{ url_for('static', filename='beneficios.svg') }}" alt="Benefícios" loading="lazy"><span>Benefícios</span></div>
         </div>
       </div>
     </section>
