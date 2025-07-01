@@ -5,23 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Painel do RH | Portal RH</title>
 
-  <!-- Favicon -->
   <link rel="shortcut icon"
         href="{{ url_for('static', filename='favicon.ico') }}"
         type="image/x-icon" />
 
-  <!-- Google Fonts: Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-  <!-- CSS Específico da Página de Admin -->
   <link rel="stylesheet"
     href="{{ url_for('views.static', filename='admin/admin.css') }}"
   />
 </head>
 <body>
-  <!-- Cabeçalho e Barra de Navegação -->
   <header>
     <nav class="navbar">
       <div class="nav-container">
@@ -43,15 +39,14 @@
           <li><a href="{{ url_for('pesquisa_login.login_pesquisa_view') }}">Pesquisa</a></li>
           <li><a href="{{ url_for('comunicados.view_comunicados') }}">Comunicados</a></li>
 
-          <!-- Lógica Dinâmica para Admin/Sair com Dropdown -->
           {% if session.get('admin_logged_in') %}
             <li class="nav-item dropdown">
-              <a href="#" class="nav-link dropdown-toggle active">Administrador</a>
+              <a href="{{ url_for('admin.admin_panel') }}" class="nav-link dropdown-toggle active">Administrador</a>
               <ul class="dropdown-menu">
                 <li><a class="dropdown-item" href="{{ url_for('analitico.analitico_view') }}">Analítico</a></li>
                 <li><a class="dropdown-item" href="{{ url_for('novo_colaborador.novo_colaborador_view') }}">Novo Colaborador</a></li>
-                <!-- CORREÇÃO APLICADA AQUI -->
                 <li><a class="dropdown-item" href="{{ url_for('novo_comunicado.novo_comunicado_view') }}">Novo Comunicado</a></li>
+                <li><a class="dropdown-item" href="{{ url_for('admin_feriados.gerenciar_feriados') }}">Gerenciar Feriados</a></li>
               </ul>
             </li>
             <li><a href="{{ url_for('logout.logout_view') }}">Sair</a></li>
@@ -63,7 +58,6 @@
     </nav>
   </header>
 
-  <!-- Conteúdo Principal do Painel do Admin -->
   <main>
     <div class="page-container">
         <section class="page-header">
@@ -71,19 +65,15 @@
             <p class="page-subtitle">Bem-vindo(a), {{ username }}! Aqui você pode gerenciar os comunicados e outras funcionalidades do portal.</p>
         </section>
 
-        <!-- Aqui entrará o conteúdo do painel -->
         <div class="content-card">
             <p>Em construção...</p>
         </div>
     </div>
   </main>
 
-  <!-- Rodapé -->
   <footer class="site-footer">
-    <!-- O conteúdo do seu rodapé aqui -->
-  </footer>
+    </footer>
 
-  <!-- Scripts -->
   <script src="{{ url_for('views.static', filename='home/theme-toggle.js') }}" defer></script>
 </body>
 </html>

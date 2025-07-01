@@ -1,0 +1,79 @@
+/* Estilos para a página de benefícios */
+
+:root {
+  /* Cores baseadas no seu tema escuro */
+  --card-bg: #1a2c42;
+  --card-hover-bg: #223a57;
+  --text-primary: #ffffff;
+  --text-secondary: #adb5bd;
+  --accent-color: #3b82f6;
+  --border-color: #34495e;
+}
+
+.beneficios-container {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 2rem;
+  color: var(--text-primary);
+}
+
+.beneficios-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+.beneficios-subtitle {
+  font-size: 1.125rem;
+  text-align: center;
+  color: var(--text-secondary);
+  margin-bottom: 3rem;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.beneficios-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.beneficio-card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 2rem;
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.beneficio-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  background-color: var(--card-hover-bg);
+}
+
+.beneficio-icon {
+  margin-bottom: 1.5rem;
+}
+
+.beneficio-icon svg {
+  width: 48px;
+  height: 48px;
+  color: var(--accent-color);
+}
+
+.beneficio-card h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  color: var(--text-primary);
+}
+
+.beneficio-card p {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}

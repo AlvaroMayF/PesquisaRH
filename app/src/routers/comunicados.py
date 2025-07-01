@@ -5,6 +5,7 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash,
 from werkzeug.utils import secure_filename
 from ..config.db import get_db_connection
 import locale
+from collections import defaultdict  # <<< ADIÇÃO IMPORTANTE
 
 try:
     locale.setlocale(locale.LC_TIME, 'pt_BR.UTF-8')
@@ -28,14 +29,18 @@ def allowed_file(filename):
         filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-# ROTA PARA LISTAR TODOS OS COMUNICADOS
+# ROTA PARA LISTAR TODOS OS COMUNICADOS (ATUALIZADA)
 @comunicados_bp.route('/comunicados')
 def view_comunicados():
+    comunicados = []
+    feriados_por_unidade = defaultdict(list)
+
     try:
         conn = get_db_connection()
         cur = conn.cursor(dictionary=True)
-        # Atualizado para buscar o ID de cada comunicado
-        query = """
+
+        # 1. Buscar os comunicados (lógica original)
+        query_comunicados = """
             SELECT 
                 c.id, c.titulo, c.conteudo, c.data_publicacao, 
                 c.categoria, c.imagem_url, a.username AS autor
@@ -43,14 +48,32 @@ def view_comunicados():
             JOIN admins a ON c.admin_id = a.id
             ORDER BY c.data_publicacao DESC
         """
-        cur.execute(query)
+        cur.execute(query_comunicados)
         comunicados = cur.fetchall()
+
+        # 2. Buscar os feriados (nova lógica)
+        query_feriados = 'SELECT data, descricao, unidade FROM feriados ORDER BY data'
+        cur.execute(query_feriados)
+        feriados_db = cur.fetchall()
+
+        # 3. Fechar a conexão com o banco
         cur.close()
         conn.close()
+
+        # 4. Processar os dados dos feriados para o template
+        for feriado in feriados_db:
+            feriados_por_unidade[feriado['unidade']].append(feriado)
+
     except Exception as e:
-        print(f"Erro ao buscar comunicados: {e}")
-        comunicados = []
-    return render_template('Comunicados/comunicados.html', comunicados=comunicados)
+        print(f"Erro ao buscar dados da página de comunicados: {e}")
+        # Em caso de erro, as variáveis já foram inicializadas como listas vazias
+
+    # 5. Renderizar o template passando ambas as variáveis
+    return render_template(
+        'Comunicados/comunicados.html',
+        comunicados=comunicados,
+        feriados_por_unidade=feriados_por_unidade
+    )
 
 
 # ROTA PARA EXCLUIR UM COMUNICADO

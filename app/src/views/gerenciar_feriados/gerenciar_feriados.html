@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Gerenciar Feriados | Portal RH</title>
+
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="{{ url_for('views.static', filename='gerenciar_feriados/gerenciar_feriados.css') }}" />
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+          <div class="nav-container">
+            <div class="navbar-center">
+              <label class="theme-switch" title="Alternar tema claro/escuro">
+                <input type="checkbox" id="theme-toggle" class="theme-checkbox" aria-label="Alternar tema claro/escuro" />
+                <div class="slider">
+                    <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                    <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                </div>
+              </label>
+              <span class="nav-logo">REDE HOSPITAL SAMAR</span>
+            </div>
+            <ul class="nav-menu">
+              <li><a href="{{ url_for('home.home_view') }}">Início</a></li>
+              <li><a href="{{ url_for('pesquisa_login.login_pesquisa_view') }}">Pesquisa</a></li>
+              <li><a href="{{ url_for('comunicados.view_comunicados') }}">Comunicados</a></li>
+
+              {% if session.get('admin_logged_in') %}
+                <li class="nav-item dropdown">
+                  <a href="#" class="nav-link dropdown-toggle">Administrador</a>
+                  <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="{{ url_for('analitico.analitico_view') }}">Analítico</a></li>
+                    <li><a class="dropdown-item" href="{{ url_for('novo_colaborador.novo_colaborador_view') }}">Novo Colaborador</a></li>
+                    <li><a class="dropdown-item" href="{{ url_for('novo_comunicado.novo_comunicado_view') }}">Novo Comunicado</a></li>
+                    <li><a class="dropdown-item" href="{{ url_for('admin_feriados.gerenciar_feriados') }}">Gerenciar Feriados</a></li>
+                  </ul>
+                </li>
+                <li><a href="{{ url_for('logout.logout_view') }}">Sair</a></li>
+              {% else %}
+                <li><a href="{{ url_for('adminLogin.admin_login') }}">Administrador</a></li>
+              {% endif %}
+            </ul>
+          </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="page-header">
+            <h1 class="page-title">Gerenciar Calendário de Feriados</h1>
+            <p class="page-subtitle">Faça o upload de um arquivo CSV para cadastrar ou atualizar os feriados do ano.</p>
+        </section>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            <div class="flash-messages-container">
+                {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        {% endwith %}
+
+        <div class="content-card">
+            <h3>Instruções</h3>
+            <p>1. Use um programa de planilhas (Excel, Google Sheets) para criar a lista de feriados.</p>
+            <p>2. O arquivo deve ter <strong>exatamente 3 colunas</strong>, nesta ordem: <code>data</code>, <code>descricao</code>, <code>unidade</code>.</p>
+            <p>3. O formato da data deve ser <strong>AAAA-MM-DD</strong> (ex: 2026-11-26).</p>
+            <p>4. Os nomes das unidades devem ser: "Porto Velho", "Cacoal" ou "Ji-Paraná".</p>
+
+            <hr>
+
+            <form action="{{ url_for('admin_feriados.upload_feriados') }}" method="post" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="csv_file" class="upload-label">Selecione o arquivo CSV:</label>
+                    <div id="upload-card" class="upload-card">
+                        <input type="file" name="csv_file" id="csv_file" accept=".csv" required>
+                        <div class="upload-card-content">
+                            <svg class="upload-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                            <p class="upload-text">Arraste e solte o arquivo CSV aqui, ou <strong>clique para selecionar</strong>.</p>
+                            <span class="upload-filename">Nenhum arquivo selecionado</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <input type="checkbox" name="delete_existing" id="delete_existing" value="true">
+                    <label for="delete_existing"><strong>Atenção:</strong> Marque para apagar TODOS os feriados existentes antes de importar os novos.</label>
+                </div>
+                <button type="submit" class="btn-submit">Enviar Arquivo</button>
+            </form>
+        </div>
+    </main>
+
+    <script src="{{ url_for('views.static', filename='home/theme-toggle.js') }}" defer></script>
+    <script>
+        // Novo script para interatividade do card de upload
+        document.addEventListener('DOMContentLoaded', function() {
+            const uploadCard = document.getElementById('upload-card');
+            const fileInput = document.getElementById('csv_file');
+            const fileNameDisplay = document.querySelector('.upload-filename');
+
+            if (uploadCard && fileInput && fileNameDisplay) {
+                // Abre a janela de seleção de arquivo ao clicar no card
+                uploadCard.addEventListener('click', (e) => {
+                    if(e.target.tagName !== 'INPUT') {
+                        fileInput.click();
+                    }
+                });
+
+                // Atualiza o nome do arquivo ao selecionar
+                fileInput.addEventListener('change', () => {
+                    if (fileInput.files.length > 0) {
+                        fileNameDisplay.textContent = `Arquivo: ${fileInput.files[0].name}`;
+                    } else {
+                        fileNameDisplay.textContent = 'Nenhum arquivo selecionado';
+                    }
+                });
+
+                // Eventos de "arrastar e soltar"
+                uploadCard.addEventListener('dragover', (event) => {
+                    event.preventDefault();
+                    uploadCard.classList.add('is-dragover');
+                });
+
+                uploadCard.addEventListener('dragleave', () => {
+                    uploadCard.classList.remove('is-dragover');
+                });
+
+                uploadCard.addEventListener('drop', (event) => {
+                    event.preventDefault();
+                    uploadCard.classList.remove('is-dragover');
+                    const files = event.dataTransfer.files;
+                    if (files.length > 0) {
+                        // Garante que apenas arquivos .csv sejam aceitos
+                        if (files[0].name.endsWith('.csv')) {
+                            fileInput.files = files;
+                            fileNameDisplay.textContent = `Arquivo: ${files[0].name}`;
+                        } else {
+                            fileNameDisplay.textContent = 'Erro: Apenas arquivos .csv são permitidos.';
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

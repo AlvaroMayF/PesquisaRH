@@ -28,26 +28,20 @@
               <li><a href="{{ url_for('home.home_view') }}">Início</a></li>
               <li><a href="{{ url_for('pesquisa_login.login_pesquisa_view') }}">Pesquisa</a></li>
               <li><a href="{{ url_for('comunicados.view_comunicados') }}" class="active">Comunicados</a></li>
-
-              <!-- ============================================= -->
-              <!-- INÍCIO DA CORREÇÃO DE LÓGICA DE LOGIN         -->
-              <!-- ============================================= -->
               {% if session.get('admin_logged_in') %}
                 <li class="nav-item dropdown">
-                  <a href="#" class="nav-link dropdown-toggle">Administrador</a>
+                  <a href="{{ url_for('admin.admin_panel') }}" class="nav-link dropdown-toggle">Administrador</a>
                   <ul class="dropdown-menu">
                     <li><a class="dropdown-item" href="{{ url_for('analitico.analitico_view') }}">Analítico</a></li>
                     <li><a class="dropdown-item" href="{{ url_for('novo_colaborador.novo_colaborador_view') }}">Novo Colaborador</a></li>
                     <li><a class="dropdown-item" href="{{ url_for('novo_comunicado.novo_comunicado_view') }}">Novo Comunicado</a></li>
+                    <li><a class="dropdown-item" href="{{ url_for('admin_feriados.gerenciar_feriados') }}">Gerenciar Feriados</a></li>
                   </ul>
                 </li>
                 <li><a href="{{ url_for('logout.logout_view') }}">Sair</a></li>
               {% else %}
                 <li><a href="{{ url_for('adminLogin.admin_login') }}">Administrador</a></li>
               {% endif %}
-              <!-- ============================================= -->
-              <!-- FIM DA CORREÇÃO                               -->
-              <!-- ============================================= -->
             </ul>
           </div>
         </nav>
@@ -68,6 +62,21 @@
                 </div>
                 {% endif %}
             {% endwith %}
+
+            <section id="feriados-section">
+                <h2 class="section-title">Calendário de Feriados</h2>
+                <div class="feriados-grid">
+                    {% for unidade, feriados in feriados_por_unidade.items() | sort %}
+                        <div class="feriado-card" data-modal-target="modal-{{ unidade | replace(' ', '-') | replace('ã','a') }}">
+                            <div class="feriado-card-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                            </div>
+                            <h3 class="feriado-card-title">{{ unidade }}</h3>
+                            <p class="feriado-card-link">Ver calendário completo</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            </section>
 
             <section class="comunicados-list">
                 {% for comunicado in comunicados %}
@@ -108,6 +117,77 @@
         </div>
     </main>
     <footer class="site-footer"></footer>
+
+    {% for unidade, feriados in feriados_por_unidade.items() | sort %}
+    <div class="modal-overlay" id="modal-{{ unidade | replace(' ', '-') | replace('ã','a') }}">
+        <div class="modal-content">
+            <button class="modal-close-btn">&times;</button>
+            <h2 class="modal-title">Feriados - {{ unidade }}</h2>
+            {% if feriados %}
+                <table class="feriados-table">
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Feriado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for feriado in feriados %}
+                            <tr>
+                                <td>{{ feriado.data.strftime('%d/%m/%Y') }}</td>
+                                <td>{{ feriado.descricao }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p class="no-feriados">Nenhum feriado cadastrado para esta unidade.</p>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+
     <script src="{{ url_for('views.static', filename='home/theme-toggle.js') }}" defer></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const feriadoCards = document.querySelectorAll('.feriado-card');
+            const modals = document.querySelectorAll('.modal-overlay');
+            const closeButtons = document.querySelectorAll('.modal-close-btn');
+            feriadoCards.forEach(card => {
+                card.addEventListener('click', () => {
+                    const modalId = card.getAttribute('data-modal-target');
+                    const modal = document.getElementById(modalId);
+                    if (modal) {
+                        document.body.style.overflow = 'hidden';
+                        modal.classList.add('active');
+                    }
+                });
+            });
+            const closeModal = (modal) => {
+                document.body.style.overflow = '';
+                modal.classList.remove('active');
+            };
+            closeButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    closeModal(button.closest('.modal-overlay'));
+                });
+            });
+            modals.forEach(modal => {
+                modal.addEventListener('click', (event) => {
+                    if (event.target === modal) {
+                        closeModal(modal);
+                    }
+                });
+            });
+            document.addEventListener('keydown', (event) => {
+                if (event.key === 'Escape') {
+                    const activeModal = document.querySelector('.modal-overlay.active');
+                    if (activeModal) {
+                        closeModal(activeModal);
+                    }
+                }
+            });
+        });
+    </script>
 </body>
 </html>

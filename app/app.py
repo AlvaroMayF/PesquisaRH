@@ -25,6 +25,8 @@ from src.routers.pesquisa import pesquisa_bp
 from src.routers.comunicados import comunicados_bp
 from src.routers.novo_colaborador import novo_colaborador_bp
 from src.routers.novo_comunicado import novo_comunicado_bp
+from src.routers.admin_feriados import admin_feriados_bp
+from src.routers.beneficios import beneficios_bp  # <<< NOVA LINHA
 
 
 # ----------------------------------------------------------------------
@@ -79,6 +81,8 @@ def create_app():
     app.register_blueprint(comunicados_bp)
     app.register_blueprint(novo_colaborador_bp)
     app.register_blueprint(novo_comunicado_bp)
+    app.register_blueprint(admin_feriados_bp)
+    app.register_blueprint(beneficios_bp)  # <<< NOVA LINHA
 
     # Nova rota para servir as imagens enviadas
     @app.route('/uploads/<path:filename>')

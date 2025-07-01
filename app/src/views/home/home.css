@@ -227,9 +227,8 @@ main {
   display: flex;
   flex-direction: column;
   gap: var(--section-gap);
-  /* --- CORREÇÃO ADICIONADA AQUI --- */
-  position: relative; /* Cria um contexto de empilhamento para o main */
-  z-index: 1;       /* Define uma camada inferior à do header */
+  position: relative;
+  z-index: 1;
 }
 
 /* ========== TÍTULOS DE SEÇÃO (Estilo moderno) ========= */
@@ -428,33 +427,55 @@ a:focus, button:focus {
   text-decoration: underline;
 }
 
-/* ========== TABELA ANIVERSÁRIOS ========= */
-.birthday-table {
-  margin-bottom: var(--section-gap);
-  border: 1px solid var(--border-color);
-  border-radius: 12px;
-  overflow: hidden;
-}
-.birthday-table table {
-  width: 100%;
-  border-collapse: collapse;
-}
-.birthday-table th, .birthday-table td {
-  padding: 0.75rem 1rem;
-  border-bottom: 1px solid var(--border-color);
-  text-align: left;
-}
-.birthday-table tr:last-child td {
-  border-bottom: none;
-}
-.birthday-table thead {
-  background: var(--bg-light);
-  font-weight: 600;
-}
-.birthday-table p {
-  padding: 1rem;
+/* ================================================== */
+/* NOVOS ESTILOS PARA A SEÇÃO DE ANIVERSARIANTES      */
+/* ================================================== */
+.birthday-section .no-birthdays {
   text-align: center;
   color: var(--text-color-secondary);
+  background-color: var(--bg-card);
+  padding: 2rem;
+  border-radius: 16px;
+  border: 1px solid var(--border-color);
+  font-style: italic;
+}
+.birthday-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1rem;
+}
+.birthday-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background-color: var(--bg-card);
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.birthday-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+html.dark .birthday-card:hover {
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+.birthday-icon {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: color-mix(in srgb, var(--accent) 15%, transparent);
+  border-radius: 50%;
+  color: var(--accent);
+}
+.birthday-name {
+  font-weight: 500;
+  font-size: 1.05rem;
+  color: var(--text-color);
 }
 
 /* ========== ANIMAÇÃO DE FADE-IN AO ROLAR ========= */
@@ -567,7 +588,6 @@ a:focus, button:focus {
   justify-content: center;
   padding: 2rem 1rem;
 }
-/* Garante que o rodapé fique no final da página */
 .login-page-body .site-footer {
   margin-top: auto;
 }

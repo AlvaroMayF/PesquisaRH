@@ -49,8 +49,7 @@ def home_view():
         cur.execute('SELECT COUNT(*) AS total_pending FROM colaboradores WHERE respondeu = 0 AND ativo = 1')
         total_pesquisas_pendentes = cur.fetchone()['total_pending']
 
-        # --- CORREÇÃO APLICADA AQUI ---
-        # Aniversariantes do dia (agora busca somente o nome)
+        # Aniversariantes do dia
         cur.execute(
             'SELECT nome FROM colaboradores WHERE MONTH(data_nascimento) = MONTH(CURDATE()) AND DAY(data_nascimento) = DAY(CURDATE()) AND ativo = 1'
         )
@@ -79,16 +78,18 @@ def home_view():
         """)
         ultimo_comunicado = cur.fetchone()
 
-        # Busca o próximo feriado do banco de dados
+        # =======================================================
+        #      *** LÓGICA DO PRÓXIMO FERIADO CORRIGIDA AQUI ***
+        # A consulta agora busca diretamente na tabela 'feriados'
+        # =======================================================
         cur.execute("""
             SELECT 
-                f.data,
-                f.descricao,
-                u.nome AS unidade
-            FROM feriados f
-            JOIN unidades u ON f.unidade_id = u.id
-            WHERE f.data >= CURDATE()
-            ORDER BY f.data ASC
+                data,
+                descricao,
+                unidade
+            FROM feriados
+            WHERE data >= CURDATE()
+            ORDER BY data ASC
             LIMIT 1
         """)
         proximo_feriado = cur.fetchone()
@@ -100,7 +101,6 @@ def home_view():
         for i in range(5, -1, -1):
             dt = date.today() - timedelta(days=30 * i)
             m = dt.month
-            # Garante que o nome do mês seja capitalizado
             labels.append(calendar.month_abbr[m].capitalize())
             data.append(next((r['qtd'] for r in rows if r['mes'] == m), 0))
 

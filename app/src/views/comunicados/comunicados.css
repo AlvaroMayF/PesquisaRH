@@ -99,7 +99,7 @@ html.dark .nav-menu a.active {
     color: var(--bg-card);
 }
 
-/* ========== BOTÃO DE TEMA (Estilo Padrão) ========= */
+/* ========== BOTÃO DE TEMA (Sincronizado com a Home) ========= */
 .theme-switch {
   display: inline-block;
   position: relative;
@@ -138,8 +138,6 @@ html.dark .nav-menu a.active {
 }
 .slider svg {
     position: absolute;
-    width: 16px;
-    height: 16px;
     top: 50%;
     left: 50%;
     transition: opacity 0.4s, transform 0.4s;
@@ -155,12 +153,20 @@ html.dark .nav-menu a.active {
     transform: translate(-50%, -50%) rotate(-90deg);
     opacity: 0;
 }
-html.dark .theme-switch .slider { background-color: #30363d; }
-.theme-checkbox:checked + .slider { background-color: var(--accent); }
-.theme-checkbox:checked + .slider::before { transform: translateX(24px); }
-.theme-checkbox:checked + .slider .icon-sun { opacity: 0; transform: translate(-50%, -50%) rotate(90deg); }
-.theme-checkbox:checked + .slider .icon-moon { opacity: 1; transform: translate(-50%, -50%) rotate(0deg); }
-
+.theme-checkbox:checked + .slider {
+  background-color: var(--accent);
+}
+.theme-checkbox:checked + .slider::before {
+  transform: translateX(24px);
+}
+.theme-checkbox:checked + .slider .icon-sun {
+    transform: translate(-50%, -50%) rotate(90deg);
+    opacity: 0;
+}
+.theme-checkbox:checked + .slider .icon-moon {
+    transform: translate(-50%, -50%) rotate(0deg);
+    opacity: 1;
+}
 
 /* ========== DROPDOWN (Estilo Padrão) ========= */
 .nav-item.dropdown {
@@ -330,7 +336,6 @@ html.dark .alert-danger {
   background-color: color-mix(in srgb, var(--accent) 20%, transparent);
   color: var(--accent);
 }
-
 .comunicado-body {
   color: var(--text-color-secondary);
   line-height: 1.7;
@@ -353,16 +358,6 @@ html.dark .alert-danger {
     color: var(--text-color-secondary);
     padding: 3rem;
     font-style: italic;
-}
-
-/* --- ESTILOS PARA AÇÕES DO ADMIN --- */
-.comunicado-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 1rem;
-    padding: 0.75rem 1.5rem;
-    background-color: var(--bg-light);
-    border-top: 1px solid var(--border-color);
 }
 .action-btn {
     padding: 0.4rem 1rem;
@@ -391,8 +386,14 @@ html.dark .btn-edit {
 .btn-delete:hover {
     background-color: var(--danger-hover);
 }
-
-
+.comunicado-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    padding: 0.75rem 1.5rem;
+    background-color: var(--bg-light);
+    border-top: 1px solid var(--border-color);
+}
 /* ========== FOOTER ========= */
 .site-footer {
   background-color: var(--bg-card);
@@ -401,4 +402,137 @@ html.dark .btn-edit {
   margin-top: auto;
   border-top: 1px solid var(--border-color);
   transition: background-color 0.3s, color 0.3s, border-top-color 0.3s;
+}
+/* ================================================== */
+/* ESTILOS PARA CARDS E MODAL DE FERIADOS (NOVO)      */
+/* ================================================== */
+#feriados-section {
+  padding: 1.5rem 0rem;
+  margin-bottom: 2rem;
+  background-color: transparent;
+  border: none;
+}
+#feriados-section .section-title {
+  text-align: center;
+  font-size: 1.75rem;
+  margin-bottom: 1.5rem;
+}
+.feriados-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+.feriado-card {
+  background-color: var(--bg-card);
+  padding: 1.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+.feriado-card:hover {
+  transform: translateY(-5px);
+  border-color: var(--accent);
+  box-shadow: 0 10px 15px -3px rgba(0,0,0,0.07), 0 4px 6px -4px rgba(0,0,0,0.07);
+}
+.feriado-card-icon {
+  width: 48px;
+  height: 48px;
+  margin: 0 auto 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: color-mix(in srgb, var(--accent) 15%, transparent);
+  color: var(--accent);
+  border-radius: 50%;
+}
+.feriado-card-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-color);
+  margin-bottom: 0.25rem;
+}
+.feriado-card-link {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--accent);
+}
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0s 0.3s;
+}
+.modal-overlay.active {
+  opacity: 1;
+  visibility: visible;
+  transition-delay: 0s;
+}
+.modal-content {
+  background: var(--bg-card);
+  padding: 2rem;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 600px;
+  position: relative;
+  transform: scale(0.95) translateY(10px);
+  transition: transform 0.3s ease;
+}
+.modal-overlay.active .modal-content {
+  transform: scale(1) translateY(0);
+}
+.modal-close-btn {
+  position: absolute;
+  top: 0.75rem;
+  right: 1rem;
+  font-size: 2.25rem;
+  line-height: 1;
+  font-weight: bold;
+  color: var(--text-color-secondary);
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.modal-close-btn:hover {
+  color: var(--text-color);
+}
+.modal-title {
+  font-size: 1.75rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  color: var(--text-color);
+  padding-right: 2rem;
+}
+.feriados-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.feriados-table th, .feriados-table td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+}
+.feriados-table thead {
+  background-color: var(--bg-light);
+}
+.feriados-table tbody tr:last-child td {
+  border-bottom: none;
+}
+.no-feriados {
+  text-align: center;
+  color: var(--text-color-secondary);
+  padding: 2rem 0;
+  font-style: italic;
 }

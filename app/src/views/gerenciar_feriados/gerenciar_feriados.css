@@ -1,0 +1,322 @@
+/* ================================================== */
+/* CSS PARA A PÁGINA 'GERENCIAR FERIADOS'             */
+/* ================================================== */
+
+/* ========== VARIÁVEIS (Copiado da Home) ========= */
+:root {
+  --container-max-width: 1200px;
+  --section-gap: 2rem;
+  --card-padding: 1.5rem;
+  --accent: #007aff;
+  --accent-hover: #0056b3;
+  --bg-light: #f8f9fa;
+  --bg-card: #ffffff;
+  --text-color: #212529;
+  --text-color-secondary: #6c757d;
+  --border-color: #dee2e6;
+  --danger: #dc3545;
+  --success: #198754;
+}
+html.dark {
+  --accent: #0a84ff;
+  --accent-hover: #3395ff;
+  --bg-light: #0d1117;
+  --bg-card: #161b22;
+  --text-color: #c9d1d9;
+  --text-color-secondary: #8b949e;
+  --border-color: #30363d;
+  --danger: #e04a59;
+  --success: #20c997;
+}
+
+/* ========== RESET E GERAL (Copiado da Home) ========= */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg-light);
+  color: var(--text-color);
+  line-height: 1.6;
+  transition: background 0.3s, color 0.3s;
+}
+
+/* ========== HEADER / NAV (Copiado da Home) ========= */
+header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border-color);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+  transition: background 0.3s, border-color 0.3s;
+}
+.nav-container {
+  max-width: var(--container-max-width);
+  margin: 0 auto;
+  padding: 0.75rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.navbar-center {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+.nav-logo {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--accent);
+  user-select: none;
+}
+.nav-menu {
+  display: flex;
+  gap: 1rem;
+  list-style: none;
+}
+.nav-menu a {
+  text-decoration: none;
+  color: var(--text-color-secondary);
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  transition: background 0.2s, color 0.2s;
+}
+.nav-menu a:hover,
+.nav-menu a:focus {
+  color: var(--text-color);
+  background: rgba(128, 128, 128, 0.1);
+  outline: none;
+}
+.nav-menu a.active {
+  background: var(--accent);
+  color: #fff;
+}
+html.dark .nav-menu a.active {
+    color: var(--bg-card);
+}
+
+/* ========== DROPDOWN (Copiado da Home) ========= */
+.nav-item.dropdown { position: relative; }
+.nav-link.dropdown-toggle::after { content: ' ▾'; font-size: 0.8em; }
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: 0.5rem;
+  min-width: 200px;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+  list-style: none;
+  padding: 0.5rem 0;
+  z-index: 1001;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(-50%) translateY(-10px);
+  transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
+}
+.nav-item.dropdown:hover .dropdown-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+}
+.dropdown-item {
+  display: block;
+  padding: 0.75rem 1.5rem;
+  color: var(--text-color-secondary);
+  text-decoration: none;
+  font-weight: 500;
+}
+.dropdown-item:hover, .dropdown-item:focus {
+  background-color: rgba(128, 128, 128, 0.1);
+  color: var(--text-color);
+}
+
+/* ========== BOTÃO DE TEMA (Copiado da Home) ========= */
+.theme-switch {
+  display: inline-block;
+  position: relative;
+  width: 52px;
+  height: 28px;
+  cursor: pointer;
+}
+.theme-switch .theme-checkbox { opacity: 0; width: 0; height: 0; }
+.slider {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: #ccc;
+  border-radius: 28px;
+  transition: background-color 0.4s;
+}
+.slider::before {
+  content: "";
+  position: absolute;
+  height: 20px; width: 20px;
+  left: 4px; bottom: 4px;
+  background-color: white;
+  border-radius: 50%;
+  transition: transform 0.4s;
+}
+.slider svg {
+    position: absolute; top: 50%; left: 50%;
+    transition: opacity 0.4s, transform 0.4s;
+    pointer-events: none;
+}
+.icon-sun { stroke: #f39c12; transform: translate(-50%, -50%) rotate(0deg); opacity: 1; }
+.icon-moon { stroke: #f1c40f; transform: translate(-50%, -50%) rotate(-90deg); opacity: 0; }
+.theme-checkbox:checked + .slider { background-color: var(--accent); }
+.theme-checkbox:checked + .slider::before { transform: translateX(24px); }
+.theme-checkbox:checked + .slider .icon-sun { transform: translate(-50%, -50%) rotate(90deg); opacity: 0; }
+.theme-checkbox:checked + .slider .icon-moon { transform: translate(-50%, -50%) rotate(0deg); opacity: 1; }
+
+
+/* ========== ESTILOS ESPECÍFICOS DA PÁGINA ========== */
+main {
+  max-width: 900px;
+  margin: var(--section-gap) auto;
+  padding: 0 1rem;
+}
+.page-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+.page-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--text-color);
+  margin-bottom: 0.5rem;
+}
+.page-subtitle {
+  font-size: 1.1rem;
+  color: var(--text-color-secondary);
+}
+.content-card {
+  background: var(--bg-card);
+  border-radius: 16px;
+  border: 1px solid var(--border-color);
+  padding: var(--card-padding);
+}
+.content-card h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+.content-card p {
+  margin-bottom: 0.75rem;
+  color: var(--text-color-secondary);
+}
+.content-card code {
+  background-color: rgba(128, 128, 128, 0.15);
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  font-family: monospace;
+}
+.content-card hr {
+  border: none;
+  border-top: 1px solid var(--border-color);
+  margin: 1.5rem 0;
+}
+.form-group {
+  margin-bottom: 1.25rem;
+}
+.form-group label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+.form-group input[type="checkbox"] {
+  margin-right: 0.5rem;
+  vertical-align: middle;
+}
+.btn-submit {
+  padding: 0.6rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  text-decoration: none;
+  background-color: var(--accent);
+  color: #fff;
+  transition: background-color 0.2s;
+}
+html.dark .btn-submit {
+    color: var(--bg-card);
+}
+.btn-submit:hover {
+  background-color: var(--accent-hover);
+}
+
+/* Estilos para mensagens flash */
+.flash-messages-container { margin-bottom: 1.5rem; }
+.alert { padding: 1rem; border-radius: 8px; border: 1px solid transparent; text-align: center; font-weight: 500; }
+.alert-success { color: #0f5132; background-color: #d1e7dd; border-color: #badbcc; }
+.alert-danger { color: #842029; background-color: #f8d7da; border-color: #f5c2c7; }
+.alert-info { color: #055160; background-color: #cff4fc; border-color: #b6effb; }
+html.dark .alert-success { color: #a3cfbb; background-color: #0f5132; border-color: #146c43; }
+html.dark .alert-danger { color: #f1b0b7; background-color: #842029; border-color: #a52834; }
+html.dark .alert-info { color: #9eeaf9; background-color: #055160; border-color: #066477; }
+/* ================================================== */
+/* ESTILOS PARA O NOVO CARD DE UPLOAD                 */
+/* ================================================== */
+
+.upload-label {
+    font-weight: 600;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.upload-card {
+    border: 2px dashed var(--border-color);
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+    background-color: rgba(128, 128, 128, 0.05);
+    transition: background-color 0.3s, border-color 0.3s;
+    cursor: pointer;
+}
+
+.upload-card:hover,
+.upload-card.is-dragover {
+    background-color: var(--bg-light);
+    border-color: var(--accent);
+}
+
+/* Esconde o input de arquivo original */
+.upload-card input[type="file"] {
+    display: none;
+}
+
+.upload-card-content .upload-icon {
+    width: 40px;
+    height: 40px;
+    stroke: var(--accent);
+    stroke-width: 1.5;
+    margin-bottom: 1rem;
+    opacity: 0.7;
+}
+
+.upload-card-content .upload-text {
+    color: var(--text-color-secondary);
+    font-weight: 500;
+    margin: 0 0 0.5rem 0;
+}
+
+.upload-card-content .upload-text strong {
+    color: var(--accent);
+}
+
+.upload-card-content .upload-filename {
+    display: block;
+    font-size: 0.9rem;
+    color: var(--text-color);
+    font-weight: 600;
+    margin-top: 1rem;
+    min-height: 1.2em; /* Evita que o layout pule quando o texto aparece */
+}
