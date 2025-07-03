@@ -55,7 +55,6 @@ def view_comunicados():
         query_feriados = 'SELECT data, descricao, unidade FROM feriados ORDER BY data'
         cur.execute(query_feriados)
         feriados_db = cur.fetchall()
-
         # 3. Fechar a conexão com o banco
         cur.close()
         conn.close()
@@ -66,6 +65,7 @@ def view_comunicados():
 
     except Exception as e:
         print(f"Erro ao buscar dados da página de comunicados: {e}")
+        # Em caso de erro, as variáveis já foram inicializadas como listas vazias
         # Em caso de erro, as variáveis já foram inicializadas como listas vazias
 
     # 5. Renderizar o template passando ambas as variáveis

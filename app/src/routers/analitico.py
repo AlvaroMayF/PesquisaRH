@@ -5,6 +5,30 @@ from ..config.db import get_db_connection
 
 analitico = Blueprint('analitico', __name__, url_prefix='/analitico')
 
+# --- INÍCIO DA ADIÇÃO: ORDEM PADRÃO DAS LEGENDAS ---
+# Esta lista define a ordem em que as legendas devem aparecer nos gráficos.
+STANDARD_LEGEND_ORDER = [
+    'Muito Satisfeito',
+    'Satisfeito',
+    'Neutro',
+    'Insatisfeito',
+    'Muito Insatisfeito',
+    'Ótimo',
+    'Bom',
+    'Regular',
+    'Ruim',
+    'Sim',
+    'Não',
+    'Menos de 12 meses',
+    'De 1 ano a 2 anos',
+    'De 3 anos a 4 anos',
+    'De 3 anos a 4 ano:',  # Variação com ":" para garantir a captura
+    'Acima de 5 anos'
+]
+
+
+# --- FIM DA ADIÇÃO ---
+
 
 @analitico.route('/')
 def analitico_view():
@@ -14,14 +38,12 @@ def analitico_view():
     conn = get_db_connection()
     cur = conn.cursor(dictionary=True)
 
-    # --- ATUALIZAÇÃO DOS INDICADORES ---
     cur.execute("SELECT COUNT(id) AS total_colaboradores FROM colaboradores")
     total_colaboradores = cur.fetchone()['total_colaboradores']
 
     cur.execute("SELECT COUNT(id) AS pesquisas_respondidas FROM colaboradores WHERE respondeu = 1")
     pesquisas_respondidas = cur.fetchone()['pesquisas_respondidas']
 
-    # Cálculo da taxa de participação
     taxa_participacao = 0
     if total_colaboradores > 0:
         taxa_participacao = round((pesquisas_respondidas / total_colaboradores) * 100)
@@ -29,9 +51,8 @@ def analitico_view():
     indicadores = {
         'total_colaboradores': total_colaboradores,
         'pesquisas_respondidas': pesquisas_respondidas,
-        'taxa_participacao': taxa_participacao  # Novo indicador
+        'taxa_participacao': taxa_participacao
     }
-    # --- FIM DA ATUALIZAÇÃO ---
 
     cur.execute("SELECT id, question_text, question_type FROM form_questions ORDER BY order_index")
     questions = cur.fetchall()
@@ -67,13 +88,29 @@ def analitico_view():
             for answer in answers:
                 answer_counts[answer] = answer_counts.get(answer, 0) + 1
 
+            # --- INÍCIO DA NOVA LÓGICA DE ORDENAÇÃO ---
+            sorted_labels = []
+            sorted_data = []
+
+            # Adiciona primeiro os itens na ordem padrão definida
+            for item in STANDARD_LEGEND_ORDER:
+                if item in answer_counts:
+                    sorted_labels.append(item)
+                    sorted_data.append(answer_counts.pop(item))  # .pop() remove o item para não ser adicionado de novo
+
+            # Adiciona quaisquer outros itens que não estavam na lista padrão
+            for item, count in answer_counts.items():
+                sorted_labels.append(item)
+                sorted_data.append(count)
+            # --- FIM DA NOVA LÓGICA DE ORDENAÇÃO ---
+
             charts.append({
                 'question_text': question['question_text'],
                 'total_responses': total_responses,
                 'is_discursive': False,
                 'chart_data': {
-                    'labels': list(answer_counts.keys()),
-                    'datasets': [{'data': list(answer_counts.values())}]
+                    'labels': sorted_labels,  # Usa a lista de legendas ordenada
+                    'datasets': [{'data': sorted_data}]  # Usa a lista de dados ordenada
                 }
             })
 
