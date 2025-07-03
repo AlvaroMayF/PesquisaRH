@@ -1,20 +1,9 @@
-/* Estilos para a página de benefícios */
-
-:root {
-  /* Cores baseadas no seu tema escuro */
-  --card-bg: #1a2c42;
-  --card-hover-bg: #223a57;
-  --text-primary: #ffffff;
-  --text-secondary: #adb5bd;
-  --accent-color: #3b82f6;
-  --border-color: #34495e;
-}
+/* Estilos para a página de benefícios (com variáveis de tema padronizadas) */
 
 .beneficios-container {
   max-width: 1200px;
   margin: 2rem auto;
   padding: 2rem;
-  color: var(--text-primary);
 }
 
 .beneficios-title {
@@ -22,12 +11,15 @@
   font-weight: 700;
   text-align: center;
   margin-bottom: 0.5rem;
+  /* Usa a variável de cor de texto principal do tema */
+  color: var(--text-color);
 }
 
 .beneficios-subtitle {
   font-size: 1.125rem;
   text-align: center;
-  color: var(--text-secondary);
+  /* Usa a variável de cor de texto secundária do tema */
+  color: var(--text-color-secondary);
   margin-bottom: 3rem;
   max-width: 600px;
   margin-left: auto;
@@ -41,9 +33,10 @@
 }
 
 .beneficio-card {
-  background-color: var(--card-bg);
+  /* Usa as variáveis de fundo de card e borda do tema */
+  background-color: var(--bg-card);
   border: 1px solid var(--border-color);
-  border-radius: 8px;
+  border-radius: 12px;
   padding: 2rem;
   text-align: center;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -51,8 +44,7 @@
 
 .beneficio-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-  background-color: var(--card-hover-bg);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
 }
 
 .beneficio-icon {
@@ -62,18 +54,21 @@
 .beneficio-icon svg {
   width: 48px;
   height: 48px;
-  color: var(--accent-color);
+  /* Usa a variável de cor de destaque do tema */
+  color: var(--accent);
 }
 
 .beneficio-card h3 {
   font-size: 1.5rem;
   font-weight: 600;
   margin-bottom: 0.75rem;
-  color: var(--text-primary);
+  /* Usa a variável de cor de texto principal do tema */
+  color: var(--text-color);
 }
 
 .beneficio-card p {
   font-size: 1rem;
-  color: var(--text-secondary);
+  /* Usa a variável de cor de texto secundária do tema */
+  color: var(--text-color-secondary);
   line-height: 1.6;
 }
