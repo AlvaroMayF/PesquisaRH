@@ -5,23 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login Administrador | Portal RH</title>
 
-  <!-- Favicon -->
   <link rel="shortcut icon"
         href="{{ url_for('static', filename='favicon.ico') }}"
         type="image/x-icon" />
 
-  <!-- Google Fonts: Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-  <!-- CSS Específico da Página de Login do Admin -->
-  <link rel="stylesheet"
-    href="{{ url_for('views.static', filename='adminLogin/admin-login.css') }}"
-  />
+  <link rel="stylesheet" href="{{ url_for('views.static', filename='base/base.css') }}" />
+
+  <link rel="stylesheet" href="{{ url_for('views.static', filename='adminLogin/admin-login.css') }}" />
 </head>
-<body>
-  <!-- Cabeçalho e Barra de Navegação -->
+<body class="login-page-body">
   <header>
     <nav class="navbar">
       <div class="nav-container">
@@ -38,18 +34,27 @@
           </label>
           <span class="nav-logo">REDE HOSPITAL SAMAR</span>
         </div>
+
+        <button class="nav-toggle" aria-label="abrir menu de navegação">
+            <span class="hamburger"></span>
+        </button>
+
         <ul class="nav-menu">
-          <li><a href="{{ url_for('home.home_view') }}">Início</a></li>
-          <li><a href="{{ url_for('pesquisa_login.login_pesquisa_view') }}">Pesquisa</a></li>
-          <li><a href="{{ url_for('comunicados.view_comunicados') }}">Comunicados</a></li>
-          <li><a href="{{ url_for('adminLogin.admin_login') }}" class="active">Administrador</a></li>
-          <li><a href="{{ url_for('logout.logout_view') }}">Sair</a></li>
-        </ul>
+            <li><a href="{{ url_for('home.home_view') }}">Início</a></li>
+            <li><a href="{{ url_for('pesquisa_login.login_pesquisa_view') }}">Pesquisa</a></li>
+            <li class="nav-item dropdown">
+              <a href="#" class="nav-link dropdown-toggle">Informativos</a>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="{{ url_for('comunicados.view_comunicados') }}">Comunicados</a></li>
+                <li><a class="dropdown-item" href="{{ url_for('beneficios.beneficios_page') }}">Benefícios</a></li>
+              </ul>
+            </li>
+            <li><a href="{{ url_for('adminLogin.admin_login') }}" class="active">Administrador</a></li>
+          </ul>
       </div>
     </nav>
   </header>
 
-  <!-- Conteúdo Principal da Página de Login -->
   <main class="login-page-main">
     <div class="login-card">
       <div class="login-header">
@@ -60,18 +65,17 @@
         <p>Acesso restrito para administradores.</p>
       </div>
 
-      <!-- Bloco para exibir mensagens de erro (flash) -->
-      {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-          {% for category, message in messages %}
-            <div class="error-message {{ category }}">
-              <p>{{ message }}</p>
-            </div>
-          {% endfor %}
-        {% endif %}
-      {% endwith %}
-
       <form method="POST" action="{{ url_for('adminLogin.admin_login') }}">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="error-message {{ category }}">
+                <p>{{ message }}</p>
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
         <div class="form-group">
           <label for="username">Usuário</label>
           <input
@@ -99,7 +103,6 @@
     </div>
   </main>
 
-  <!-- Rodapé -->
   <footer class="site-footer">
     <div class="footer-container">
       <div class="footer-main">
@@ -112,7 +115,17 @@
     </div>
   </footer>
 
-  <!-- Scripts -->
   <script src="{{ url_for('views.static', filename='home/theme-toggle.js') }}" defer></script>
+
+  <script>
+    const navToggle = document.querySelector('.nav-toggle');
+    const navMenu = document.querySelector('.nav-menu');
+    if (navToggle && navMenu) {
+      navToggle.addEventListener('click', () => {
+          navMenu.classList.toggle('nav-menu--visible');
+          navToggle.classList.toggle('is-active');
+      });
+    }
+  </script>
 </body>
 </html>

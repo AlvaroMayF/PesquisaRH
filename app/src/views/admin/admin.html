@@ -13,9 +13,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet"
-    href="{{ url_for('views.static', filename='admin/admin.css') }}"
-  />
+  <link rel="stylesheet" href="{{ url_for('views.static', filename='base/base.css') }}" />
+
+  <link rel="stylesheet" href="{{ url_for('views.static', filename='admin/admin.css') }}" />
 </head>
 <body>
   <header>
@@ -34,10 +34,21 @@
           </label>
           <span class="nav-logo">REDE HOSPITAL SAMAR</span>
         </div>
+
+        <button class="nav-toggle" aria-label="abrir menu de navegação">
+            <span class="hamburger"></span>
+        </button>
+
         <ul class="nav-menu">
           <li><a href="{{ url_for('home.home_view') }}">Início</a></li>
           <li><a href="{{ url_for('pesquisa_login.login_pesquisa_view') }}">Pesquisa</a></li>
-          <li><a href="{{ url_for('comunicados.view_comunicados') }}">Comunicados</a></li>
+          <li class="nav-item dropdown">
+            <a href="#" class="nav-link dropdown-toggle">Informativos</a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="{{ url_for('comunicados.view_comunicados') }}">Comunicados</a></li>
+              <li><a class="dropdown-item" href="{{ url_for('beneficios.beneficios_page') }}">Benefícios</a></li>
+            </ul>
+          </li>
 
           {% if session.get('admin_logged_in') %}
             <li class="nav-item dropdown">
@@ -71,9 +82,18 @@
     </div>
   </main>
 
-  <footer class="site-footer">
-    </footer>
 
   <script src="{{ url_for('views.static', filename='home/theme-toggle.js') }}" defer></script>
+
+  <script>
+    const navToggle = document.querySelector('.nav-toggle');
+    const navMenu = document.querySelector('.nav-menu');
+    if (navToggle && navMenu) {
+      navToggle.addEventListener('click', () => {
+          navMenu.classList.toggle('nav-menu--visible');
+          navToggle.classList.toggle('is-active');
+      });
+    }
+  </script>
 </body>
 </html>

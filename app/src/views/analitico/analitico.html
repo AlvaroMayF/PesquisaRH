@@ -20,10 +20,9 @@
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-  <link
-    rel="stylesheet"
-    href="{{ url_for('views.static', filename='analitico/analitico.css') }}"
-  />
+  <link rel="stylesheet" href="{{ url_for('views.static', filename='base/base.css') }}" />
+
+  <link rel="stylesheet" href="{{ url_for('views.static', filename='analitico/analitico.css') }}" />
 </head>
 <body>
   <header>
@@ -42,21 +41,31 @@
           </label>
           <span class="nav-logo">REDE HOSPITAL SAMAR</span>
         </div>
-        <ul class="nav-menu">
-          <li><a href="{{ url_for('home.home_view') }}">Início</a></li>
-          <li><a href="{{ url_for('pesquisa_login.login_pesquisa_view') }}">Pesquisa</a></li>
-          <li><a href="{{ url_for('comunicados.view_comunicados') }}">Comunicados</a></li>
 
-          <li class="nav-item dropdown">
-            <a href="{{ url_for('admin.admin_panel') }}" class="nav-link dropdown-toggle active">Administrador</a>
-            <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="{{ url_for('analitico.analitico_view') }}">Analítico</a></li>
-              <li><a class="dropdown-item" href="{{ url_for('novo_colaborador.novo_colaborador_view') }}">Novo Colaborador</a></li>
-              <li><a class="dropdown-item" href="{{ url_for('novo_comunicado.novo_comunicado_view') }}">Novo Comunicado</a></li>
-              <li><a class="dropdown-item" href="{{ url_for('admin_feriados.gerenciar_feriados') }}">Gerenciar Feriados</a></li>
-            </ul>
-          </li>
-          <li><a href="{{ url_for('logout.logout_view') }}">Sair</a></li>
+        <button class="nav-toggle" aria-label="abrir menu de navegação">
+            <span class="hamburger"></span>
+        </button>
+
+        <ul class="nav-menu">
+            <li><a href="{{ url_for('home.home_view') }}">Início</a></li>
+            <li><a href="{{ url_for('pesquisa_login.login_pesquisa_view') }}">Pesquisa</a></li>
+            <li class="nav-item dropdown">
+              <a href="#" class="nav-link dropdown-toggle">Informativos</a>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="{{ url_for('comunicados.view_comunicados') }}">Comunicados</a></li>
+                <li><a class="dropdown-item" href="{{ url_for('beneficios.beneficios_page') }}">Benefícios</a></li>
+              </ul>
+            </li>
+            <li class="nav-item dropdown">
+              <a href="{{ url_for('admin.admin_panel') }}" class="nav-link dropdown-toggle active">Administrador</a>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="{{ url_for('analitico.analitico_view') }}">Analítico</a></li>
+                <li><a class="dropdown-item" href="{{ url_for('novo_colaborador.novo_colaborador_view') }}">Novo Colaborador</a></li>
+                <li><a class="dropdown-item" href="{{ url_for('novo_comunicado.novo_comunicado_view') }}">Novo Comunicado</a></li>
+                <li><a class="dropdown-item" href="{{ url_for('admin_feriados.gerenciar_feriados') }}">Gerenciar Feriados</a></li>
+              </ul>
+            </li>
+            <li><a href="{{ url_for('logout.logout_view') }}">Sair</a></li>
         </ul>
       </div>
     </nav>
@@ -142,7 +151,8 @@
     </div>
   </main>
 
-  <footer class="site-footer"></footer>
+  <footer class="site-footer">
+    </footer>
 
   <script>
     function copyQuestion(button) {
@@ -154,6 +164,7 @@
         .catch(() => alert('Falha ao copiar.'));
     }
 
+    // SCRIPT COMPLETO DO GRÁFICO RESTAURADO
     document.addEventListener('DOMContentLoaded', function() {
         const colorMap = {
             'muito satisfeito': '#0d6efd', 'satisfeito': '#79aeff', 'neutro': '#6c757d',
@@ -183,15 +194,13 @@
         };
         const defaultColor = '#adb5bd';
 
-        // --- NOVO PLUGIN PARA TEXTO NO CENTRO DO GRÁFICO ---
         const centerTextPlugin = {
           id: 'centerText',
           afterDraw: (chart) => {
-            if (chart.config.type !== 'doughnut' || chart.canvas.dataset.total === '0') return;
+            if (chart.config.type !== 'doughnut' || !chart.canvas.dataset.count || chart.canvas.dataset.count === '0') return;
 
             let ctx = chart.ctx;
-            const card = chart.canvas.closest('.question-card');
-            const totalResponses = card.dataset.count || '0';
+            const totalResponses = chart.canvas.closest('.question-card').dataset.count;
             const textColor = getComputedStyle(document.documentElement).getPropertyValue('--text-color').trim();
 
             ctx.save();
@@ -201,12 +210,10 @@
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
 
-            // Texto principal (número)
             ctx.font = 'bold 2rem Inter';
             ctx.fillStyle = textColor;
             ctx.fillText(totalResponses, x, y - 10);
 
-            // Texto secundário ("respostas")
             ctx.font = 'normal 0.9rem Inter';
             ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--text-color-secondary').trim();
             ctx.fillText('respostas', x, y + 20);
@@ -218,7 +225,6 @@
         document.querySelectorAll('.chart-canvas').forEach(canvas => {
             try {
                 const chartData = JSON.parse(canvas.dataset.chartData);
-
                 const backgroundColors = chartData.labels.map(label => {
                     const cleanLabel = (label || '').trim().toLowerCase();
                     return colorMap[cleanLabel] || defaultColor;
@@ -229,13 +235,11 @@
                 chartData.datasets[0].borderWidth = 3;
 
                 new Chart(canvas, {
-                    // --- MUDANÇA DE TIPO DE GRÁFICO ---
                     type: 'doughnut',
                     data: chartData,
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
-                        // --- AJUSTE NO TAMANHO DO FURO CENTRAL ---
                         cutout: '70%',
                         plugins: {
                             legend: {
@@ -248,10 +252,9 @@
                                     color: getComputedStyle(document.documentElement).getPropertyValue('--text-color-secondary').trim()
                                 }
                             },
-                            tooltip: { /* ... (código do tooltip continua o mesmo) ... */ }
+                            tooltip: {}
                         }
                     },
-                    // --- REGISTRO DO NOVO PLUGIN ---
                     plugins: [centerTextPlugin]
                 });
             } catch (e) {
@@ -261,5 +264,16 @@
     });
   </script>
   <script src="{{ url_for('views.static', filename='home/theme-toggle.js') }}" defer></script>
+
+  <script>
+    const navToggle = document.querySelector('.nav-toggle');
+    const navMenu = document.querySelector('.nav-menu');
+    if (navToggle && navMenu) {
+      navToggle.addEventListener('click', () => {
+          navMenu.classList.toggle('nav-menu--visible');
+          navToggle.classList.toggle('is-active');
+      });
+    }
+  </script>
 </body>
 </html>

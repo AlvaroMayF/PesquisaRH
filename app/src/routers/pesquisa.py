@@ -5,15 +5,17 @@ from ..config.db import get_db_connection
 
 pesquisa_bp = Blueprint('pesquisa', __name__, url_prefix='')
 
+
 @pesquisa_bp.route('/pesquisa', methods=['GET', 'POST'])
 def pesquisa_view():
     # 1) Só permite quem está logado
     user_id = session.get('user_id')
     if not user_id:
-        flash('Faça home antes de responder à pesquisa.', 'warning')
-        return redirect(url_for('home.login_view'))
+        flash('Faça login antes de responder à pesquisa.', 'warning')
+        # CORREÇÃO: Redireciona para a tela de login da pesquisa
+        return redirect(url_for('pesquisa_login.login_pesquisa_view'))
 
-    conn   = get_db_connection()
+    conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
 
     # 2) Verifica se colaborador existe e se já respondeu
@@ -23,12 +25,15 @@ def pesquisa_view():
         conn.close()
         flash('Usuário não encontrado.', 'danger')
         session.pop('user_id', None)
-        return redirect(url_for('home.login_view'))
+        # CORREÇÃO: Redireciona para a tela de login da pesquisa
+        return redirect(url_for('pesquisa_login.login_pesquisa_view'))
+
     if colaborador['respondeu']:
         conn.close()
-        flash('Você já respondeu à pesquisa.', 'warning')
+        flash('Você já respondeu à pesquisa.', 'info')
         session.pop('user_id', None)
-        return redirect(url_for('home.login_view'))
+        # CORREÇÃO: Redireciona para a tela de login da pesquisa
+        return redirect(url_for('pesquisa_login.login_pesquisa_view'))
 
     # 3) Busca o survey ativo
     cursor.execute(
@@ -39,7 +44,8 @@ def pesquisa_view():
     if not survey:
         conn.close()
         flash('Pesquisa não cadastrada no sistema.', 'danger')
-        return redirect(url_for('home.login_view'))
+        # CORREÇÃO: Redireciona para a tela de login da pesquisa
+        return redirect(url_for('pesquisa_login.login_pesquisa_view'))
     survey_id = survey['id']
 
     # 4) Carrega perguntas + seção + tipo
@@ -90,7 +96,12 @@ def pesquisa_view():
         conn.close()
         flash('Obrigado por responder à pesquisa!', 'success')
         session.pop('user_id', None)
-        return redirect(url_for('home.login_view'))
+
+        # ================================================================= #
+        #   *** CORREÇÃO PRINCIPAL (ERRO DA IMAGEM) ESTÁ AQUI *** #
+        # Redireciona para a home page principal após o envio bem-sucedido. #
+        # ================================================================= #
+        return redirect(url_for('home.home_view'))
 
     # GET: renderiza o formulário com perguntas e opções do banco
     conn.close()

@@ -16,7 +16,7 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
 
   <link rel="stylesheet"
-        href="{{ url_for('views.static', filename='home/home.css') }}" />
+        href="{{ url_for('views.static', filename='base/base.css') }}" />
 </head>
 <body>
   <header>
@@ -35,6 +35,11 @@
           </label>
           <span class="nav-logo">REDE HOSPITAL SAMAR</span>
         </div>
+
+        <button class="nav-toggle" aria-label="abrir menu de navegação">
+            <span class="hamburger"></span>
+        </button>
+
         <ul class="nav-menu">
           <li><a href="{{ url_for('home.home_view') }}" class="active">Início</a></li>
           <li><a href="{{ url_for('pesquisa_login.login_pesquisa_view') }}">Pesquisa</a></li>
@@ -177,5 +182,17 @@
   <script src="{{ url_for('views.static', filename='home/carousel-spark.js') }}" defer></script>
   <script src="{{ url_for('views.static', filename='home/theme-toggle.js') }}" defer></script>
   <script src="{{ url_for('views.static', filename='home/animations.js') }}" defer></script>
+
+  <script>
+      const navToggle = document.querySelector('.nav-toggle');
+      const navMenu = document.querySelector('.nav-menu');
+
+      if (navToggle && navMenu) {
+        navToggle.addEventListener('click', () => {
+            navMenu.classList.toggle('nav-menu--visible');
+            navToggle.classList.toggle('is-active');
+        });
+      }
+  </script>
 </body>
 </html>

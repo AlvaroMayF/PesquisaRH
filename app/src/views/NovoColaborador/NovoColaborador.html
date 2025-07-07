@@ -5,14 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Gerenciar Colaborador | Portal RH</title>
 
-  <!-- Favicon -->
   <link
     rel="shortcut icon"
     href="{{ url_for('static', filename='favicon.ico') }}"
     type="image/x-icon"
   />
 
-  <!-- Google Fonts: Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
@@ -20,14 +18,11 @@
     rel="stylesheet"
   />
 
-  <!-- CSS Específico da Página -->
-  <link
-    rel="stylesheet"
-    href="{{ url_for('views.static', filename='NovoColaborador/NovoColaborador.css') }}"
-  />
+  <link rel="stylesheet" href="{{ url_for('views.static', filename='base/base.css') }}" />
+
+  <link rel="stylesheet" href="{{ url_for('views.static', filename='NovoColaborador/NovoColaborador.css') }}" />
 </head>
-<body>
-  <!-- Cabeçalho e Barra de Navegação Padrão do Sistema -->
+<body class="login-page-body">
   <header>
     <nav class="navbar">
       <div class="nav-container">
@@ -44,17 +39,28 @@
           </label>
           <span class="nav-logo">REDE HOSPITAL SAMAR</span>
         </div>
+
+        <button class="nav-toggle" aria-label="abrir menu de navegação">
+            <span class="hamburger"></span>
+        </button>
+
         <ul class="nav-menu">
           <li><a href="{{ url_for('home.home_view') }}">Início</a></li>
           <li><a href="{{ url_for('pesquisa_login.login_pesquisa_view') }}">Pesquisa</a></li>
-          <li><a href="{{ url_for('comunicados.view_comunicados') }}">Comunicados</a></li>
+          <li class="nav-item dropdown">
+            <a href="#" class="nav-link dropdown-toggle">Informativos</a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="{{ url_for('comunicados.view_comunicados') }}">Comunicados</a></li>
+              <li><a class="dropdown-item" href="{{ url_for('beneficios.beneficios_page') }}">Benefícios</a></li>
+            </ul>
+          </li>
           <li class="nav-item dropdown">
             <a href="#" class="nav-link dropdown-toggle active">Administrador</a>
             <ul class="dropdown-menu">
               <li><a class="dropdown-item" href="{{ url_for('analitico.analitico_view') }}">Analítico</a></li>
               <li><a class="dropdown-item" href="{{ url_for('novo_colaborador.novo_colaborador_view') }}">Novo Colaborador</a></li>
-              <!-- CORREÇÃO APLICADA AQUI -->
               <li><a class="dropdown-item" href="{{ url_for('novo_comunicado.novo_comunicado_view') }}">Novo Comunicado</a></li>
+              <li><a class="dropdown-item" href="{{ url_for('admin_feriados.gerenciar_feriados') }}">Gerenciar Feriados</a></li>
             </ul>
           </li>
           <li><a href="{{ url_for('logout.logout_view') }}">Sair</a></li>
@@ -63,11 +69,9 @@
     </nav>
   </header>
 
-  <!-- Conteúdo Principal -->
-  <main>
+  <main class="login-page-main">
     <div class="page-container">
 
-      <!-- Seção para exibir mensagens de feedback (flash) -->
       {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
           <div class="flash-messages-container">
@@ -80,9 +84,7 @@
         {% endif %}
       {% endwith %}
 
-      <!-- Card Principal com os dois formulários -->
       <div class="form-card">
-        <!-- Formulário de Cadastro -->
         <div class="form-section">
             <h2 class="form-title">Cadastrar Novo Colaborador</h2>
             <form method="POST" action="{{ url_for('novo_colaborador.novo_colaborador_view') }}">
@@ -98,14 +100,12 @@
                 <label for="data_nascimento">Data de Nascimento:</label>
                 <input type="date" id="data_nascimento" name="data_nascimento" required />
               </div>
-              <button type="submit" class="btn-primary">Cadastrar</button>
+              <button type="submit" class="btn btn-primary">Cadastrar</button>
             </form>
         </div>
 
-        <!-- Separador -->
         <div class="separator">ou</div>
 
-        <!-- Formulário de Inativação -->
         <div class="form-section">
             <h2 class="form-title">Inativar Colaborador Existente</h2>
             <form method="POST" action="{{ url_for('novo_colaborador.inativar_colaborador') }}" onsubmit="return confirm('Tem certeza que deseja inativar este colaborador?');">
@@ -113,17 +113,24 @@
                 <label for="cpf_inativar">CPF do Colaborador:</label>
                 <input type="text" id="cpf_inativar" name="cpf_inativar" required placeholder="Digite o CPF para inativar" />
               </div>
-              <button type="submit" class="btn-danger">Inativar</button>
+              <button type="submit" class="btn btn-danger">Inativar</button>
             </form>
         </div>
       </div>
     </div>
   </main>
 
-  <!-- Rodapé Padrão do Sistema -->
-  <footer class="site-footer"></footer>
-
-  <!-- Script para o Tema Escuro -->
   <script src="{{ url_for('views.static', filename='home/theme-toggle.js') }}" defer></script>
+
+  <script>
+    const navToggle = document.querySelector('.nav-toggle');
+    const navMenu = document.querySelector('.nav-menu');
+    if (navToggle && navMenu) {
+      navToggle.addEventListener('click', () => {
+          navMenu.classList.toggle('nav-menu--visible');
+          navToggle.classList.toggle('is-active');
+      });
+    }
+  </script>
 </body>
 </html>
