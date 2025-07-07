@@ -1,13 +1,22 @@
-# ambientes virtuais
-.venv/
+# Arquivo .gitignore
+
+# Byte-code compilado ou empacotado do Python
 __pycache__/
 *.py[cod]
+*$py.class
 
-# configurações IDE
-.idea/
+# Arquivos de ambiente virtual
+.venv/
+venv/
+ENV/
+env/
+env.bak/
+venv.bak/
 
-# arquivos de banco de dados, logs etc.
-*.sqlite3
-*.log
-# arquivos do PyCharm
+# Arquivos de configuração de IDEs
 .idea/
+.vscode/
+*.iml
+
+# Outros arquivos de sistema e cache
+.DS_Store
