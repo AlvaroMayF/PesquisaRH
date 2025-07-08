@@ -15,3 +15,5 @@ openpyxl==3.1.5
 
 # Para carregar variáveis de ambiente do arquivo .env (ex: senhas do banco)
 python-dotenv==1.0.1
+
+gunicorn
