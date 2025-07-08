@@ -1,0 +1,49 @@
+# docker-compose.yml
+
+version: '3.8'
+
+services:
+  # Serviço do Banco de Dados MySQL
+  db:
+    image: mysql:8.0
+    container_name: mysql_db_pesquisarh
+    restart: always
+    # As variáveis de ambiente definem o usuário, senha e banco de dados
+    # que serão criados quando o container iniciar pela primeira vez.
+    # Elas são lidas de um arquivo .env para segurança.
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      # Este volume garante que os dados do banco de dados persistam
+      # mesmo que o container seja removido e recriado.
+      - db_data:/var/lib/mysql
+    ports:
+      # Mapeia a porta do container para a porta da sua máquina local.
+      # Útil para conectar o MySQL Workbench: localhost:3307
+      - "3307:3306"
+
+  # Serviço da Aplicação Web (Flask)
+  webapp:
+    container_name: flask_app_pesquisarh
+    restart: always
+    # Constrói a imagem a partir do Dockerfile no diretório atual (.).
+    build: .
+    ports:
+      # Expõe a aplicação na porta 8000 da sua máquina.
+      # Acesse em http://localhost:8000
+      - "8000:5000"
+    # Carrega as variáveis de ambiente do arquivo .env.
+    # É assim que sua aplicação Flask saberá como se conectar ao banco.
+    env_file:
+      - .env
+    # Garante que o container do banco de dados (db) inicie ANTES
+    # do container da sua aplicação.
+    depends_on:
+      - db
+
+# Define o volume nomeado para persistência dos dados do MySQL
+volumes:
+  db_data:

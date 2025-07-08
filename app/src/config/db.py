@@ -6,6 +6,11 @@ from mysql.connector import Error
 from dotenv import load_dotenv
 
 # Carrega variáveis do .env
+# project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(_file_)))))
+# dotenv_path = os.path.join(project_root, '.env')
+
+# Carrega as variáveis a partir do caminho exato do arquivo .env
+#load_dotenv(dotenv_path=dotenv_path)
 load_dotenv()
 
 def conectar():

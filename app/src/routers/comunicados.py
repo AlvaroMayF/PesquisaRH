@@ -70,7 +70,7 @@ def view_comunicados():
 
     # 5. Renderizar o template passando ambas as variáveis
     return render_template(
-        'Comunicados/comunicados.html',
+        'comunicados/comunicados.html',
         comunicados=comunicados,
         feriados_por_unidade=feriados_por_unidade
     )
