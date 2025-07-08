@@ -34,7 +34,7 @@ services:
     ports:
       # Expõe a aplicação na porta 8000 da sua máquina.
       # Acesse em http://localhost:8000
-      - "8000:5000"
+      - "7000:5000"
     # Carrega as variáveis de ambiente do arquivo .env.
     # É assim que sua aplicação Flask saberá como se conectar ao banco.
     env_file:
