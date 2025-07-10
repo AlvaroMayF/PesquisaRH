@@ -30,42 +30,8 @@ main {
   margin: 0 auto;
 }
 
-/* Container para as mensagens de feedback (flash) */
-.flash-messages-container {
-  margin-bottom: 1.5rem;
-}
-
-.alert {
-  padding: 1rem;
-  border-radius: 8px;
-  border: 1px solid transparent;
-  text-align: center;
-  font-weight: 500;
-}
-
-.alert-success {
-  color: #0f5132;
-  background-color: #d1e7dd;
-  border-color: #badbcc;
-}
-
-.alert-danger {
-  color: #842029;
-  background-color: #f8d7da;
-  border-color: #f5c2c7;
-}
-
-html.dark .alert-success {
-  color: #a3cfbb;
-  background-color: #0f5132;
-  border-color: #146c43;
-}
-
-html.dark .alert-danger {
-  color: #f1b0b7;
-  background-color: #842029;
-  border-color: #a52834;
-}
+/* Os estilos de .alert e .flash-messages-container foram removidos daqui */
+/* Eles agora são herdados do base.css */
 
 /* Lista de Comunicados */
 .comunicados-list {
@@ -222,19 +188,14 @@ html.dark .btn-edit {
   margin-bottom: 1.5rem;
 }
 
-/* comunicados.css */
-
 .feriados-grid {
   display: grid;
-  /* Abordagem Mobile-First: O padrão é uma coluna, ideal para celulares */
   grid-template-columns: 1fr;
   gap: 1.5rem;
 }
 
-/* Para telas de tablet e desktop (768px ou mais largas) */
 @media (min-width: 768px) {
   .feriados-grid {
-    /* Aplica as 3 colunas apenas em telas maiores */
     grid-template-columns: repeat(3, 1fr);
   }
 }

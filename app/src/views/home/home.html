@@ -11,12 +11,14 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
 
   <link rel="stylesheet"
         href="{{ url_for('views.static', filename='base/base.css') }}" />
+  <link rel="stylesheet"
+      href="{{ url_for('views.static', filename='home/home.css') }}" />
 </head>
 <body>
   <header>
@@ -24,12 +26,7 @@
       <div class="nav-container">
 
         <div class="navbar-left">
-          {% if session.get('colaborador_id') %}
-            <span class="header-user-greeting">Olá, {{ session.get('colaborador_nome', 'Colaborador') }}</span>
-          {% endif %}
-        </div>
-
-        <div class="navbar-center">
+          <span class="nav-logo">REDE HOSPITAL SAMAR</span>
           <label class="theme-switch" title="Alternar tema claro/escuro">
             <input type="checkbox"
                    id="theme-toggle"
@@ -40,7 +37,12 @@
                 <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
             </div>
           </label>
-          <span class="nav-logo">REDE HOSPITAL SAMAR</span>
+        </div>
+
+        <div class="navbar-center">
+          {% if session.get('colaborador_id') %}
+            <span class="header-user-greeting">Olá, {{ session.get('colaborador_nome', 'Colaborador') }}</span>
+          {% endif %}
         </div>
 
         <div class="navbar-right">
@@ -60,7 +62,6 @@
               </ul>
             </li>
 
-            {# Lógica para exibir o link ADMINISTRADOR #}
             {% if session.get('admin_logged_in') %}
               <li class="nav-item dropdown">
                 <a href="{{ url_for('admin.admin_panel') }}" class="nav-link dropdown-toggle">Administrador</a>
@@ -71,13 +72,12 @@
                   <li><a class="dropdown-item" href="{{ url_for('admin_feriados.gerenciar_feriados') }}">Gerenciar Feriados</a></li>
                 </ul>
               </li>
-            {% else %} {# Se não for admin logado, mostra o link para login de admin #}
+            {% else %}
               <li><a href="{{ url_for('adminLogin.admin_login') }}">Administrador</a></li>
             {% endif %}
 
-            {# Lógica para exibir o botão SAIR #}
             {% if session.get('colaborador_id') or session.get('admin_logged_in') %}
-              <li><a href="{{ url_for('logout.logout_view') }}" class="btn btn-logout">Sair</a></li>
+              <li><a href="{{ url_for('logout.logout_view') }}" class="btn-logout">Sair</a></li>
             {% endif %}
           </ul>
         </div>
@@ -188,7 +188,7 @@
         <div class="footer-column"><h4 class="footer-heading">Samar Ji-Paraná</h4><address class="footer-address"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg><span>R. Padre Adolfo Rhol, 1267 - Casa Preta, Ji-Paraná - RO, 76907-554</span></address></div>
         <div class="footer-column"><h4 class="footer-heading">Samar Cacoal</h4><address class="footer-address"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg><span>Av. São Paulo, 2326 - Centro, Cacoal - RO, 76963-970</span></address></div>
         <div class="footer-column"><h4 class="footer-heading">Samar Porto Velho</h4><address class="footer-address"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg><span>Av. Calama, 2585 - Liberdade, Porto Velho - RO, 76803-883</span></address></div>
-        <div class="footer-column"><h4 class="footer-heading">Contato</h4><a href="tel:08000330393" class="footer-link"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg> 0800 033 0393</a><h4 class="footer-heading" style="margin-top: 1.5rem;">Siga nossas redes</h4><ul class="social-links"><li><a href="https://www.facebook.com/hospitalsamar/?locale=pt_BR" target="_blank" rel="noopener noreferrer" class="footer-link"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg> Facebook</a></li><li><a href="https://www.instagram.com/hospitalsamar/" target="_blank" rel="noopener noreferrer" class="footer-link"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg> Instagram</a></li><li><a href="https://www.linkedin.com/company/hospital-samar/posts/?feedView=all" target="_blank" rel="noopener noreferrer" class="footer-link"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4"r="2"></circle></svg> LinkedIn</a></li></ul></div>
+        <div class="footer-column"><h4 class="footer-heading">Contato</h4><a href="tel:08000330393" class="footer-link"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg> 0800 033 0393</a><h4 class="footer-heading" style="margin-top: 1.5rem;">Siga nossas redes</h4><ul class="social-links"><li><a href="https://www.facebook.com/hospitalsamar/?locale=pt_BR" target="_blank" rel="noopener noreferrer" class="footer-link"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg> Facebook</a></li><li><a href="https://www.instagram.com/hospitalsamar/" target="_blank" rel="noopener noreferrer" class="footer-link"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg> Instagram</a></li><li><a href="https://www.linkedin.com/company/hospital-samar/posts/?feedView=all" target="_blank" rel="noopener noreferrer" class="footer-link"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg> LinkedIn</a></li></ul></div>
       </div>
       <div class="footer-bottom"><p class="copyright-text"> Copyright © 2025. Todos os direitos reservados. </p><a href="https://alvaromayf.github.io" class="footer-link"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline></svg> Política de acesso</a></div>
     </div>

@@ -21,7 +21,7 @@ from src.routers.adminLogin import adminLogin
 from src.routers.homeView import home as home_bp
 from src.routers.logout import logout_bp
 from src.routers.analitico import analitico
-from src.routers.pesquisa import pesquisa  # <<< 1. CORREÇÃO AQUI
+from src.routers.pesquisa import pesquisa
 from src.routers.comunicados import comunicados_bp
 from src.routers.novo_colaborador import novo_colaborador_bp
 from src.routers.novo_comunicado import novo_comunicado_bp
