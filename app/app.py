@@ -29,7 +29,7 @@ from src.routers.admin_feriados import admin_feriados_bp
 from src.routers.beneficios import beneficios_bp
 from src.routers.auth import auth_bp
 from src.routers.pesquisas_lista import pesquisas_lista_bp
-
+from src.routers.admin_surveys import admin_surveys_bp # <-- ADICIONADO
 
 # ----------------------------------------------------------------------
 # Factory para criar e configurar a aplicação
@@ -93,6 +93,7 @@ def create_app():
     app.register_blueprint(beneficios_bp)
     app.register_blueprint(auth_bp)
     app.register_blueprint(pesquisas_lista_bp)
+    app.register_blueprint(admin_surveys_bp) # <-- ADICIONADO
 
     @app.route('/uploads/<path:filename>')
     def uploaded_file(filename):

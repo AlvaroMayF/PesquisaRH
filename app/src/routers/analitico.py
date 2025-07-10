@@ -1,33 +1,17 @@
 # src/routers/analitico.py
 
-from flask import Blueprint, render_template, redirect, url_for, session
+from flask import Blueprint, render_template, redirect, url_for, session, request, flash
 from ..config.db import get_db_connection
 
 analitico = Blueprint('analitico', __name__, url_prefix='/analitico')
 
-# --- INÍCIO DA ADIÇÃO: ORDEM PADRÃO DAS LEGENDAS ---
-# Esta lista define a ordem em que as legendas devem aparecer nos gráficos.
+MINIMUM_RESPONDENTS = 3
+
 STANDARD_LEGEND_ORDER = [
-    'Muito Satisfeito',
-    'Satisfeito',
-    'Neutro',
-    'Insatisfeito',
-    'Muito Insatisfeito',
-    'Ótimo',
-    'Bom',
-    'Regular',
-    'Ruim',
-    'Sim',
-    'Não',
-    'Menos de 12 meses',
-    'De 1 ano a 2 anos',
-    'De 3 anos a 4 anos',
-    'De 3 anos a 4 ano:',  # Variação com ":" para garantir a captura
-    'Acima de 5 anos'
+    'Muito Satisfeito', 'Satisfeito', 'Neutro', 'Insatisfeito', 'Muito Insatisfeito',
+    'Ótimo', 'Bom', 'Regular', 'Ruim', 'Sim', 'Não', 'Menos de 12 meses',
+    'De 1 ano a 2 anos', 'De 3 anos a 4 anos', 'De 3 anos a 4 ano:', 'Acima de 5 anos'
 ]
-
-
-# --- FIM DA ADIÇÃO ---
 
 
 @analitico.route('/')
@@ -38,80 +22,111 @@ def analitico_view():
     conn = get_db_connection()
     cur = conn.cursor(dictionary=True)
 
-    cur.execute("SELECT COUNT(id) AS total_colaboradores FROM colaboradores")
-    total_colaboradores = cur.fetchone()['total_colaboradores']
+    selected_unidade = request.args.get('unidade', '')
+    selected_setor = request.args.get('setor', '')
+    selected_cargo = request.args.get('cargo', '')
 
-    cur.execute("SELECT COUNT(id) AS pesquisas_respondidas FROM colaboradores WHERE respondeu = 1")
-    pesquisas_respondidas = cur.fetchone()['pesquisas_respondidas']
+    params = []
 
-    taxa_participacao = 0
-    if total_colaboradores > 0:
-        taxa_participacao = round((pesquisas_respondidas / total_colaboradores) * 100)
+    where_conditions_responses = []
+    if selected_unidade:
+        where_conditions_responses.append("r.colaborador_unidade = %s")
+        params.append(selected_unidade)
+    if selected_setor:
+        where_conditions_responses.append("r.colaborador_setor = %s")
+        params.append(selected_setor)
+    if selected_cargo:
+        where_conditions_responses.append("r.colaborador_cargo = %s")
+        params.append(selected_cargo)
 
-    indicadores = {
-        'total_colaboradores': total_colaboradores,
-        'pesquisas_respondidas': pesquisas_respondidas,
-        'taxa_participacao': taxa_participacao
-    }
+    where_clause_responses = " AND ".join(where_conditions_responses) if where_conditions_responses else "1=1"
 
-    cur.execute("SELECT id, question_text, question_type FROM form_questions ORDER BY order_index")
-    questions = cur.fetchall()
+    where_conditions_colabs = []
+    if selected_unidade:
+        where_conditions_colabs.append("unidade = %s")
+    if selected_setor:
+        where_conditions_colabs.append("setor = %s")
+    if selected_cargo:
+        where_conditions_colabs.append("cargo = %s")
 
-    cur.execute("SELECT question_id, answer FROM response_answers WHERE answer IS NOT NULL AND answer != ''")
-    all_answers = cur.fetchall()
+    where_clause_colabs = " AND ".join(where_conditions_colabs) if where_conditions_colabs else "1=1"
+
+    cur.execute(
+        "SELECT DISTINCT unidade FROM colaboradores WHERE unidade IS NOT NULL AND unidade != '' ORDER BY unidade")
+    unidades = [row['unidade'] for row in cur.fetchall()]
+    cur.execute("SELECT DISTINCT setor FROM colaboradores WHERE setor IS NOT NULL AND setor != '' ORDER BY setor")
+    setores = [row['setor'] for row in cur.fetchall()]
+    cur.execute("SELECT DISTINCT cargo FROM colaboradores WHERE cargo IS NOT NULL AND cargo != '' ORDER BY cargo")
+    cargos = [row['cargo'] for row in cur.fetchall()]
+
+    count_query = f"SELECT COUNT(*) as count FROM responses r WHERE {where_clause_responses}"
+    cur.execute(count_query, tuple(params))
+    total_responses_for_filter = cur.fetchone()['count']
+
+    charts = []
+    if total_responses_for_filter >= MINIMUM_RESPONDENTS:
+        query = f"""
+            SELECT q.id, q.question_text, q.question_type, ra.answer
+            FROM responses r
+            JOIN response_answers ra ON r.id = ra.response_id
+            JOIN form_questions q ON ra.question_id = q.id
+            WHERE {where_clause_responses}
+            ORDER BY q.order_index
+        """
+        cur.execute(query, tuple(params))
+        all_answers_filtered = cur.fetchall()
+
+        answers_by_qid = {}
+        questions_map = {}
+        for row in all_answers_filtered:
+            qid = row['id']
+            if qid not in answers_by_qid:
+                answers_by_qid[qid] = []
+                questions_map[qid] = {'question_text': row['question_text'], 'question_type': row['question_type']}
+            if row['answer'] and row['answer'].strip():
+                answers_by_qid[qid].append(row['answer'])
+
+        for qid, question_data in questions_map.items():
+            answers = answers_by_qid.get(qid, [])
+            total_responses = len(answers)
+            if question_data['question_type'] == 'text':
+                charts.append({'question_text': question_data['question_text'], 'total_responses': total_responses,
+                               'is_discursive': True, 'answers': answers})
+            elif total_responses > 0:
+                answer_counts = {a: answers.count(a) for a in set(answers)}
+                sorted_labels, sorted_data = [], []
+                for item in STANDARD_LEGEND_ORDER:
+                    if item in answer_counts:
+                        sorted_labels.append(item)
+                        sorted_data.append(answer_counts.pop(item))
+                for item, count in answer_counts.items():
+                    sorted_labels.append(item)
+                    sorted_data.append(count)
+                charts.append({'question_text': question_data['question_text'], 'total_responses': total_responses,
+                               'is_discursive': False,
+                               'chart_data': {'labels': sorted_labels, 'datasets': [{'data': sorted_data}]}})
+
+    # A linha abaixo foi removida para evitar que a mensagem "vaze" para outras páginas
+    # elif any(request.args.values()):
+    #     flash(f'Não há dados suficientes...', 'warning')
+
+    cur.execute(f"SELECT COUNT(id) AS total FROM colaboradores WHERE {where_clause_colabs}", tuple(params))
+    total_colaboradores = cur.fetchone()['total']
+
+    cur.execute(f"SELECT COUNT(id) as count FROM responses r WHERE {where_clause_responses}", tuple(params))
+    pesquisas_respondidas = cur.fetchone()['count']
+
+    taxa_participacao = round((pesquisas_respondidas / total_colaboradores) * 100, 1) if total_colaboradores > 0 else 0
+
+    indicadores = {'total_colaboradores': total_colaboradores, 'pesquisas_respondidas': pesquisas_respondidas,
+                   'taxa_participacao': taxa_participacao}
+
     cur.close()
     conn.close()
 
-    answers_by_qid = {}
-    for answer_row in all_answers:
-        qid = answer_row['question_id']
-        if qid not in answers_by_qid:
-            answers_by_qid[qid] = []
-        answers_by_qid[qid].append(answer_row['answer'])
-
-    charts = []
-    for question in questions:
-        qid = question['id']
-        answers = answers_by_qid.get(qid, [])
-        total_responses = len(answers)
-        q_type = question.get('question_type', 'multiple_choice')
-
-        if q_type == 'text':
-            charts.append({
-                'question_text': question['question_text'],
-                'total_responses': total_responses,
-                'is_discursive': True,
-                'answers': answers
-            })
-        elif total_responses > 0:
-            answer_counts = {}
-            for answer in answers:
-                answer_counts[answer] = answer_counts.get(answer, 0) + 1
-
-            # --- INÍCIO DA NOVA LÓGICA DE ORDENAÇÃO ---
-            sorted_labels = []
-            sorted_data = []
-
-            # Adiciona primeiro os itens na ordem padrão definida
-            for item in STANDARD_LEGEND_ORDER:
-                if item in answer_counts:
-                    sorted_labels.append(item)
-                    sorted_data.append(answer_counts.pop(item))  # .pop() remove o item para não ser adicionado de novo
-
-            # Adiciona quaisquer outros itens que não estavam na lista padrão
-            for item, count in answer_counts.items():
-                sorted_labels.append(item)
-                sorted_data.append(count)
-            # --- FIM DA NOVA LÓGICA DE ORDENAÇÃO ---
-
-            charts.append({
-                'question_text': question['question_text'],
-                'total_responses': total_responses,
-                'is_discursive': False,
-                'chart_data': {
-                    'labels': sorted_labels,  # Usa a lista de legendas ordenada
-                    'datasets': [{'data': sorted_data}]  # Usa a lista de dados ordenada
-                }
-            })
-
-    return render_template('analitico/analitico.html', charts=charts, indicadores=indicadores)
+    return render_template('analitico/analitico.html',
+                           charts=charts,
+                           indicadores=indicadores,
+                           unidades=unidades,
+                           setores=setores,
+                           cargos=cargos)

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Adicionar Pergunta | Portal RH</title>
+
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="{{ url_for('views.static', filename='base/base.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('views.static', filename='admin/survey_form.css') }}" />
+</head>
+<body>
+    <header>
+        </header>
+
+    <main>
+        <div class="page-container">
+            <section class="page-header">
+                <h1 class="page-title">Adicionar Nova Pergunta</h1>
+                <p class="page-subtitle">Para a pesquisa: <strong>{{ survey.name }}</strong></p>
+            </section>
+
+            <div class="content-card form-card">
+                <form method="POST">
+                    <div class="form-group">
+                        <label for="section_title">Título da Seção</label>
+                        <input type="text" id="section_title" name="section_title" placeholder="Ex: Sobre o Ambiente de Trabalho" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="question_text">Texto da Pergunta</label>
+                        <textarea id="question_text" name="question_text" rows="4" placeholder="Ex: Como você classifica o seu nível de satisfação..." required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="question_type">Tipo de Resposta</label>
+                        <select id="question_type" name="question_type">
+                            <option value="radio">Múltipla Escolha (Rádio)</option>
+                            <option value="text">Texto Aberto (Discursiva)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-actions">
+                        <a href="{{ url_for('admin_surveys.gerenciar_perguntas_view', survey_id=survey.id) }}" class="btn-secondary">Cancelar</a>
+                        <button type="submit" class="btn btn-primary">Salvar Pergunta</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

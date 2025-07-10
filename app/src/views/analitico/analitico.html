@@ -68,6 +68,7 @@
                     <li><a class="dropdown-item" href="{{ url_for('novo_colaborador.novo_colaborador_view') }}">Novo Colaborador</a></li>
                     <li><a class="dropdown-item" href="{{ url_for('novo_comunicado.novo_comunicado_view') }}">Novo Comunicado</a></li>
                     <li><a class="dropdown-item" href="{{ url_for('admin_feriados.gerenciar_feriados') }}">Gerenciar Feriados</a></li>
+                    <li><a class="dropdown-item" href="{{ url_for('admin_surveys.gerenciar_pesquisas_view') }}">Gerenciar Pesquisas</a></li>
                   </ul>
                 </li>
               {% else %}
@@ -87,6 +88,44 @@
       <section class="page-header">
         <h1 class="page-title">Visão Analítica da Pesquisa</h1>
         <p class="page-subtitle">Resultados consolidados das respostas dos colaboradores.</p>
+      </section>
+
+      <section class="filter-section content-card">
+        <form method="GET" action="{{ url_for('analitico.analitico_view') }}">
+            <div class="filter-controls">
+                <div class="filter-group">
+                    <label for="filtro-unidade">Unidade</label>
+                    <select name="unidade" id="filtro-unidade">
+                        <option value="">Todas</option>
+                        {% for unidade in unidades %}
+                            <option value="{{ unidade }}" {% if unidade == request.args.get('unidade') %}selected{% endif %}>{{ unidade }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="filtro-setor">Setor</label>
+                    <select name="setor" id="filtro-setor">
+                        <option value="">Todos</option>
+                        {% for setor in setores %}
+                            <option value="{{ setor }}" {% if setor == request.args.get('setor') %}selected{% endif %}>{{ setor }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="filtro-cargo">Cargo</label>
+                    <select name="cargo" id="filtro-cargo">
+                        <option value="">Todos</option>
+                        {% for cargo in cargos %}
+                            <option value="{{ cargo }}" {% if cargo == request.args.get('cargo') %}selected{% endif %}>{{ cargo }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="filter-actions">
+                    <button type="submit" class="btn btn-primary">Aplicar Filtros</button>
+                    <a href="{{ url_for('analitico.analitico_view') }}" class="btn-secondary">Limpar</a>
+                </div>
+            </div>
+        </form>
       </section>
 
       <section class="indicators-section">
@@ -156,13 +195,21 @@
         </div>
       {% else %}
         <div class="content-card no-data">
-            <p>Nenhum dado disponível para exibição no momento.</p>
+            <div class="no-data-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+            </div>
+            <h4>Dados Insuficientes para Exibição</h4>
+            <p>
+                Os resultados para este filtro não foram exibidos para proteger a confidencialidade dos colaboradores.
+                É necessário um mínimo de <strong>3 respostas</strong> para que os dados sejam mostrados.
+            </p>
         </div>
-      {% endif %}
+        {% endif %}
     </div>
   </main>
 
   <script>
+    // ... todo o seu script JavaScript continua aqui ...
     function copyQuestion(button) {
       const card = button.closest('.question-card');
       const txt = card.querySelector('.question-text').innerText;
@@ -219,12 +266,10 @@
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
 
-            // ATUALIZADO PARA 'Source Sans 3'
             ctx.font = 'bold 2rem "Source Sans 3"';
             ctx.fillStyle = textColor;
             ctx.fillText(totalResponses, x, y - 10);
 
-            // ATUALIZADO PARA 'Source Sans 3'
             ctx.font = 'normal 0.9rem "Source Sans 3"';
             ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--text-color-secondary').trim();
             ctx.fillText('respostas', x, y + 20);
@@ -259,7 +304,6 @@
                                 labels: {
                                     boxWidth: 12,
                                     padding: 20,
-                                    // ATUALIZADO PARA 'Source Sans 3'
                                     font: { size: 12, family: 'Source Sans 3' },
                                     color: getComputedStyle(document.documentElement).getPropertyValue('--text-color-secondary').trim()
                                 }

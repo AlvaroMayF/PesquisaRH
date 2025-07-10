@@ -261,3 +261,87 @@ html.dark .answer-card {
   font-style: italic;
   color: var(--text-color-secondary);
 }
+
+/* --- ESTILOS PARA A SEÇÃO DE FILTROS --- */
+
+.filter-section {
+  padding: 1.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.filter-controls {
+  display: flex;
+  flex-wrap: wrap; /* Permite que os filtros quebrem a linha em telas menores */
+  gap: 1.5rem;
+  align-items: flex-end; /* Alinha os botões com a base dos selects */
+}
+
+.filter-group {
+  flex: 1 1 200px; /* Flex-grow, flex-shrink, e base-width */
+  display: flex;
+  flex-direction: column;
+  min-width: 200px; /* Garante uma largura mínima */
+}
+
+.filter-group label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--text-color-secondary);
+}
+
+.filter-group select {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background-color: var(--bg-light);
+  color: var(--text-color);
+  font-family: inherit;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.filter-group select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent);
+}
+
+.filter-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-basis: 100%; /* Ocupa a linha inteira em telas menores */
+}
+
+@media (min-width: 960px) {
+  .filter-actions {
+    flex-basis: auto; /* Volta ao normal em telas maiores */
+  }
+}
+
+/* Estilo para o botão secundário (Limpar) */
+.btn-secondary {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-card);
+    color: var(--text-color);
+    border-radius: 8px;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+.btn-secondary:hover {
+    background-color: var(--bg-light);
+    border-color: var(--text-color-secondary);
+}
+
+/* Ajusta o tamanho dos botões */
+.filter-actions .btn-primary, .filter-actions .btn-secondary {
+    padding: 0.75rem 1.5rem !important;
+}

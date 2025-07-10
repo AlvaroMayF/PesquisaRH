@@ -181,3 +181,44 @@
         <ul>
             <li><strong>Objetivo:</strong> Garantir o funcionamento completo do fluxo de seleção e resposta de pesquisas distintas por um mesmo colaborador.</li>
             <li><strong>Teste de Ponta a Ponta:</strong> Foi executado um teste completo que validou:
+                <ol>
+                    <li>A exibição correta da lista de pesquisas ativas.</li>
+                    <li>A exibição do formulário com as perguntas específicas da pesquisa selecionada.</li>
+                    <li>O envio e salvamento bem-sucedido das respostas.</li>
+                    <li>A atualização de status da pesquisa para "Respondido" na interface.</li>
+                    <li>O bloqueio que impede um usuário de responder a mesma pesquisa duas vezes.</li>
+                </ol>
+            </li>
+            <li><strong>Verificação no Banco de Dados:</strong> Confirmação de que as tabelas <code>responses</code> (com dados demográficos), <code>response_answers</code> e <code>colaborador_survey_status</code> foram todas populadas corretamente após o teste.</li>
+        </ul>
+
+        <h2>4. Impacto da Mudança:</h2>
+        <ul>
+            <li><strong>Positivo:</strong>
+                <ul>
+                    <li>Experiência de usuário consistente e profissional em todo o sistema.</li>
+                    <li>Base de dados de colaboradores enriquecida, habilitando futuras análises estratégicas.</li>
+                    <li>Funcionalidade de múltiplas pesquisas 100% validada e pronta para uso.</li>
+                    <li>Código mais limpo e de fácil manutenção com a remoção de CSS duplicado.</li>
+                </ul>
+            </li>
+            <li><strong>Negativo:</strong> Nenhum impacto negativo direto esperado.</li>
+        </ul>
+
+        <h2>5. Plano de Rollback (Reversão):</h2>
+        <p>Em caso de problemas, as alterações podem ser revertidas através do sistema de controle de versão (Git). As alterações no banco de dados exigem restauração de backup ou execução de um script de limpeza manual, se necessário.</p>
+
+        <h2>6. Testes Realizados:</h2>
+        <ul>
+            <li>Testes visuais em todas as páginas padronizadas.</li>
+            <li>Validação do script de importação de dados e verificação dos resultados no banco de dados.</li>
+            <li>Execução de um roteiro de teste completo (end-to-end) para a funcionalidade de múltiplas pesquisas, incluindo a verificação final da integridade dos dados salvos.</li>
+        </ul>
+
+        <footer>
+            <p>Portal RH - Rede Hospitalar Samar</p>
+            <p>&copy; 2025. Todos os direitos reservados.</p>
+        </footer>
+    </div>
+</body>
+</html>
