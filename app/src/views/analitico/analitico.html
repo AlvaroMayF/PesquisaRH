@@ -19,9 +19,9 @@
   />
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
 
   <link rel="stylesheet" href="{{ url_for('views.static', filename='base/base.css') }}" />
-
   <link rel="stylesheet" href="{{ url_for('views.static', filename='analitico/analitico.css') }}" />
 </head>
 <body>
@@ -48,7 +48,7 @@
 
         <ul class="nav-menu">
             <li><a href="{{ url_for('home.home_view') }}">Início</a></li>
-            <li><a href="{{ url_for('pesquisa_login.login_pesquisa_view') }}">Pesquisa</a></li>
+            <li><a href="{{ url_for('pesquisas_lista.lista_pesquisas_view') }}">Pesquisa</a></li>
             <li class="nav-item dropdown">
               <a href="#" class="nav-link dropdown-toggle">Informativos</a>
               <ul class="dropdown-menu">
@@ -152,7 +152,7 @@
   </main>
 
   <footer class="site-footer">
-    </footer>
+  </footer>
 
   <script>
     function copyQuestion(button) {
@@ -164,8 +164,10 @@
         .catch(() => alert('Falha ao copiar.'));
     }
 
-    // SCRIPT COMPLETO DO GRÁFICO RESTAURADO
     document.addEventListener('DOMContentLoaded', function() {
+        // Registra o plugin de datalabels globalmente
+        Chart.register(ChartDataLabels);
+
         const colorMap = {
             'muito satisfeito': '#0d6efd', 'satisfeito': '#79aeff', 'neutro': '#6c757d',
             'insatisfeito': '#ffc107', 'muito insatisfeito': '#dc3545',
@@ -252,7 +254,20 @@
                                     color: getComputedStyle(document.documentElement).getPropertyValue('--text-color-secondary').trim()
                                 }
                             },
-                            tooltip: {}
+                            tooltip: {},
+                            datalabels: {
+                                color: '#fff',
+                                font: {
+                                    weight: 'bold',
+                                    size: 12
+                                },
+                                formatter: (value, ctx) => {
+                                    if (value === 0) return '';
+                                    const total = ctx.chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
+                                    const percentage = (value / total) * 100;
+                                    return percentage.toFixed(1) + '%';
+                                },
+                            }
                         }
                     },
                     plugins: [centerTextPlugin]
@@ -263,8 +278,8 @@
         });
     });
   </script>
-  <script src="{{ url_for('views.static', filename='home/theme-toggle.js') }}" defer></script>
 
+  <script src="{{ url_for('views.static', filename='home/theme-toggle.js') }}" defer></script>
   <script>
     const navToggle = document.querySelector('.nav-toggle');
     const navMenu = document.querySelector('.nav-menu');

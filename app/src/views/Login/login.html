@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Portal do Colaborador</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="{{ url_for('views.static', filename='Login/login.css') }}">
+</head>
+<body>
+
+    <main class="login-page">
+        <div class="login-container">
+            <div class="login-header">
+                <img src="{{ url_for('static', filename='logo_samar.png') }}" alt="Logo Rede Hospital Samar" class="login-logo">
+                <h1>Portal do Colaborador</h1>
+                <p>Use seu CPF e data de nascimento para acessar.</p>
+            </div>
+
+            <form action="{{ url_for('auth.login') }}" method="POST" class="login-form">
+                <div class="form-group">
+                    <label for="cpf">CPF</label>
+                    <input type="text" id="cpf" name="cpf" placeholder="000.000.000-00" required>
+                </div>
+                <div class="form-group">
+                    <label for="data_nascimento">Data de Nascimento</label>
+                    <input type="date" id="data_nascimento" name="data_nascimento" required>
+                </div>
+
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            {% if category == 'error' %}
+                                <div class="error-message">{{ message }}</div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+                <button type="submit" class="login-button">Acessar</button>
+            </form>
+
+            <footer class="login-footer">
+                <p>Em caso de problemas com o acesso, entre em contato com o setor de RH.</p>
+            </footer>
+        </div>
+    </main>
+
+    <script>
+        document.getElementById('cpf').addEventListener('input', function (e) {
+            let value = e.target.value.replace(/\D/g, '');
+            value = value.replace(/(\d{3})(\d)/, '$1.$2');
+            value = value.replace(/(\d{3})(\d)/, '$1.$2');
+            value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+            e.target.value = value;
+        });
+    </script>
+</body>
+</html>

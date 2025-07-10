@@ -137,6 +137,11 @@ main {
   transition: border-color 0.3s, box-shadow 0.3s;
 }
 
+/* Regra de altura APENAS para os cards de gráfico */
+.question-card:not(.discursive-full-width) {
+  min-height: 460px;
+}
+
 .card-header {
   padding: 1.25rem;
   border-bottom: 1px solid var(--border-color);

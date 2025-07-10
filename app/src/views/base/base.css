@@ -753,3 +753,22 @@ html.dark .alert-danger {
 html.dark .alert-info {
   color: #9eeaf9; background-color: #055160; border-color: #066477;
 }
+
+.header-user-greeting {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--accent); /* Cor do texto */
+  background-color: color-mix(in srgb, var(--accent) 15%, transparent); /* Fundo suave */
+  padding: 0.4rem 0.8rem; /* Espaçamento interno */
+  border-radius: 20px;   /* Bordas arredondadas */
+  margin-right: 1.5rem;
+  white-space: nowrap;
+  transition: background-color 0.2s;
+}
+
+/* Em telas pequenas, esconde a saudação */
+@media (max-width: 992px) {
+  .header-user-greeting {
+    display: none;
+  }
+}

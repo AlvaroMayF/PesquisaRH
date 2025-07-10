@@ -1,112 +1,112 @@
-# src/routers/pesquisa.py
-
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
 from ..config.db import get_db_connection
 
-pesquisa_bp = Blueprint('pesquisa', __name__, url_prefix='')
+pesquisa = Blueprint('pesquisa', __name__)
 
 
-@pesquisa_bp.route('/pesquisa', methods=['GET', 'POST'])
-def pesquisa_view():
-    # 1) Só permite quem está logado
-    user_id = session.get('user_id')
-    if not user_id:
-        flash('Faça login antes de responder à pesquisa.', 'warning')
-        # CORREÇÃO: Redireciona para a tela de login da pesquisa
-        return redirect(url_for('pesquisa_login.login_pesquisa_view'))
+@pesquisa.route('/pesquisa/<int:survey_id>', methods=['GET', 'POST'])
+def pesquisa_view(survey_id):
+    colaborador_id = session.get('colaborador_id')
 
-    conn = get_db_connection()
-    cursor = conn.cursor(dictionary=True)
-
-    # 2) Verifica se colaborador existe e se já respondeu
-    cursor.execute('SELECT respondeu FROM colaboradores WHERE id = %s', (user_id,))
-    colaborador = cursor.fetchone()
-    if not colaborador:
-        conn.close()
-        flash('Usuário não encontrado.', 'danger')
-        session.pop('user_id', None)
-        # CORREÇÃO: Redireciona para a tela de login da pesquisa
-        return redirect(url_for('pesquisa_login.login_pesquisa_view'))
-
-    if colaborador['respondeu']:
-        conn.close()
-        flash('Você já respondeu à pesquisa.', 'info')
-        session.pop('user_id', None)
-        # CORREÇÃO: Redireciona para a tela de login da pesquisa
-        return redirect(url_for('pesquisa_login.login_pesquisa_view'))
-
-    # 3) Busca o survey ativo
-    cursor.execute(
-        'SELECT id FROM surveys WHERE name = %s',
-        ('Pesquisa de Clima Organizacional',)
-    )
-    survey = cursor.fetchone()
-    if not survey:
-        conn.close()
-        flash('Pesquisa não cadastrada no sistema.', 'danger')
-        # CORREÇÃO: Redireciona para a tela de login da pesquisa
-        return redirect(url_for('pesquisa_login.login_pesquisa_view'))
-    survey_id = survey['id']
-
-    # 4) Carrega perguntas + seção + tipo
-    cursor.execute("""
-      SELECT id, section_title, question_text, question_type
-        FROM form_questions
-       WHERE survey_id = %s
-       ORDER BY order_index
-    """, (survey_id,))
-    questions = cursor.fetchall()
-
-    # 5) Carrega opções para cada pergunta
-    options = {}
-    for q in questions:
-        cursor.execute("""
-          SELECT option_label, option_value
-            FROM form_options
-           WHERE question_id = %s
-           ORDER BY option_label
-        """, (q['id'],))
-        options[q['id']] = cursor.fetchall()
-
+    # --- LÓGICA DE SALVAR RESPOSTAS (POST) ---
     if request.method == 'POST':
-        # 6) Insere master em responses
-        cur = conn.cursor()
-        cur.execute(
-            'INSERT INTO responses (survey_id) VALUES (%s)',
-            (survey_id,)
-        )
-        response_id = cur.lastrowid
+        conn = None
+        cursor = None
+        try:
+            conn = get_db_connection()
+            if not conn:
+                flash("Erro de conexão com o banco de dados.", "error")
+                return redirect(url_for('home.home_view'))
 
-        # 7) Insere cada resposta
-        for q in questions:
-            ans = request.form.get(f'resposta{q["id"]}', '').strip() or None
-            cur.execute(
-                'INSERT INTO response_answers (response_id, question_id, answer) '
-                'VALUES (%s, %s, %s)',
-                (response_id, q['id'], ans)
-            )
+            # AJUSTE IMPORTANTE: Controlamos o commit manualmente
+            conn.autocommit = False
+            cursor = conn.cursor(dictionary=True)
 
-        # 8) Marca colaborador como respondeu
-        cur.execute(
-            'UPDATE colaboradores SET respondeu = 1 WHERE id = %s',
-            (user_id,)
-        )
+            # Busca os dados demográficos
+            cursor.execute("SELECT setor, cargo, unidade FROM colaboradores WHERE id = %s", (colaborador_id,))
+            demographics = cursor.fetchone() or {}
+            colaborador_setor = demographics.get('setor')
+            colaborador_cargo = demographics.get('cargo')
+            colaborador_unidade = demographics.get('unidade')
 
-        conn.commit()
-        conn.close()
-        flash('Obrigado por responder à pesquisa!', 'success')
-        session.pop('user_id', None)
+            # 1. Inserindo na tabela 'responses'
+            sql_insert_response = "INSERT INTO responses (survey_id, colaborador_setor, colaborador_cargo, colaborador_unidade) VALUES (%s, %s, %s, %s)"
+            cursor.execute(sql_insert_response, (survey_id, colaborador_setor, colaborador_cargo, colaborador_unidade))
+            response_id = cursor.lastrowid
 
-        # ================================================================= #
-        #   *** CORREÇÃO PRINCIPAL (ERRO DA IMAGEM) ESTÁ AQUI *** #
-        # Redireciona para a home page principal após o envio bem-sucedido. #
-        # ================================================================= #
+            # 2. Inserindo na tabela 'response_answers'
+            for key, answer in request.form.items():
+                if key.startswith('resposta'):
+                    question_id = int(key.replace('resposta', ''))
+                    sql_insert_answer = "INSERT INTO response_answers (response_id, question_id, answer) VALUES (%s, %s, %s)"
+                    cursor.execute(sql_insert_answer, (response_id, question_id, answer))
+
+            # 3. Inserindo na tabela 'colaborador_survey_status'
+            sql_update_status = "INSERT INTO colaborador_survey_status (colaborador_id, survey_id, status) VALUES (%s, %s, 'completed')"
+            cursor.execute(sql_update_status, (colaborador_id, survey_id))
+
+            # 4. Se tudo deu certo, salva todas as alterações de uma vez
+            conn.commit()
+            flash("Sua pesquisa foi enviada com sucesso. Obrigado pela sua participação!", "success")
+
+        except Exception as e:
+            if conn:
+                conn.rollback()  # Desfaz tudo se houver qualquer erro
+            print(f"❌ Erro ao salvar a pesquisa: {e}")
+            flash("Ocorreu um erro ao salvar sua pesquisa. Por favor, tente novamente.", "error")
+
+        finally:
+            if conn and conn.is_connected():
+                if cursor:
+                    cursor.close()
+                conn.close()
+
+        return redirect(url_for('pesquisas_lista.lista_pesquisas_view'))
+
+    # --- Lógica GET para exibir o formulário (continua a mesma) ---
+    conn = None
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT id FROM colaborador_survey_status WHERE colaborador_id = %s AND survey_id = %s",
+                       (colaborador_id, survey_id))
+        if cursor.fetchone():
+            flash("Você já respondeu a esta pesquisa anteriormente. Obrigado!", "info")
+            return redirect(url_for('pesquisas_lista.lista_pesquisas_view'))
+
+        # O resto do seu código GET para buscar as perguntas continua o mesmo...
+        cursor.execute(
+            "SELECT id, question_type, section_title, question_text FROM form_questions WHERE survey_id = %s ORDER BY order_index",
+            (survey_id,))
+        questions = cursor.fetchall()
+
+        if not questions:
+            flash("Esta pesquisa não foi encontrada ou não contém perguntas.", "error")
+            return redirect(url_for('pesquisas_lista.lista_pesquisas_view'))
+
+        question_ids = [q['id'] for q in questions]
+        options = {}
+        if question_ids:
+            format_strings = ','.join(['%s'] * len(question_ids))
+            cursor.execute(
+                f"SELECT question_id, option_value, option_label AS option_text FROM form_options WHERE question_id IN ({format_strings}) ORDER BY id",
+                tuple(question_ids))
+            all_options = cursor.fetchall()
+
+            for opt in all_options:
+                q_id = opt['question_id']
+                if q_id not in options:
+                    options[q_id] = []
+                options[q_id].append(opt)
+
+    except Exception as e:
+        print(f"❌ Erro ao buscar dados da pesquisa: {e}")
+        flash("Ocorreu um erro ao carregar a pesquisa. Tente novamente.", "error")
         return redirect(url_for('home.home_view'))
+    finally:
+        if conn and conn.is_connected():
+            if 'cursor' in locals() and cursor:
+                cursor.close()
+            conn.close()
 
-    # GET: renderiza o formulário com perguntas e opções do banco
-    conn.close()
-    return render_template(
-        'pesquisa/pesquisa.html',
-        questions=questions,
-        options=options
-    )
+    return render_template('pesquisa/pesquisa.html', questions=questions, options=options)

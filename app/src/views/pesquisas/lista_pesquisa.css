@@ -1,0 +1,130 @@
+/* app/src/views/pesquisas/lista_pesquisa.css */
+
+/* --- Contêiner Principal --- */
+.survey-list-container {
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+/* --- Grade dos Cards --- */
+.survey-grid {
+    display: grid;
+    gap: 1.5rem;
+}
+
+/* --- Card Detalhado (Estrutura Principal) --- */
+.survey-card-detailed {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column; /* Organiza o conteúdo e o rodapé verticalmente */
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -2px rgba(0,0,0,0.05);
+}
+
+.survey-card-detailed:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 15px -3px rgba(0,0,0,0.07), 0 4px 6px -4px rgba(0,0,0,0.07);
+}
+
+/* --- Corpo do Card (Ícone + Conteúdo) --- */
+.survey-card-body {
+    padding: 1.5rem;
+    display: flex;
+    gap: 1.5rem;
+    align-items: flex-start;
+}
+
+.survey-icon {
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: color-mix(in srgb, var(--accent) 10%, transparent);
+    color: var(--accent);
+    border-radius: 12px;
+    margin-top: 5px;
+}
+
+.survey-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* --- Cabeçalho do Conteúdo (Título + Aviso) --- */
+.survey-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.survey-card-header h3 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: var(--text-color);
+}
+
+.survey-content p {
+    margin: 0;
+    color: var(--text-color-secondary);
+    flex-grow: 1;
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+}
+
+/* --- Rodapé do Card (Data de Encerramento) --- */
+.survey-footer {
+    border-top: 1px solid var(--border-color);
+    padding: 1rem 1.5rem;
+    font-size: 0.85rem;
+    color: var(--text-color-secondary);
+    text-align: center;
+    background-color: color-mix(in srgb, var(--bg-light) 50%, var(--bg-card));
+    border-bottom-left-radius: 16px;
+    border-bottom-right-radius: 16px;
+}
+
+/* --- Aviso de "Respondido" --- */
+.status-badge {
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 0.3rem 0.6rem;
+    border-radius: 12px;
+    white-space: nowrap;
+}
+
+.status-badge.responded {
+    color: #198754; /* Verde */
+    background-color: rgba(25, 135, 84, 0.1);
+}
+
+html.dark .status-badge.responded {
+    color: #7ee2b2;
+    background-color: rgba(45, 156, 107, 0.2);
+}
+
+/* --- Botões --- */
+.btn-responder {
+    width: auto;
+    align-self: flex-start;
+    padding: 0.75rem 1.5rem !important; /* !important para garantir a sobreposição se necessário */
+}
+
+.btn-disabled {
+    background-color: #e9ecef;
+    color: #6c757d;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+html.dark .btn-disabled {
+    background-color: #30363d;
+    color: #8b949e;
+}

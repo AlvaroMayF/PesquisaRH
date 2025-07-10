@@ -22,6 +22,13 @@
   <header>
     <nav class="navbar">
       <div class="nav-container">
+
+        <div class="navbar-left">
+          {% if session.get('colaborador_id') %}
+            <span class="header-user-greeting">Olá, {{ session.get('colaborador_nome', 'Colaborador') }}</span>
+          {% endif %}
+        </div>
+
         <div class="navbar-center">
           <label class="theme-switch" title="Alternar tema claro/escuro">
             <input type="checkbox"
@@ -36,37 +43,45 @@
           <span class="nav-logo">REDE HOSPITAL SAMAR</span>
         </div>
 
-        <button class="nav-toggle" aria-label="abrir menu de navegação">
-            <span class="hamburger"></span>
-        </button>
+        <div class="navbar-right">
+          <button class="nav-toggle" aria-label="abrir menu de navegação">
+              <span class="hamburger"></span>
+          </button>
 
-        <ul class="nav-menu">
-          <li><a href="{{ url_for('home.home_view') }}" class="active">Início</a></li>
-          <li><a href="{{ url_for('pesquisa_login.login_pesquisa_view') }}">Pesquisa</a></li>
+          <ul class="nav-menu">
+            <li><a href="{{ url_for('home.home_view') }}" class="active">Início</a></li>
+            <li><a href="{{ url_for('pesquisas_lista.lista_pesquisas_view') }}">Pesquisa</a></li>
 
-          <li class="nav-item dropdown">
-            <a href="#" class="nav-link dropdown-toggle">Informativos</a>
-            <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="{{ url_for('comunicados.view_comunicados') }}">Comunicados</a></li>
-              <li><a class="dropdown-item" href="{{ url_for('beneficios.beneficios_page') }}">Benefícios</a></li>
-            </ul>
-          </li>
-
-          {% if session.get('admin_logged_in') %}
             <li class="nav-item dropdown">
-              <a href="{{ url_for('admin.admin_panel') }}" class="nav-link dropdown-toggle">Administrador</a>
+              <a href="#" class="nav-link dropdown-toggle">Informativos</a>
               <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="{{ url_for('analitico.analitico_view') }}">Analítico</a></li>
-                <li><a class="dropdown-item" href="{{ url_for('novo_colaborador.novo_colaborador_view') }}">Novo Colaborador</a></li>
-                <li><a class="dropdown-item" href="{{ url_for('novo_comunicado.novo_comunicado_view') }}">Novo Comunicado</a></li>
-                <li><a class="dropdown-item" href="{{ url_for('admin_feriados.gerenciar_feriados') }}">Gerenciar Feriados</a></li>
+                <li><a class="dropdown-item" href="{{ url_for('comunicados.view_comunicados') }}">Comunicados</a></li>
+                <li><a class="dropdown-item" href="{{ url_for('beneficios.beneficios_page') }}">Benefícios</a></li>
               </ul>
             </li>
-            <li><a href="{{ url_for('logout.logout_view') }}">Sair</a></li>
-          {% else %}
-            <li><a href="{{ url_for('adminLogin.admin_login') }}">Administrador</a></li>
-          {% endif %}
-        </ul>
+
+            {# Lógica para exibir o link ADMINISTRADOR #}
+            {% if session.get('admin_logged_in') %}
+              <li class="nav-item dropdown">
+                <a href="{{ url_for('admin.admin_panel') }}" class="nav-link dropdown-toggle">Administrador</a>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="{{ url_for('analitico.analitico_view') }}">Analítico</a></li>
+                  <li><a class="dropdown-item" href="{{ url_for('novo_colaborador.novo_colaborador_view') }}">Novo Colaborador</a></li>
+                  <li><a class="dropdown-item" href="{{ url_for('novo_comunicado.novo_comunicado_view') }}">Novo Comunicado</a></li>
+                  <li><a class="dropdown-item" href="{{ url_for('admin_feriados.gerenciar_feriados') }}">Gerenciar Feriados</a></li>
+                </ul>
+              </li>
+            {% else %} {# Se não for admin logado, mostra o link para login de admin #}
+              <li><a href="{{ url_for('adminLogin.admin_login') }}">Administrador</a></li>
+            {% endif %}
+
+            {# Lógica para exibir o botão SAIR #}
+            {% if session.get('colaborador_id') or session.get('admin_logged_in') %}
+              <li><a href="{{ url_for('logout.logout_view') }}" class="btn btn-logout">Sair</a></li>
+            {% endif %}
+          </ul>
+        </div>
+
       </div>
     </nav>
   </header>
@@ -94,7 +109,7 @@
       <h2 class="section-title">Acesso Rápido</h2>
       <div class="content-card">
         <div class="quick-grid">
-          <a href="{{ url_for('pesquisa_login.login_pesquisa_view') }}" class="grid-item" tabindex="0"><img src="{{ url_for('static', filename='pesquisa.svg') }}" alt="Pesquisa Rede Samar" loading="lazy"><span>Pesquisa Rede Samar</span></a>
+          <a href="{{ url_for('pesquisas_lista.lista_pesquisas_view') }}" class="grid-item" tabindex="0"><img src="{{ url_for('static', filename='pesquisa.svg') }}" alt="Pesquisa Rede Samar" loading="lazy"><span>Pesquisa Rede Samar</span></a>
           <a href="{{ url_for('comunicados.view_comunicados') }}" class="grid-item" tabindex="0"><img src="{{ url_for('static', filename='comunicados.svg') }}" alt="Comunicados" loading="lazy"><span>Comunicados</span></a>
           <a href="{{ url_for('beneficios.beneficios_page') }}" class="grid-item" tabindex="0"><img src="{{ url_for('static', filename='beneficios.svg') }}" alt="Benefícios" loading="lazy"><span>Benefícios</span></a>
           </div>
