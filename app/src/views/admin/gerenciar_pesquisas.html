@@ -94,31 +94,58 @@
                 {% endif %}
             {% endwith %}
 
-            <div class="survey-list">
+            <div class="survey-grid">
                 {% for survey in surveys %}
-                    <div class="survey-manage-card">
-                        <div class="survey-info">
-                            <div class="survey-details">
-                                <h3 class="survey-name">{{ survey.name }}</h3>
-                                {% if survey.is_active %}
-                                    <span class="status-badge active">Ativa</span>
-                                {% else %}
-                                    <span class="status-badge inactive">Inativa</span>
-                                {% endif %}
-                            </div>
-                            <p class="survey-period">
-                                {% if survey.start_date and survey.end_date %}
-                                    Disponível de {{ survey.start_date.strftime('%d/%m/%y') }} a {{ survey.end_date.strftime('%d/%m/%y') }}
-                                {% else %}
-                                    Período não definido
-                                {% endif %}
-                            </p>
+                    <div class="survey-card">
+                        <div class="survey-card-header">
+                            <h3 class="survey-card-title">{{ survey.name }}</h3>
+                             {% if survey.is_active %}
+                                <span class="status-badge active">Ativa</span>
+                            {% else %}
+                                <span class="status-badge inactive">Inativa</span>
+                            {% endif %}
                         </div>
-                        <div class="survey-actions">
-                            <a href="{{ url_for('admin_surveys.gerenciar_perguntas_view', survey_id=survey.id) }}" class="action-btn btn-edit">Gerenciar Perguntas</a>
-                            <form action="{{ url_for('admin_surveys.deletar_pesquisa', survey_id=survey.id) }}" method="POST" onsubmit="return confirm('Tem certeza que deseja excluir esta pesquisa? Todas as suas perguntas e respostas serão apagadas permanentemente.');">
-                                <button type="submit" class="action-btn btn-delete">Excluir</button>
-                            </form>
+
+                        <div class="survey-card-body">
+                            <div class="survey-card-stats">
+                                <div class="stat-item">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+                                    <span>{{ survey.questions_count }} Perguntas</span>
+                                </div>
+                                <div class="stat-item">
+                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><polyline points="17 11 19 13 23 9"></polyline></svg>
+                                    <!-- ATUALIZADO para usar a contagem de respostas do backend -->
+                                    <span>{{ survey.responses_count }} Respostas</span>
+                                </div>
+                            </div>
+                            <div class="survey-card-progress">
+                                <p class="progress-label">
+                                    Período:
+                                    {% if survey.start_date and survey.end_date %}
+                                        {{ survey.start_date.strftime('%d/%m/%y') }} - {{ survey.end_date.strftime('%d/%m/%y') }}
+                                    {% else %}
+                                        Não definido
+                                    {% endif %}
+                                </p>
+                                <div class="progress-bar">
+                                    <div class="progress-bar-fill" style="width: {{ survey.progress }}%;"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="survey-card-footer">
+                            <a href="{{ url_for('admin_surveys.gerenciar_perguntas_view', survey_id=survey.id) }}" class="btn btn-primary-outline">Gerenciar</a>
+                            <div class="actions-menu">
+                                <button class="kebab-toggle" aria-label="Mais opções">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"></circle><circle cx="12" cy="5" r="1"></circle><circle cx="12" cy="19" r="1"></circle></svg>
+                                </button>
+                                <div class="dropdown-menu-actions">
+                                    <a href="{{ url_for('admin_surveys.editar_pesquisa_view', survey_id=survey.id) }}" class="dropdown-item-action">Editar Detalhes</a>
+                                    <form action="{{ url_for('admin_surveys.deletar_pesquisa', survey_id=survey.id) }}" method="POST" onsubmit="return confirm('Tem certeza que deseja excluir esta pesquisa? Todos os seus dados serão apagados permanentemente.');">
+                                        <button type="submit" class="dropdown-item-action danger">Excluir Pesquisa</button>
+                                    </form>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 {% else %}
@@ -140,6 +167,28 @@
             navToggle.classList.toggle('is-active');
         });
       }
+
+      // Lógica para os menus kebab de cada card
+      document.querySelectorAll('.actions-menu').forEach(menu => {
+          const toggle = menu.querySelector('.kebab-toggle');
+          toggle.addEventListener('click', (event) => {
+              event.stopPropagation();
+              // Fecha outros menus abertos
+              document.querySelectorAll('.actions-menu.is-active').forEach(activeMenu => {
+                  if (activeMenu !== menu) {
+                      activeMenu.classList.remove('is-active');
+                  }
+              });
+              menu.classList.toggle('is-active');
+          });
+      });
+
+      // Fecha o menu se clicar fora
+      window.addEventListener('click', () => {
+          document.querySelectorAll('.actions-menu.is-active').forEach(menu => {
+              menu.classList.remove('is-active');
+          });
+      });
     </script>
 </body>
 </html>

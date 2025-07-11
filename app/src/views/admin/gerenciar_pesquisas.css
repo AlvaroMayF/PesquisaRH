@@ -6,26 +6,24 @@
     padding: 0 1rem;
 }
 
+/* CABEÇALHO DA PÁGINA */
 .page-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
     gap: 1.5rem;
-    margin-bottom: 2.5rem; /* AUMENTADO PARA MAIS ESPAÇO */
+    margin-bottom: 2.5rem;
 }
-
 .page-header-content {
     display: flex;
     align-items: center;
     gap: 1.5rem;
     flex-grow: 1;
 }
-
 .page-header-icon {
     flex-shrink: 0;
-    width: 52px;
-    height: 52px;
+    width: 52px; height: 52px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -33,96 +31,193 @@
     color: var(--accent);
     border-radius: 12px;
 }
-
 .page-header-icon svg {
-    width: 28px;
-    height: 28px;
+    width: 28px; height: 28px;
 }
-
-.page-header-text {
-    flex-grow: 1;
-}
-
+.page-header-text { flex-grow: 1; }
 .page-title {
     font-size: 1.75rem;
     font-weight: 700;
     margin: 0;
 }
-
 .page-subtitle {
     font-size: 1rem;
     color: var(--text-color-secondary);
     margin-top: 0.1rem;
 }
-
 .btn-new-survey {
     display: inline-block;
     width: auto;
     flex-shrink: 0;
 }
 
-/* Lista de Cards de Pesquisa */
-.survey-list {
+/* NOVA ESTRUTURA DE GRID PARA OS CARDS */
+.survey-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 1.5rem;
+}
+
+.survey-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    transition: transform 0.2s ease, box-shadow 0.3s ease;
+}
+.survey-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.07);
 }
 
-.survey-manage-card {
+/* CABEÇALHO DO CARD */
+.survey-card-header {
     display: flex;
-    align-items: center;
-    gap: 1.5rem;
-    padding: 1.5rem;
-    background-color: var(--bg-card);
-    border: 1px solid var(--border-color);
-    border-radius: 12px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.04);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 1.5rem 1.5rem 1rem;
 }
-
-.survey-manage-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 16px rgba(0,0,0,0.07);
-}
-
-.survey-info {
-    flex-grow: 1;
-}
-
-.survey-details {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-bottom: 0.25rem;
-}
-
-.survey-name {
-    font-size: 1.25rem;
+.survey-card-title {
+    font-size: 1.2rem;
     font-weight: 600;
     color: var(--text-color);
+    margin-right: 1rem;
 }
 
-.survey-period {
+/* CORPO DO CARD */
+.survey-card-body {
+    padding: 0 1.5rem;
+    flex-grow: 1;
+}
+.survey-card-stats {
+    display: flex;
+    gap: 1.5rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid var(--border-color);
+}
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
     font-size: 0.9rem;
     color: var(--text-color-secondary);
-    margin: 0;
 }
-
-.survey-actions {
-    display: flex;
-    gap: 0.75rem;
-    align-items: center;
+.stat-item svg {
     flex-shrink: 0;
-}
-
-.no-results-card {
-    text-align: center;
-    padding: 3rem;
-    font-style: italic;
     color: var(--text-color-secondary);
 }
+.stat-item span {
+    font-weight: 500;
+}
 
-/* Estilos de Status Badge e Botões */
+/* BARRA DE PROGRESSO */
+.survey-card-progress {
+    padding: 1.25rem 0;
+}
+.progress-label {
+    font-size: 0.85rem;
+    color: var(--text-color-secondary);
+    margin-bottom: 0.5rem;
+}
+.progress-bar {
+    width: 100%;
+    height: 6px;
+    background-color: var(--border-color);
+    border-radius: 6px;
+    overflow: hidden;
+}
+.progress-bar-fill {
+    height: 100%;
+    background-color: var(--accent);
+    border-radius: 6px;
+    transition: width 0.5s ease;
+}
+
+/* RODAPÉ E AÇÕES DO CARD */
+.survey-card-footer {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 1.5rem 1.5rem;
+}
+.btn.btn-primary-outline {
+    background-color: transparent;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    padding: 0.5rem 1.2rem;
+    width: auto;
+}
+.btn.btn-primary-outline:hover {
+    background-color: var(--accent);
+    color: var(--bg-card);
+}
+
+/* MENU DE AÇÕES (KEBAB) */
+.actions-menu {
+    position: relative;
+}
+.kebab-toggle {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    border-radius: 50%;
+    width: 36px; height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-color-secondary);
+    transition: background-color 0.2s;
+}
+.kebab-toggle:hover {
+    background-color: var(--border-color);
+    color: var(--text-color);
+}
+.dropdown-menu-actions {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 5px);
+    background-color: var(--bg-card);
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+    list-style: none;
+    padding: 0.5rem 0;
+    z-index: 100;
+    width: 180px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
+}
+.actions-menu.is-active .dropdown-menu-actions {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+.dropdown-item-action {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 0.75rem 1rem;
+    color: var(--text-color);
+    text-decoration: none;
+    font-weight: 500;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+.dropdown-item-action:hover {
+    background-color: color-mix(in srgb, var(--border-color) 50%, transparent);
+}
+.dropdown-item-action.danger {
+    color: var(--danger);
+}
+
+/* BADGES DE STATUS */
 .status-badge {
     padding: 0.25rem 0.6rem;
     border-radius: 999px;
@@ -130,49 +225,21 @@
     font-size: 0.8rem;
     white-space: nowrap;
 }
-
 .status-badge.active {
-    color: #198754;
-    background-color: rgba(25, 135, 84, 0.1);
+    color: #198754; background-color: rgba(25, 135, 84, 0.1);
 }
-
 .status-badge.inactive {
-    color: var(--text-color-secondary);
-    background-color: rgba(128, 128, 128, 0.15);
+    color: var(--text-color-secondary); background-color: rgba(128, 128, 128, 0.15);
 }
-
 html.dark .status-badge.active {
-    background-color: rgba(45, 156, 107, 0.2);
-    color: #7ee2b2;
+    background-color: rgba(45, 156, 107, 0.2); color: #7ee2b2;
 }
 
-.action-btn {
-    padding: 0.4rem 1rem;
-    font-size: 0.85rem;
-    font-weight: 600;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    text-decoration: none;
-    transition: background-color 0.2s, color 0.2s, box-shadow 0.2s;
-    line-height: 1.5;
-}
-
-.btn-edit {
-    background-color: var(--accent);
-    color: white;
-}
-html.dark .btn-edit {
-    color: var(--bg-card);
-}
-
-.btn-delete {
-    background-color: transparent;
-    color: var(--danger);
-    border: 1px solid var(--danger);
-}
-
-.btn-delete:hover {
-    background-color: var(--danger);
-    color: white;
+/* CARD DE 'SEM RESULTADOS' */
+.no-results-card {
+    text-align: center;
+    padding: 3rem;
+    font-style: italic;
+    color: var(--text-color-secondary);
+    grid-column: 1 / -1; /* Ocupa a largura total do grid */
 }

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Pesquisa de Clima Organizacional | Samar</title>
+  <title>{{ survey.name }} | Samar</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -18,6 +18,7 @@
     type="image/x-icon"
   />
 
+  <!-- Garante que está usando o CSS correto para o estilo escuro -->
   <link
     rel="stylesheet"
     href="{{ url_for('views.static', filename='pesquisa/pesquisa.css') }}"
@@ -28,37 +29,38 @@
     <form id="surveyForm" method="post" novalidate>
       <header class="form-header">
         <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo Samar" class="form-logo" />
-        <h2>Pesquisa de Clima Organizacional</h2>
-        <p class="intro">
-          Prezado colaborador,<br>
-          O preenchimento <strong>consciente e sincero</strong> da Pesquisa de Clima Organizacional é <strong>essencial</strong> para impulsionarmos juntos a excelência da nossa instituição. Esta ferramenta é o canal direto para captarmos suas percepções, anseios e desafios, que refletem não apenas no seu dia a dia, mas também na qualidade do atendimento aos nossos pacientes.
-        </p>
-        <div class="intro-details">
-          <h4>Por que sua participação faz a diferença?</h4>
-          <ul>
-            <li>✓ Identifica oportunidades de melhoria concretas;</li>
-            <li>✓ Fortalece a transparência e a comunicação interna;</li>
-            <li>✓ Orienta a gestão na tomada de decisões alinhadas às suas necessidades;</li>
-            <li>✓ Promove um ambiente de trabalho mais saudável e produtivo para todos.</li>
-          </ul>
-        </div>
-        <p class="intro">
-          <strong>Dedique alguns minutos</strong> para responder com autenticidade – cada contribuição é um passo rumo a uma Rede Hospitalar Samar ainda melhor. Juntos, construímos o futuro da nossa equipe e da saúde que entregamos à sociedade!
-        </p>
+        <h2>{{ survey.name }}</h2>
+
+        {% if survey.description %}
+            <div class="intro">
+                {{ survey.description | safe }}
+            </div>
+        {% else %}
+            <!-- Texto padrão caso a descrição esteja vazia -->
+            <p class="intro">
+              Prezado colaborador,<br>
+              O preenchimento <strong>consciente e sincero</strong> da Pesquisa de Clima Organizacional é <strong>essencial</strong> para impulsionarmos juntos a excelência da nossa instituição. Esta ferramenta é o canal direto para captarmos suas percepções, anseios e desafios, que refletem não apenas no seu dia a dia, mas também na qualidade do atendimento aos nossos pacientes.
+            </p>
+            <div class="intro-details">
+              <h4>Por que sua participação faz a diferença?</h4>
+              <ul>
+                <li>✓ Identifica oportunidades de melhoria concretas;</li>
+                <li>✓ Fortalece a transparência e a comunicação interna;</li>
+                <li>✓ Orienta a gestão na tomada de decisões alinhadas às suas necessidades;</li>
+                <li>✓ Promove um ambiente de trabalho mais saudável e produtivo para todos.</li>
+              </ul>
+            </div>
+            <p class="intro">
+              <strong>Dedique alguns minutos</strong> para responder com autenticidade – cada contribuição é um passo rumo a uma Rede Hospitalar Samar ainda melhor. Juntos, construímos o futuro da nossa equipe e da saúde que entregamos à sociedade!
+            </p>
+        {% endif %}
       </header>
 
-      {# --- Agrupa perguntas por seção --- #}
-      {% set grouped = {} %}
-      {% for q in questions %}
-        {% set list_for_section = grouped[q.section_title] if q.section_title in grouped else [] %}
-        {% set _ = grouped.update({ q.section_title: list_for_section + [q] }) %}
-      {% endfor %}
-
       {# --- Renderiza cada seção e suas perguntas --- #}
-      {% for section_title, qs in grouped.items() %}
+      {% for section_title, qs in grouped_questions.items() %}
       <section class="form-section">
 
-        <h3 class="section-title" style="width: auto !important; white-space: normal !important;">{{ section_title }}</h3>
+        <h3 class="section-title">{{ section_title }}</h3>
 
         {% for q in qs %}
         <div class="question-block">
@@ -68,16 +70,17 @@
 
           {% if q.question_type == 'radio' %}
             <div class="options-group">
-              {% for opt in options[q.id] %}
+              <!-- O loop agora busca as opções diretamente do objeto da pergunta 'q' -->
+              {% for opt in q.options %}
               <label class="radio-label">
-                <input type="radio" name="resposta{{ q.id }}" value="{{ opt.option_value }}" required />
-                <span class="option-text">{{ opt.option_text }}</span>
+                <input type="radio" name="question_{{ q.id }}" value="{{ opt.option_value }}" required />
+                <span class="option-text">{{ opt.option_label }}</span>
               </label>
               {% endfor %}
             </div>
           {% else %}
             <textarea
-              name="resposta{{ q.id }}"
+              name="question_{{ q.id }}"
               rows="4"
               placeholder="Sua resposta..."
               required

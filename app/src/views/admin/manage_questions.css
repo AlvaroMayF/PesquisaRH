@@ -1,172 +1,235 @@
 /* app/src/views/admin/manage_questions.css */
 
-/* --- Layout Principal da Página --- */
+/* --- Layout Principal e Cabeçalho --- */
 .page-container {
     max-width: 900px;
     margin: var(--section-gap) auto;
     padding: 0 1rem;
 }
 
-/* --- Card de Cabeçalho Refinado --- */
 .page-header {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 1.5rem 2rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    flex-wrap: wrap;
     gap: 1.5rem;
-    margin-bottom: 2.5rem;
-    padding: 2rem;
-}
-
-.page-header-content {
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-    flex-grow: 1;
-}
-
-.page-header-icon {
-    flex-shrink: 0;
-    width: 52px;
-    height: 52px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: color-mix(in srgb, var(--accent) 15%, transparent);
-    color: var(--accent);
-    border-radius: 12px;
-}
-
-.page-header-icon svg {
-    width: 28px;
-    height: 28px;
-}
-
-.page-header-text {
-    flex-grow: 1;
-}
-
-.page-title {
-    font-size: 1.85rem;
-    font-weight: 700;
-    margin: 0;
-    line-height: 1.2;
-}
-
-.page-subtitle {
-    font-size: 1.05rem;
-    color: var(--text-color-secondary);
-    margin-top: 0.25rem;
-}
-
-.header-actions {
-    display: flex;
-    gap: 0.75rem;
-    flex-shrink: 0;
-    align-items: center; /* Garante alinhamento vertical */
-}
-
-/* --- ESTILOS CORRIGIDOS PARA OS BOTÕES --- */
-.header-actions .btn {
-    width: auto; /* Sobrescreve o width: 100% da classe .btn global */
-    padding: 0.65rem 1.25rem;
-    font-size: 0.9rem;
-    font-weight: 600;
-}
-
-.header-actions .btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(0, 123, 255, 0.25);
-}
-
-.btn-secondary {
-    border: 1px solid var(--border-color);
-    background-color: var(--bg-card);
-    color: var(--text-color);
-    text-decoration: none;
-    transition: background-color 0.2s, border-color 0.2s;
-}
-
-.btn-secondary:hover {
-    background-color: var(--bg-light);
-    border-color: var(--text-color-secondary);
-}
-
-/* --- Container das Seções de Perguntas --- */
-.survey-sections-container {
-    display: flex;
-    flex-direction: column;
-    gap: 2.5rem;
-}
-
-.survey-section {
-    background-color: var(--bg-card);
-    border: 1px solid var(--border-color);
-    border-radius: 16px;
+    margin-bottom: 3rem;
     box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }
 
-.survey-section-header {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: var(--text-color);
-    padding: 1.25rem 1.5rem;
-    border-bottom: 1px solid var(--border-color);
+.page-header-content {
+    display: flex; align-items: center;
+    gap: 1.5rem; flex-grow: 1;
+}
+.page-header-icon {
+    flex-shrink: 0; width: 48px; height: 48px;
+    display: flex; align-items: center; justify-content: center;
+    background-color: color-mix(in srgb, var(--accent) 15%, transparent);
+    color: var(--accent); border-radius: 12px;
+}
+.page-header-icon svg { width: 24px; height: 24px; }
+.page-header-text { flex-grow: 1; }
+.page-title {
+    font-size: 1.75rem; font-weight: 700;
+    margin: 0; line-height: 1.2;
+}
+.page-subtitle {
+    font-size: 1rem; color: var(--text-color-secondary);
+    margin-top: 0.25rem;
+}
+.header-actions {
+    display: flex; gap: 0.75rem;
+    flex-shrink: 0; align-items: center;
+}
+.header-actions .btn {
+    width: auto; padding: 0.7rem 1.3rem;
+    font-size: 0.9rem; font-weight: 600;
 }
 
+/* --- Container da Lista de Perguntas --- */
+.questions-list-container {
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+}
+
+/* --- Estilo da Seção --- */
+.survey-section {
+    width: 100%;
+}
+.section-header {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-color-secondary);
+    padding-bottom: 0.75rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+}
 .section-questions-list {
     display: flex;
     flex-direction: column;
+    gap: 1.5rem;
 }
 
-/* --- Card de Gerenciamento de Pergunta --- */
-.question-manage-card {
+/* --- Card de Pergunta (Novo Design) --- */
+.question-card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    transition: box-shadow 0.2s ease, border-color 0.2s ease;
+    cursor: pointer;
+}
+
+.question-card:hover {
+    border-color: color-mix(in srgb, var(--accent) 40%, transparent);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+}
+
+.question-card.is-editing {
+    border-color: var(--accent);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+    cursor: default;
+}
+
+/* Painel de Visualização */
+.view-panel {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 1rem;
     padding: 1.25rem 1.5rem;
-    border-bottom: 1px solid var(--border-color);
-    transition: background-color 0.2s ease;
 }
-
-.question-manage-card:last-child {
-    border-bottom: none;
+.question-card.is-editing .view-panel {
+    display: none;
 }
-
-.question-manage-card:hover {
-    background-color: var(--bg-light);
-}
-
-.question-drag-handle {
-    color: var(--text-color-secondary);
-    cursor: grab;
-    opacity: 0.5;
-}
-
-.question-info {
+.question-summary {
     flex-grow: 1;
 }
-
-.question-text {
-    font-size: 1.05rem;
+.question-view-text {
+    font-size: 1.1rem;
     font-weight: 500;
     color: var(--text-color);
-    margin: 0 0 0.5rem 0;
+    margin: 0;
 }
-
-.question-type-badge {
-    display: inline-block;
-    font-size: 0.75rem;
-    font-weight: 600;
-    padding: 0.2rem 0.5rem;
-    border-radius: 6px;
-    background-color: color-mix(in srgb, var(--border-color) 50%, transparent);
-    color: var(--text-color-secondary);
-}
-
-.question-actions {
+.options-preview {
+    margin-top: 1rem;
     display: flex;
+    flex-direction: column;
     gap: 0.75rem;
+}
+.option-preview-item {
+    font-size: 1rem;
+    color: var(--text-color-secondary);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+.option-preview-item::before {
+    content: '';
+    display: block;
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--border-color);
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+.option-preview-item.text-input::before {
+    content: 'Aa';
+    font-weight: 600;
+    font-size: 0.7rem;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.view-panel-actions {
+    flex-shrink: 0;
+}
+.action-btn-icon {
+    background: transparent;
+    border: none;
+    border-radius: 50%;
+    width: 40px; height: 40px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-color-secondary);
+    opacity: 0;
+    transition: opacity 0.2s, background-color 0.2s;
+}
+.question-card:hover .action-btn-icon,
+.question-card:focus-within .action-btn-icon {
+    opacity: 1;
+}
+.action-btn-icon:hover {
+    background-color: color-mix(in srgb, var(--accent) 15%, transparent);
+    color: var(--accent);
+}
+
+/* Painel de Edição */
+.edit-panel {
+    display: none;
+    padding: 1.5rem;
+    border-top: 1px solid var(--border-color);
+}
+.question-card.is-editing .edit-panel {
+    display: block;
+}
+
+.question-edit-form .form-row {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+.question-edit-form .form-group { margin-bottom: 1.5rem; }
+.question-edit-form .flex-grow { flex-grow: 1; }
+.question-edit-form label {
+    display: block;
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+.question-edit-form input,
+.question-edit-form textarea,
+.question-edit-form select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background-color: var(--bg-light);
+    color: var(--text-color);
+    font-family: inherit;
+    font-size: 1rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+.question-edit-form input:focus,
+.question-edit-form textarea:focus,
+.question-edit-form select:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 20%, transparent);
+}
+.question-edit-form textarea { resize: vertical; }
+
+/* Ações do Formulário */
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+.form-actions .btn { width: auto; }
+.btn-danger-outline {
+    background: transparent;
+    color: var(--danger);
+    border: 1px solid transparent;
+    text-decoration: none;
+}
+.btn-danger-outline:hover {
+    background-color: color-mix(in srgb, var(--danger) 15%, transparent);
 }
 
 /* Card de "Nenhuma pergunta" */
@@ -175,10 +238,11 @@
     padding: 4rem;
     font-style: italic;
     color: var(--text-color-secondary);
-    border-style: dashed;
+    border: 2px dashed var(--border-color);
+    background-color: transparent;
 }
 
-/* --- ESTILOS DA MODAL --- */
+/* --- ESTILOS DA MODAL DE ADICIONAR PERGUNTA --- */
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -208,6 +272,7 @@
     max-width: 600px;
     transform: scale(0.95);
     transition: transform 0.3s ease;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
 }
 
 .modal-overlay.active .modal-content {
@@ -245,10 +310,12 @@
 
 .modal-body {
     padding: 2rem;
+    max-height: 70vh;
+    overflow-y: auto;
 }
 
 .modal-body .form-group { margin-bottom: 1.5rem; }
-.modal-body .form-group label { font-weight: 600; margin-bottom: 0.5rem; }
+.modal-body .form-group label { display: block; font-weight: 600; margin-bottom: 0.5rem; }
 .modal-body .form-group input, .modal-body .form-group textarea, .modal-body .form-group select {
     width: 100%; padding: 0.75rem; border: 1px solid var(--border-color);
     border-radius: 8px; background-color: var(--bg-light); color: var(--text-color);
@@ -256,7 +323,7 @@
 }
 .modal-body .form-group textarea { resize: vertical; min-height: 80px; }
 .modal-body .form-actions { margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color); display: flex; justify-content: flex-end; gap: 1rem; }
-.modal-body .form-actions .btn-primary, .modal-body .form-actions .btn-secondary { width: auto; }
+.modal-body .form-actions .btn { width: auto; }
 
 .options-container {
     margin-top: 1.5rem;
@@ -295,6 +362,11 @@
     border: none;
     cursor: pointer;
     padding: 0.5rem;
+    border-radius: 6px;
+    transition: background-color 0.2s;
+}
+.btn-add-option:hover {
+    background-color: color-mix(in srgb, var(--accent) 15%, transparent);
 }
 
 .btn-remove-option {
@@ -311,4 +383,10 @@
 .btn-remove-option:hover {
     color: var(--danger);
     background-color: color-mix(in srgb, var(--danger) 15%, transparent);
+}
+.btn-remove-option[disabled] {
+    opacity: 0.3;
+    cursor: not-allowed;
+    background: none !important;
+    color: var(--text-color-secondary) !important;
 }

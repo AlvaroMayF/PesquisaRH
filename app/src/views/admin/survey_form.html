@@ -84,18 +84,18 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="description">Descrição (Opcional)</label>
-                        <textarea id="description" name="description" rows="4" placeholder="Uma breve explicação sobre o objetivo desta pesquisa.">{{ survey.description or '' }}</textarea>
+                        <label for="description">Texto de Apresentação (Descrição)</label>
+                        <textarea id="description" name="description" rows="8" placeholder="Digite aqui o texto que aparecerá para o colaborador no início da pesquisa. Você pode usar HTML para formatação, como <strong> para negrito.">{{ survey.description or '' }}</textarea>
                     </div>
 
                     <div class="form-row">
                         <div class="form-group">
                             <label for="start_date">Data de Início (Opcional)</label>
-                            <input type="date" id="start_date" name="start_date" value="{{ survey.start_date or '' }}">
+                            <input type="date" id="start_date" name="start_date" value="{{ survey.start_date.strftime('%Y-%m-%d') if survey and survey.start_date else '' }}">
                         </div>
                         <div class="form-group">
                             <label for="end_date">Data de Fim (Opcional)</label>
-                            <input type="date" id="end_date" name="end_date" value="{{ survey.end_date or '' }}">
+                            <input type="date" id="end_date" name="end_date" value="{{ survey.end_date.strftime('%Y-%m-%d') if survey and survey.end_date else '' }}">
                         </div>
                     </div>
 

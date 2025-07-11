@@ -33,6 +33,13 @@ html.dark {
   margin: 0;
   padding: 0;
 }
+
+/* ATUALIZADO: Regra aplicada a ambos para máxima eficácia */
+html,
+body {
+  overflow-x: hidden;
+}
+
 body {
   font-family: 'Source Sans 3', sans-serif;
   background: var(--bg-light);

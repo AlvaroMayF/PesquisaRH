@@ -21,7 +21,8 @@ from src.routers.adminLogin import adminLogin
 from src.routers.homeView import home as home_bp
 from src.routers.logout import logout_bp
 from src.routers.analitico import analitico
-from src.routers.pesquisa import pesquisa
+# CORRIGIDO: O nome da variável importada agora é 'pesquisa_bp'
+from src.routers.pesquisa import pesquisa_bp
 from src.routers.comunicados import comunicados_bp
 from src.routers.novo_colaborador import novo_colaborador_bp
 from src.routers.novo_comunicado import novo_comunicado_bp
@@ -29,7 +30,7 @@ from src.routers.admin_feriados import admin_feriados_bp
 from src.routers.beneficios import beneficios_bp
 from src.routers.auth import auth_bp
 from src.routers.pesquisas_lista import pesquisas_lista_bp
-from src.routers.admin_surveys import admin_surveys_bp # <-- ADICIONADO
+from src.routers.admin_surveys import admin_surveys_bp
 
 # ----------------------------------------------------------------------
 # Factory para criar e configurar a aplicação
@@ -85,7 +86,8 @@ def create_app():
     app.register_blueprint(home_bp)
     app.register_blueprint(logout_bp)
     app.register_blueprint(analitico)
-    app.register_blueprint(pesquisa)
+    # CORRIGIDO: O nome da variável registrada agora é 'pesquisa_bp'
+    app.register_blueprint(pesquisa_bp)
     app.register_blueprint(comunicados_bp)
     app.register_blueprint(novo_colaborador_bp)
     app.register_blueprint(novo_comunicado_bp)
@@ -93,7 +95,7 @@ def create_app():
     app.register_blueprint(beneficios_bp)
     app.register_blueprint(auth_bp)
     app.register_blueprint(pesquisas_lista_bp)
-    app.register_blueprint(admin_surveys_bp) # <-- ADICIONADO
+    app.register_blueprint(admin_surveys_bp)
 
     @app.route('/uploads/<path:filename>')
     def uploaded_file(filename):
