@@ -59,15 +59,13 @@ def gerenciar_pesquisas_view():
     return render_template('admin/gerenciar_pesquisas.html', surveys=surveys)
 
 
-# Rota para gerenciar as perguntas de uma pesquisa (ATUALIZADA)
+# Rota para gerenciar as perguntas de uma pesquisa
 @admin_surveys_bp.route('/admin/pesquisas/<int:survey_id>/gerenciar-perguntas')
 def gerenciar_perguntas_view(survey_id):
     if not session.get('admin_logged_in'):
         return redirect(url_for('adminLogin.admin_login'))
 
-    # Verifica se a pesquisa está congelada
     locked = is_survey_locked(survey_id)
-
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
 
@@ -106,13 +104,12 @@ def gerenciar_perguntas_view(survey_id):
                            is_locked=locked)
 
 
-# Rota para atualizar uma pergunta via AJAX (ATUALIZADA com verificação)
+# Rota para atualizar uma pergunta via AJAX
 @admin_surveys_bp.route('/admin/perguntas/<int:question_id>/update', methods=['POST'])
 def update_question(question_id):
     if not session.get('admin_logged_in'):
         return jsonify({'success': False, 'message': 'Não autorizado'}), 401
 
-    # Pega o survey_id a partir do question_id para verificar o congelamento
     conn_check = get_db_connection()
     cursor_check = conn_check.cursor(dictionary=True)
     cursor_check.execute("SELECT survey_id FROM form_questions WHERE id = %s", (question_id,))
@@ -156,7 +153,7 @@ def update_question(question_id):
             conn.close()
 
 
-# Rota para o formulário de adicionar pergunta (ATUALIZADA com verificação)
+# Rota para o formulário de adicionar pergunta
 @admin_surveys_bp.route('/admin/pesquisas/<int:survey_id>/perguntas/adicionar', methods=['POST'])
 def adicionar_pergunta_view(survey_id):
     if not session.get('admin_logged_in'):
@@ -175,7 +172,6 @@ def adicionar_pergunta_view(survey_id):
         cursor = conn.cursor()
         try:
             conn.start_transaction()
-
             cursor.execute("SELECT MAX(order_index) as max_order FROM form_questions WHERE survey_id = %s",
                            (survey_id,))
             max_order_result = cursor.fetchone()
@@ -185,20 +181,16 @@ def adicionar_pergunta_view(survey_id):
             sql_insert_question = "INSERT INTO form_questions (survey_id, question_text, question_type, section_title, order_index) VALUES (%s, %s, %s, %s, %s)"
             cursor.execute(sql_insert_question,
                            (survey_id, question_text, question_type, section_title, new_order_index))
-
             new_question_id = cursor.lastrowid
 
             if question_type == 'radio':
                 option_texts = request.form.getlist('option_text')
                 sql_insert_option = "INSERT INTO form_options (question_id, option_value, option_label) VALUES (%s, %s, %s)"
-
                 for option_text in option_texts:
                     if option_text and option_text.strip():
                         cursor.execute(sql_insert_option, (new_question_id, option_text.strip(), option_text.strip()))
-
             conn.commit()
             flash("Pergunta adicionada com sucesso!", "success")
-
         except Exception as e:
             conn.rollback()
             flash(f"Erro ao adicionar pergunta: {e}", "error")
@@ -206,11 +198,10 @@ def adicionar_pergunta_view(survey_id):
             if conn and conn.is_connected():
                 cursor.close()
                 conn.close()
-
         return redirect(url_for('admin_surveys.gerenciar_perguntas_view', survey_id=survey_id))
 
 
-# Rota para deletar uma pergunta (ATUALIZADA com verificação)
+# Rota para deletar uma pergunta
 @admin_surveys_bp.route('/admin/pesquisas/<int:survey_id>/perguntas/<int:question_id>/deletar', methods=['POST'])
 def deletar_pergunta_view(survey_id, question_id):
     if not session.get('admin_logged_in'):
@@ -234,7 +225,6 @@ def deletar_pergunta_view(survey_id, question_id):
         if conn and conn.is_connected():
             cursor.close()
             conn.close()
-
     return redirect(url_for('admin_surveys.gerenciar_perguntas_view', survey_id=survey_id))
 
 
@@ -266,7 +256,6 @@ def nova_pesquisa_view():
             if conn and conn.is_connected():
                 cursor.close()
                 conn.close()
-
         return redirect(url_for('admin_surveys.gerenciar_pesquisas_view'))
 
     return render_template('admin/survey_form.html', survey=None, title="Criar Nova Pesquisa", action="Criar")
@@ -305,7 +294,6 @@ def editar_pesquisa_view(survey_id):
             if conn.is_connected():
                 cursor.close()
                 conn.close()
-
         return redirect(url_for('admin_surveys.gerenciar_pesquisas_view'))
 
     cursor.execute("SELECT * FROM surveys WHERE id = %s", (survey_id,))
@@ -343,5 +331,88 @@ def deletar_pesquisa(survey_id):
         if conn and conn.is_connected():
             cursor.close()
             conn.close()
-
     return redirect(url_for('admin_surveys.gerenciar_pesquisas_view'))
+
+
+# --- NOVAS ROTAS PARA GERIR OPÇÕES ---
+
+@admin_surveys_bp.route('/admin/questions/<int:question_id>/options/add', methods=['POST'])
+def add_option(question_id):
+    if not session.get('admin_logged_in'):
+        return jsonify({'success': False, 'message': 'Não autorizado'}), 401
+
+    conn_check = get_db_connection()
+    cursor_check = conn_check.cursor(dictionary=True)
+    cursor_check.execute("SELECT survey_id FROM form_questions WHERE id = %s", (question_id,))
+    result = cursor_check.fetchone()
+    if not result or is_survey_locked(result['survey_id']):
+        cursor_check.close()
+        conn_check.close()
+        return jsonify({'success': False, 'message': 'A pesquisa está congelada.'}), 403
+    cursor_check.close()
+    conn_check.close()
+
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        sql = "INSERT INTO form_options (question_id, option_value, option_label) VALUES (%s, %s, %s)"
+        cursor.execute(sql, (question_id, 'Nova Opção', 'Nova Opção'))
+        new_option_id = cursor.lastrowid
+        conn.commit()
+        cursor.close()
+        conn.close()
+        return jsonify({'success': True, 'new_option_id': new_option_id})
+    except Exception as e:
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+
+@admin_surveys_bp.route('/admin/options/<int:option_id>/update', methods=['POST'])
+def update_option(option_id):
+    if not session.get('admin_logged_in'):
+        return jsonify({'success': False, 'message': 'Não autorizado'}), 401
+
+    data = request.get_json()
+    new_text = data.get('text')
+
+    if not new_text:
+        return jsonify({'success': False, 'message': 'O texto da opção não pode ser vazio.'}), 400
+
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        sql = "UPDATE form_options SET option_label = %s, option_value = %s WHERE id = %s"
+        cursor.execute(sql, (new_text, new_text, option_id))
+        conn.commit()
+        cursor.close()
+        conn.close()
+        return jsonify({'success': True})
+    except Exception as e:
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+
+@admin_surveys_bp.route('/admin/options/<int:option_id>/delete', methods=['POST'])
+def delete_option(option_id):
+    if not session.get('admin_logged_in'):
+        return jsonify({'success': False, 'message': 'Não autorizado'}), 401
+
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT question_id FROM form_options WHERE id = %s", (option_id,))
+        result = cursor.fetchone()
+        if result:
+            question_id = result[0]
+            cursor.execute("SELECT COUNT(*) FROM form_options WHERE question_id = %s", (question_id,))
+            if cursor.fetchone()[0] <= 1:
+                cursor.close()
+                conn.close()
+                return jsonify({'success': False, 'message': 'A pergunta deve ter pelo menos uma opção.'}), 400
+
+        sql = "DELETE FROM form_options WHERE id = %s"
+        cursor.execute(sql, (option_id,))
+        conn.commit()
+        cursor.close()
+        conn.close()
+        return jsonify({'success': True})
+    except Exception as e:
+        return jsonify({'success': False, 'message': str(e)}), 500
