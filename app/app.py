@@ -20,7 +20,7 @@ from src.routers.admin import admin
 from src.routers.adminLogin import adminLogin
 from src.routers.homeView import home as home_bp
 from src.routers.logout import logout_bp
-from src.routers.analitico import analitico
+from src.routers.analitico import analitico_bp
 # CORRIGIDO: O nome da variável importada agora é 'pesquisa_bp'
 from src.routers.pesquisa import pesquisa_bp
 from src.routers.comunicados import comunicados_bp
@@ -85,8 +85,7 @@ def create_app():
     app.register_blueprint(adminLogin)
     app.register_blueprint(home_bp)
     app.register_blueprint(logout_bp)
-    app.register_blueprint(analitico)
-    # CORRIGIDO: O nome da variável registrada agora é 'pesquisa_bp'
+    app.register_blueprint(analitico_bp)
     app.register_blueprint(pesquisa_bp)
     app.register_blueprint(comunicados_bp)
     app.register_blueprint(novo_colaborador_bp)

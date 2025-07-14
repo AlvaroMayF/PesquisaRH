@@ -1,4 +1,4 @@
-/* Estilos específicos para a página de Análise */
+/* app/src/views/analitico/analitico.css */
 
 main {
   padding: 0 2rem;
@@ -26,7 +26,68 @@ main {
   color: var(--text-color-secondary);
 }
 
-/* SEÇÃO DE INDICADORES */
+/* --- ESTILOS PARA A SEÇÃO DE FILTROS --- */
+.filter-section {
+  margin-bottom: 2.5rem;
+}
+
+.filter-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
+    background-color: var(--bg-card);
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.filter-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    flex-grow: 1;
+}
+
+.filter-group select {
+    flex: 1 1 180px;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background-color: var(--bg-light);
+    color: var(--text-color);
+    font-family: inherit;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.filter-group select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent);
+}
+
+.filter-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-shrink: 0;
+}
+
+.filter-actions .btn-secondary {
+    background-color: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-color-secondary);
+}
+.filter-actions .btn-secondary:hover {
+    background-color: var(--bg-light);
+    border-color: var(--text-color-secondary);
+}
+
+
+/* --- SEÇÃO DE INDICADORES --- */
 .indicators-section {
   margin-bottom: 3rem;
 }
@@ -111,19 +172,11 @@ main {
   margin-bottom: 0.25rem;
 }
 
-/* GRID DE PERGUNTAS E RESPOSTAS */
+/* --- GRID DE GRÁFICOS (CORRIGIDO) --- */
 .cards-grid {
   display: grid;
-  /* Mobile-first: Uma coluna por padrão */
-  grid-template-columns: 1fr;
+  grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); /* Volta para o grid responsivo */
   gap: 1.5rem;
-}
-
-/* Telas maiores: aplica a grade automática */
-@media (min-width: 520px) {
-  .cards-grid {
-    grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
-  }
 }
 
 .question-card {
@@ -134,16 +187,10 @@ main {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  transition: border-color 0.3s, box-shadow 0.3s;
-}
-
-/* Regra de altura APENAS para os cards de gráfico */
-.question-card:not(.discursive-full-width) {
-  min-height: 460px;
 }
 
 .card-header {
-  padding: 1.25rem;
+  padding: 1.25rem 1.5rem;
   border-bottom: 1px solid var(--border-color);
   display: flex;
   justify-content: space-between;
@@ -159,14 +206,11 @@ main {
 .card-body {
   padding: 1.5rem;
   flex-grow: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .chart-container {
   position: relative;
-  height: 300px;
+  height: 250px;
   width: 100%;
 }
 
@@ -185,19 +229,9 @@ main {
     opacity: 1;
 }
 
-/* LAYOUT PARA RESPOSTAS DISCURSIVAS */
+/* LAYOUT PARA RESPOSTAS DISCURSIVAS (CORRIGIDO) */
 .discursive-full-width {
     grid-column: 1 / -1;
-}
-
-.discursive-full-width .card-header {
-    justify-content: center;
-}
-
-.discursive-full-width .question-text {
-    text-align: center;
-    flex-grow: 0;
-    margin-right: 1rem;
 }
 
 .answers-list-container {
@@ -224,7 +258,6 @@ main {
   display: flex;
   gap: 1rem;
   align-items: flex-start;
-  transition: background-color 0.3s;
 }
 
 html.dark .answer-card {
@@ -255,93 +288,12 @@ html.dark .answer-card {
   padding: 2rem;
 }
 
-.content-card.no-data {
+.content-card.no-data, .no-results-banner, .warning-banner {
   text-align: center;
   padding: 3rem;
   font-style: italic;
   color: var(--text-color-secondary);
-}
-
-/* --- ESTILOS PARA A SEÇÃO DE FILTROS --- */
-
-.filter-section {
-  padding: 1.5rem;
-  margin-bottom: 2.5rem;
-}
-
-.filter-controls {
-  display: flex;
-  flex-wrap: wrap; /* Permite que os filtros quebrem a linha em telas menores */
-  gap: 1.5rem;
-  align-items: flex-end; /* Alinha os botões com a base dos selects */
-}
-
-.filter-group {
-  flex: 1 1 200px; /* Flex-grow, flex-shrink, e base-width */
-  display: flex;
-  flex-direction: column;
-  min-width: 200px; /* Garante uma largura mínima */
-}
-
-.filter-group label {
-  font-size: 0.9rem;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-  color: var(--text-color-secondary);
-}
-
-.filter-group select {
-  width: 100%;
-  padding: 0.75rem;
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  background-color: var(--bg-light);
-  color: var(--text-color);
-  font-family: inherit;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-.filter-group select:focus {
-  outline: none;
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent);
-}
-
-.filter-actions {
-  display: flex;
-  gap: 0.75rem;
-  flex-basis: 100%; /* Ocupa a linha inteira em telas menores */
-}
-
-@media (min-width: 960px) {
-  .filter-actions {
-    flex-basis: auto; /* Volta ao normal em telas maiores */
-  }
-}
-
-/* Estilo para o botão secundário (Limpar) */
-.btn-secondary {
-    padding: 0.75rem 1.5rem;
-    font-size: 1rem;
-    font-weight: 600;
-    border: 1px solid var(--border-color);
-    background-color: var(--bg-card);
-    color: var(--text-color);
-    border-radius: 8px;
-    cursor: pointer;
-    text-align: center;
-    text-decoration: none;
-    transition: background-color 0.2s, border-color 0.2s;
-}
-
-.btn-secondary:hover {
-    background-color: var(--bg-light);
-    border-color: var(--text-color-secondary);
-}
-
-/* Ajusta o tamanho dos botões */
-.filter-actions .btn-primary, .filter-actions .btn-secondary {
-    padding: 0.75rem 1.5rem !important;
+  background-color: var(--bg-card);
+  border: 1px dashed var(--border-color);
+  border-radius: 12px;
 }

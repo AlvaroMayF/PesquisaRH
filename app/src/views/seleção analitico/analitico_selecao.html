@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard: {{ survey.name }} | Portal RH</title>
+
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="{{ url_for('views.static', filename='base/base.css') }}" />
+    <!-- Garante que está a usar o CSS correto para o dashboard -->
+    <link rel="stylesheet" href="{{ url_for('views.static', filename='admin/analitico_dashboard.css') }}" />
+
+    <!-- Biblioteca de Gráficos -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <header>
+        <!-- A sua navbar aqui, com o link "Analítico" ativo -->
+        <nav class="navbar">
+            <div class="nav-container">
+              <div class="navbar-left">
+                <span class="nav-logo">REDE HOSPITAL SAMAR</span>
+                <label class="theme-switch" title="Alternar tema claro/escuro">
+                  <input type="checkbox" id="theme-toggle" class="theme-checkbox" aria-label="Alternar tema claro/escuro" />
+                  <div class="slider">
+                      <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                      <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                  </div>
+                </label>
+              </div>
+              <div class="navbar-center">
+                {% if session.get('colaborador_id') or session.get('admin_logged_in') %}
+                  <span class="header-user-greeting">Olá, {{ session.get('admin_username') or session.get('colaborador_nome') }}</span>
+                {% endif %}
+              </div>
+              <div class="navbar-right">
+                <button class="nav-toggle" aria-label="abrir menu de navegação">
+                    <span class="hamburger"></span>
+                </button>
+                <ul class="nav-menu">
+                  <li><a href="{{ url_for('home.home_view') }}">Início</a></li>
+                  <li><a href="{{ url_for('pesquisas_lista.lista_pesquisas_view') }}">Pesquisa</a></li>
+                  <li class="nav-item dropdown">
+                    <a href="#" class="nav-link dropdown-toggle">Informativos</a>
+                    <ul class="dropdown-menu">
+                      <li><a class="dropdown-item" href="{{ url_for('comunicados.view_comunicados') }}">Comunicados</a></li>
+                      <li><a class="dropdown-item" href="{{ url_for('beneficios.beneficios_page') }}">Benefícios</a></li>
+                    </ul>
+                  </li>
+                  {% if session.get('admin_logged_in') %}
+                    <li class="nav-item dropdown">
+                      <a href="#" class="nav-link dropdown-toggle active">Administrador</a>
+                      <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="{{ url_for('analitico.analitico_selecao_view') }}">Analítico</a></li>
+                        <li><a class="dropdown-item" href="{{ url_for('novo_colaborador.novo_colaborador_view') }}">Novo Colaborador</a></li>
+                        <li><a class="dropdown-item" href="{{ url_for('novo_comunicado.novo_comunicado_view') }}">Novo Comunicado</a></li>
+                        <li><a class="dropdown-item" href="{{ url_for('admin_feriados.gerenciar_feriados') }}">Gerenciar Feriados</a></li>
+                        <li><a class="dropdown-item" href="{{ url_for('admin_surveys.gerenciar_pesquisas_view') }}">Gerenciar Pesquisas</a></li>
+                      </ul>
+                    </li>
+                  {% endif %}
+                  {% if session.get('colaborador_id') or session.get('admin_logged_in') %}
+                    <li><a href="{{ url_for('logout.logout_view') }}" class="btn-logout">Sair</a></li>
+                  {% endif %}
+                </ul>
+              </div>
+            </div>
+          </nav>
+    </header>
+
+    <main>
+        <div class="page-container">
+            <section class="page-header">
+                <div class="header-main">
+                    <a href="{{ url_for('analitico.analitico_selecao_view') }}" class="back-link">&larr; Voltar para Seleção de Pesquisas</a>
+                    <h1 class="page-title">{{ survey.name }}</h1>
+                </div>
+                <form id="filter-form" method="GET">
+                    <div class="filter-controls">
+                        <select name="unidade" onchange="this.form.submit()">
+                            <option value="">Todas as Unidades</option>
+                            {% for unidade in unidades %}
+                            <option value="{{ unidade }}" {% if unidade == selected_unidade %}selected{% endif %}>{{ unidade }}</option>
+                            {% endfor %}
+                        </select>
+                        <select name="setor" onchange="this.form.submit()">
+                            <option value="">Todos os Setores</option>
+                            {% for setor in setores %}
+                            <option value="{{ setor }}" {% if setor == selected_setor %}selected{% endif %}>{{ setor }}</option>
+                            {% endfor %}
+                        </select>
+                        <select name="cargo" onchange="this.form.submit()">
+                            <option value="">Todos os Cargos</option>
+                             {% for cargo in cargos %}
+                            <option value="{{ cargo }}" {% if cargo == selected_cargo %}selected{% endif %}>{{ cargo }}</option>
+                            {% endfor %}
+                        </select>
+                        <a href="{{ url_for('analitico.analitico_dashboard_view', survey_id=survey.id) }}" class="clear-filters">Limpar Filtros</a>
+                    </div>
+                </form>
+            </section>
+
+            <section class="kpi-grid">
+                <div class="kpi-card">
+                    <h4>Taxa de Participação</h4>
+                    <span class="kpi-value">{{ indicadores.taxa_participacao }}%</span>
+                </div>
+                <div class="kpi-card">
+                    <h4>Respostas Recebidas</h4>
+                    <span class="kpi-value">{{ indicadores.pesquisas_respondidas }}</span>
+                </div>
+                <div class="kpi-card">
+                    <h4>Total de Colaboradores</h4>
+                    <span class="kpi-value">{{ indicadores.total_colaboradores }}</span>
+                </div>
+            </section>
+
+            <section class="charts-container">
+                {% if show_warning %}
+                    <div class="warning-banner">
+                        Os dados não podem ser exibidos. O filtro selecionado resultou em menos de {{ minimum_respondents }} respostas, o que poderia comprometer o anonimato.
+                    </div>
+                {% elif charts %}
+                    {% for chart in charts %}
+                        <div class="chart-card">
+                            <h3>{{ chart.question_text }}</h3>
+                            <span class="response-count-label">{{ chart.total_responses }} respostas</span>
+                            {% if chart.is_discursive %}
+                                <div class="discursive-answers">
+                                    <ul>
+                                        {% for answer in chart.answers %}
+                                            <li>{{ answer }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            {% else %}
+                                <div class="chart-wrapper">
+                                    <canvas id="chart-{{ loop.index }}"></canvas>
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                {% else %}
+                     <div class="no-results-banner">
+                        Nenhuma resposta encontrada para esta pesquisa ou para os filtros selecionados.
+                    </div>
+                {% endif %}
+            </section>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const chartsData = {{ charts | tojson | safe }};
+            const chartElements = document.querySelectorAll('canvas');
+
+            chartElements.forEach((canvas, index) => {
+                const chartInfo = chartsData[index];
+                if (chartInfo && !chartInfo.is_discursive) {
+                    new Chart(canvas, {
+                        type: 'bar',
+                        data: {
+                            labels: chartInfo.chart_data.labels,
+                            datasets: [{
+                                label: 'Nº de Respostas',
+                                data: chartInfo.chart_data.datasets[0].data,
+                                backgroundColor: [
+                                    'rgba(37, 99, 235, 0.7)', 'rgba(59, 130, 246, 0.7)',
+                                    'rgba(147, 197, 253, 0.7)', 'rgba(251, 146, 60, 0.7)',
+                                    'rgba(239, 68, 68, 0.7)'
+                                ],
+                                borderColor: [
+                                    'rgba(37, 99, 235, 1)', 'rgba(59, 130, 246, 1)',
+                                    'rgba(147, 197, 253, 1)', 'rgba(251, 146, 60, 1)',
+                                    'rgba(239, 68, 68, 1)'
+                                ],
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            indexAxis: 'y',
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: { legend: { display: false } },
+                            scales: { x: { beginAtZero: true } }
+                        }
+                    });
+                }
+            });
+
+            // Script do menu hamburger
+            const navToggle = document.querySelector('.nav-toggle');
+            const navMenu = document.querySelector('.nav-menu');
+            if (navToggle && navMenu) {
+                navToggle.addEventListener('click', () => {
+                    navMenu.classList.toggle('nav-menu--visible');
+                    navToggle.classList.toggle('is-active');
+                });
+            }
+        });
+    </script>
+</body>
+</html>
