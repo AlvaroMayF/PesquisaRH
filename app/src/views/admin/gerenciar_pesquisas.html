@@ -10,8 +10,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="{{ url_for('views.static', filename='base/base.css') }}" />
-    <link rel="stylesheet" href="{{ url_for('views.static', filename='admin/gerenciar_pesquisas.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='base/base.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='admin/gerenciar_pesquisas.css') }}" />
 </head>
 <body>
     <header>
@@ -157,7 +157,7 @@
         </div>
     </main>
 
-    <script src="{{ url_for('views.static', filename='home/theme-toggle.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='home/theme-toggle.js') }}" defer></script>
     <script>
       const navToggle = document.querySelector('.nav-toggle');
       const navMenu = document.querySelector('.nav-menu');

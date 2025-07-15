@@ -10,8 +10,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="{{ url_for('views.static', filename='base/base.css') }}" />
-    <link rel="stylesheet" href="{{ url_for('views.static', filename='admin/manage_questions.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='base/base.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='admin/manage_questions.css') }}" />
 
     <!-- Biblioteca SortableJS para drag-and-drop -->
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
@@ -229,7 +229,7 @@
 
     <div id="toast-container"></div>
 
-    <script src="{{ url_for('views.static', filename='home/theme-toggle.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='home/theme-toggle.js') }}" defer></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const showToast = (message, type = 'success') => {

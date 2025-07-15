@@ -9,8 +9,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="{{ url_for('views.static', filename='base/base.css') }}">
-    <link rel="stylesheet" href="{{ url_for('views.static', filename='Login/login.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='base/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='Login/login.css') }}">
 </head>
 <body>
 
@@ -63,7 +63,7 @@
     </main>
 
     {# Script para o tema escuro/claro #}
-    <script src="{{ url_for('views.static', filename='home/theme-toggle.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='home/theme-toggle.js') }}" defer></script>
     <script defer> {# Adicionado 'defer' aqui também #}
         document.getElementById('cpf').addEventListener('input', function (e) {
             let value = e.target.value.replace(/\D/g, '');

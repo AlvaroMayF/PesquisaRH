@@ -18,9 +18,9 @@
     rel="stylesheet"
   />
 
-  <link rel="stylesheet" href="{{ url_for('views.static', filename='base/base.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='base/base.css') }}" />
 
-  <link rel="stylesheet" href="{{ url_for('views.static', filename='NovoColaborador/NovoColaborador.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='NovoColaborador/NovoColaborador.css') }}" />
 </head>
 <body class="login-page-body">
   <header>
@@ -121,7 +121,7 @@
     </div>
   </main>
 
-  <script src="{{ url_for('views.static', filename='home/theme-toggle.js') }}" defer></script>
+  <script src="{{ url_for('static', filename='home/theme-toggle.js') }}" defer></script>
 
   <script>
     const navToggle = document.querySelector('.nav-toggle');

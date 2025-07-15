@@ -16,9 +16,9 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
 
   <link rel="stylesheet"
-        href="{{ url_for('views.static', filename='base/base.css') }}" />
+        href="{{ url_for('static', filename='base/base.css') }}" />
   <link rel="stylesheet"
-      href="{{ url_for('views.static', filename='home/home.css') }}" />
+      href="{{ url_for('static', filename='home/home.css') }}" />
 </head>
 <body>
   <header>
@@ -195,9 +195,9 @@
     </div>
   </footer>
 
-  <script src="{{ url_for('views.static', filename='home/carousel-spark.js') }}" defer></script>
-  <script src="{{ url_for('views.static', filename='home/theme-toggle.js') }}" defer></script>
-  <script src="{{ url_for('views.static', filename='home/animations.js') }}" defer></script>
+  <script src="{{ url_for('static', filename='home/carousel-spark.js') }}" defer></script>
+  <script src="{{ url_for('static', filename='home/theme-toggle.js') }}" defer></script>
+  <script src="{{ url_for('static', filename='home/animations.js') }}" defer></script>
 
   <script>
       const navToggle = document.querySelector('.nav-toggle');
