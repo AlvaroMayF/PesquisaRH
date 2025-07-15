@@ -14,21 +14,21 @@
 
   <link
     rel="shortcut icon"
-    href="{{ url_for('static', filename='favicon.ico') }}"
+    href="{{ url_for('serve_view_file', filename='favicon.ico') }}"
     type="image/x-icon"
   />
 
   <!-- Garante que está usando o CSS correto para o estilo escuro -->
   <link
     rel="stylesheet"
-    href="{{ url_for('static', filename='pesquisa/pesquisa.css') }}"
+    href="{{ url_for('serve_view_file', filename='pesquisa/pesquisa.css') }}"
   />
 </head>
 <body class="pesquisa-page">
   <main class="pesquisa-container">
     <form id="surveyForm" method="post" novalidate>
       <header class="form-header">
-        <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo Samar" class="form-logo" />
+        <img src="{{ url_for('serve_view_file', filename='logo.png') }}" alt="Logo Samar" class="form-logo" />
         <h2>{{ survey.name }}</h2>
 
         {% if survey.description %}

@@ -6,7 +6,7 @@
   <title>Portal RH | Painel de Recursos Humanos</title>
 
   <link rel="shortcut icon"
-        href="{{ url_for('static', filename='favicon.ico') }}"
+        href="{{ url_for('serve_view_file', filename='favicon.ico') }}"
         type="image/x-icon" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,9 +16,9 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
 
   <link rel="stylesheet"
-        href="{{ url_for('static', filename='base/base.css') }}" />
+        href="{{ url_for('serve_view_file', filename='base/base.css') }}" />
   <link rel="stylesheet"
-      href="{{ url_for('static', filename='home/home.css') }}" />
+      href="{{ url_for('serve_view_file', filename='home/home.css') }}" />
 </head>
 <body>
   <header>
@@ -94,9 +94,9 @@
         <button class="carousel-button prev" aria-label="Slide anterior">‹</button>
         <button class="carousel-button next" aria-label="Próximo slide">›</button>
         <div class="carousel-track">
-          <div class="carousel-slide"><img src="{{ url_for('static', filename='bannerPesquisa.svg') }}" alt="Participe da Pesquisa de Clima" loading="lazy"></div>
-          <div class="carousel-slide"><img src="{{ url_for('static', filename='bannerComunicado.svg') }}" alt="Comunicados Importantes" loading="lazy"></div>
-          <div class="carousel-slide"><img src="{{ url_for('static', filename='bannerBeneficio.svg') }}" alt="Conheça seus Benefícios" loading="lazy"></div>
+          <div class="carousel-slide"><img src="{{ url_for('serve_view_file', filename='bannerPesquisa.svg') }}" alt="Participe da Pesquisa de Clima" loading="lazy"></div>
+          <div class="carousel-slide"><img src="{{ url_for('serve_view_file', filename='bannerComunicado.svg') }}" alt="Comunicados Importantes" loading="lazy"></div>
+          <div class="carousel-slide"><img src="{{ url_for('serve_view_file', filename='bannerBeneficio.svg') }}" alt="Conheça seus Benefícios" loading="lazy"></div>
         </div>
         <div class="carousel-indicators" role="tablist">
           <button class="indicator active" data-index="0" aria-label="Slide 1" tabindex="0"></button>
@@ -110,9 +110,9 @@
       <h2 class="section-title">Acesso Rápido</h2>
       <div class="content-card">
         <div class="quick-grid">
-          <a href="{{ url_for('pesquisas_lista.lista_pesquisas_view') }}" class="grid-item" tabindex="0"><img src="{{ url_for('static', filename='pesquisa.svg') }}" alt="Pesquisa Rede Samar" loading="lazy"><span>Pesquisa Rede Samar</span></a>
-          <a href="{{ url_for('comunicados.view_comunicados') }}" class="grid-item" tabindex="0"><img src="{{ url_for('static', filename='comunicados.svg') }}" alt="Comunicados" loading="lazy"><span>Comunicados</span></a>
-          <a href="{{ url_for('beneficios.beneficios_page') }}" class="grid-item" tabindex="0"><img src="{{ url_for('static', filename='beneficios.svg') }}" alt="Benefícios" loading="lazy"><span>Benefícios</span></a>
+          <a href="{{ url_for('pesquisas_lista.lista_pesquisas_view') }}" class="grid-item" tabindex="0"><img src="{{ url_for('serve_view_file', filename='pesquisa.svg') }}" alt="Pesquisa Rede Samar" loading="lazy"><span>Pesquisa Rede Samar</span></a>
+          <a href="{{ url_for('comunicados.view_comunicados') }}" class="grid-item" tabindex="0"><img src="{{ url_for('serve_view_file', filename='comunicados.svg') }}" alt="Comunicados" loading="lazy"><span>Comunicados</span></a>
+          <a href="{{ url_for('beneficios.beneficios_page') }}" class="grid-item" tabindex="0"><img src="{{ url_for('serve_view_file', filename='beneficios.svg') }}" alt="Benefícios" loading="lazy"><span>Benefícios</span></a>
           </div>
       </div>
     </section>
@@ -195,9 +195,9 @@
     </div>
   </footer>
 
-  <script src="{{ url_for('static', filename='home/carousel-spark.js') }}" defer></script>
-  <script src="{{ url_for('static', filename='home/theme-toggle.js') }}" defer></script>
-  <script src="{{ url_for('static', filename='home/animations.js') }}" defer></script>
+  <script src="{{ url_for('serve_view_file', filename='home/carousel-spark.js') }}" defer></script>
+  <script src="{{ url_for('serve_view_file', filename='home/theme-toggle.js') }}" defer></script>
+  <script src="{{ url_for('serve_view_file', filename='home/animations.js') }}" defer></script>
 
   <script>
       const navToggle = document.querySelector('.nav-toggle');

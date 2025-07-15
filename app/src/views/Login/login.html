@@ -9,8 +9,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='base/base.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='Login/login.css') }}">
+    <link rel="stylesheet" href="{{ url_for('serve_view_file', filename='base/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('serve_view_file', filename='Login/login.css') }}">
 </head>
 <body>
 
@@ -28,7 +28,7 @@
     <main class="login-page">
         <div class="login-container">
             <div class="login-header">
-                <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo Rede Hospital Samar" class="login-logo">
+                <img src="{{ url_for('serve_view_file', filename='logo.png') }}" alt="Logo Rede Hospital Samar" class="login-logo">
                 <h1>Portal do Colaborador</h1>
                 <p>Use seu CPF e data de nascimento para acessar.</p>
             </div>
@@ -63,7 +63,7 @@
     </main>
 
     {# Script para o tema escuro/claro #}
-    <script src="{{ url_for('static', filename='home/theme-toggle.js') }}" defer></script>
+    <script src="{{ url_for('serve_view_file', filename='home/theme-toggle.js') }}" defer></script>
     <script defer> {# Adicionado 'defer' aqui também #}
         document.getElementById('cpf').addEventListener('input', function (e) {
             let value = e.target.value.replace(/\D/g, '');

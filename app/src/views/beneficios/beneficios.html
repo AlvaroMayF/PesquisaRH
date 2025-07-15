@@ -6,7 +6,7 @@
   <title>Benefícios | Portal RH</title>
 
   <link rel="shortcut icon"
-        href="{{ url_for('static', filename='favicon.ico') }}"
+        href="{{ url_for('serve_view_file', filename='favicon.ico') }}"
         type="image/x-icon" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -14,10 +14,10 @@
   <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <link rel="stylesheet"
-        href="{{ url_for('static', filename='base/base.css') }}" />
+        href="{{ url_for('serve_view_file', filename='base/base.css') }}" />
 
   <link rel="stylesheet"
-        href="{{ url_for('static', filename='beneficios/beneficios.css') }}" />
+        href="{{ url_for('serve_view_file', filename='beneficios/beneficios.css') }}" />
 </head>
 <body>
   <header>
@@ -136,7 +136,7 @@
       </div>
   </main>
 
-  <script src="{{ url_for('static', filename='home/theme-toggle.js') }}" defer></script>
+  <script src="{{ url_for('serve_view_file', filename='home/theme-toggle.js') }}" defer></script>
 
   <script>
     const navToggle = document.querySelector('.nav-toggle');

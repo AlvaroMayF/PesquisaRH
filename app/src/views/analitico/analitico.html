@@ -7,7 +7,7 @@
 
   <link
     rel="shortcut icon"
-    href="{{ url_for('static', filename='favicon.ico') }}"
+    href="{{ url_for('serve_view_file', filename='favicon.ico') }}"
     type="image/x-icon"
   />
 
@@ -22,8 +22,8 @@
   <!-- O plugin datalabels não é mais necessário para os gráficos de barra -->
   <!-- <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script> -->
 
-  <link rel="stylesheet" href="{{ url_for('static', filename='base/base.css') }}" />
-  <link rel="stylesheet" href="{{ url_for('static', filename='analitico/analitico.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('serve_view_file', filename='base/base.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('serve_view_file', filename='analitico/analitico.css') }}" />
 </head>
 <body>
   <header>
