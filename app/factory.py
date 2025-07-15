@@ -1,27 +1,30 @@
+# factory.py - VERSÃO FINAL
+
 import os
+import sys
 from flask import Flask, send_from_directory, Blueprint, session, redirect, url_for, request
 from markupsafe import escape, Markup
 from datetime import timedelta
 
-# ----------------------------------------------------------------------
-# Blueprint “views” para servir templates estáticos (CSS, HTML, etc)
-# ----------------------------------------------------------------------
-views_bp = Blueprint(
-    'views',
-    __name__,
-    static_folder='src/views',
-    static_url_path='/views_static'
-)
+# --- INÍCIO DA CORREÇÃO ---
+# Adiciona a raiz do projeto ao path do Python.
+# Isso garante que imports como 'from src.config import db' funcionem
+# quando o Flask é executado pelo terminal.
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__)))
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
+# --- FIM DA CORREÇÃO ---
+
 
 # ----------------------------------------------------------------------
-# Import dos blueprints de rota
+# Import dos blueprints de rota (agora eles serão encontrados)
 # ----------------------------------------------------------------------
 from src.routers.admin import admin
 from src.routers.adminLogin import adminLogin
 from src.routers.homeView import home as home_bp
+# ... (todos os seus outros imports de rotas continuam aqui)
 from src.routers.logout import logout_bp
 from src.routers.analitico import analitico_bp
-# CORRIGIDO: O nome da variável importada agora é 'pesquisa_bp'
 from src.routers.pesquisa import pesquisa_bp
 from src.routers.comunicados import comunicados_bp
 from src.routers.novo_colaborador import novo_colaborador_bp
@@ -32,55 +35,54 @@ from src.routers.auth import auth_bp
 from src.routers.pesquisas_lista import pesquisas_lista_bp
 from src.routers.admin_surveys import admin_surveys_bp
 
+
 # ----------------------------------------------------------------------
 # Factory para criar e configurar a aplicação
 # ----------------------------------------------------------------------
 def create_app():
-    base = os.path.abspath(os.path.dirname(__file__))
+    app = Flask(__name__, instance_relative_config=True)
 
-    # Diretórios de templates e estáticos
-    template_dir = os.path.join(base, 'src', 'views')
-    static_dir = os.path.join(base, 'assets')
-    upload_dir = os.path.join(base, 'src', 'uploads')
-    os.makedirs(upload_dir, exist_ok=True)
+    # --- CONFIGURAÇÃO CENTRALIZADA ---
+    is_production = os.getenv('RENDER', False)
+    db_path = os.path.join('/var/data', 'pesquisa.db') if is_production else os.path.join(app.instance_path,
+                                                                                          'pesquisa.db')
 
-    app = Flask(
-        __name__,
-        template_folder=template_dir,
-        static_folder=static_dir,
-        static_url_path='/static'
+    app.config.from_mapping(
+        SECRET_KEY=os.getenv('FLASK_SECRET_KEY', 'dev_key_super_secreta'),
+        DATABASE=db_path,
+        UPLOAD_FOLDER=os.path.join(project_root, 'src', 'uploads'),  # Usando a variável que definimos
+        SEND_FILE_MAX_AGE_DEFAULT=31536000
     )
 
-    app.config['UPLOAD_FOLDER'] = upload_dir
+    os.makedirs(app.instance_path, exist_ok=True)
+    os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
-    app.permanent_session_lifetime = timedelta(minutes=15)
+    # --- INICIALIZAÇÃO DE EXTENSÕES ---
+    from src.config import db
+    db.init_app(app)
+
+    # ... (o resto do seu arquivo factory.py continua exatamente igual)
+    # --- LÓGICA DA APLICAÇÃO ---
+    app.permanent_session_lifetime = timedelta(minutes=30)
 
     @app.before_request
     def require_login():
         session.permanent = True
+        allowed_endpoints = ['auth.login', 'static']
 
-        allowed_endpoints = ['auth.login', 'static', 'views.static']
+        if request.blueprint == 'views':
+            return
 
         if 'colaborador_id' not in session and request.endpoint not in allowed_endpoints:
             return redirect(url_for('auth.login'))
 
     def nl2br(value):
-        """Converte quebras de linha em texto para tags <br> em HTML."""
         return Markup(escape(value).replace('\n', '<br>\n'))
 
     app.jinja_env.filters['nl2br'] = nl2br
 
-    app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 31536000
-
-    try:
-        from flask_compress import Compress
-        Compress(app)
-    except ImportError:
-        pass
-
-    app.register_blueprint(views_bp)
-
-    # Registra todos os blueprints de rota
+    # --- REGISTRO DOS BLUEPRINTS ---
+    # Removi o views_bp pois os arquivos estáticos agora são gerenciados pelo Flask principal
     app.register_blueprint(admin, url_prefix='/admin')
     app.register_blueprint(adminLogin)
     app.register_blueprint(home_bp)
@@ -100,21 +102,4 @@ def create_app():
     def uploaded_file(filename):
         return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
-    @app.route('/admin/admin.css')
-    def admin_css():
-        return send_from_directory(
-            os.path.join(template_dir, 'admin'),
-            'admin.css'
-        )
-
-    app.secret_key = os.getenv('FLASK_SECRET_KEY', 'troque_em_producao')
-
     return app
-
-
-# Instância para execução direta
-app = create_app()
-
-if __name__ == '__main__':
-    port = int(os.getenv('PORT', 10000))
-    app.run(debug=True, port=port)

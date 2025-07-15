@@ -1,11 +1,10 @@
+# Conteúdo CORRETO para o arquivo requirements.txt
+
 # Framework principal da aplicação web
 Flask==3.0.3
 
 # Para gerenciamento de login e sessões de usuário (admin)
 Flask-Login==0.6.3
-
-# Conector para interagir com o banco de dados MySQL
-mysql-connector-python==8.4.0
 
 # Para manipulação e leitura de dados, especialmente da planilha Excel
 pandas==2.2.2
@@ -13,7 +12,8 @@ pandas==2.2.2
 # Dependência do Pandas para conseguir ler e manipular arquivos .xlsx (Excel)
 openpyxl==3.1.5
 
-# Para carregar variáveis de ambiente do arquivo .env (ex: senhas do banco)
+# Para carregar variáveis de ambiente do arquivo .env
 python-dotenv==1.0.1
 
+# Servidor de produção WSGI para a hospedagem no Render
 gunicorn
