@@ -50,7 +50,7 @@ def login():
             return redirect(url_for('auth.login'))
         finally:
             # Garante que a conexão com o banco seja sempre fechada
-            if conn and conn.is_connected():
+            if conn:
                 conn.close()
 
         if colaborador:

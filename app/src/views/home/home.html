@@ -94,9 +94,9 @@
         <button class="carousel-button prev" aria-label="Slide anterior">‹</button>
         <button class="carousel-button next" aria-label="Próximo slide">›</button>
         <div class="carousel-track">
-          <div class="carousel-slide"><img src="{{ url_for('static', filename='bannerPesquisa.svg') }}" alt="Participe da Pesquisa de Clima" loading="lazy"></div>
-          <div class="carousel-slide"><img src="{{ url_for('static', filename='bannerComunicado.svg') }}" alt="Comunicados Importantes" loading="lazy"></div>
-          <div class="carousel-slide"><img src="{{ url_for('static', filename='bannerBeneficio.svg') }}" alt="Conheça seus Benefícios" loading="lazy"></div>
+          <div class="carousel-slide"><img src="{{ url_for('static', filename='carousel-pesquisa.jpg') }}" alt="Sua opinião é importante para construirmos uma rede cada vez melhor." loading="lazy"></div>
+          <div class="carousel-slide"><img src="{{ url_for('static', filename='carousel-noticias.jpg') }}" alt="Fique por dentro das notícias e novidades da Rede Samar." loading="lazy"></div>
+          <div class="carousel-slide"><img src="{{ url_for('static', filename='carousel-beneficios.jpg') }}" alt="Descubra os benefícios de fazer parte deste time de sucesso." loading="lazy"></div>
         </div>
         <div class="carousel-indicators" role="tablist">
           <button class="indicator active" data-index="0" aria-label="Slide 1" tabindex="0"></button>
@@ -110,10 +110,10 @@
       <h2 class="section-title">Acesso Rápido</h2>
       <div class="content-card">
         <div class="quick-grid">
-          <a href="{{ url_for('pesquisas_lista.lista_pesquisas_view') }}" class="grid-item" tabindex="0"><img src="{{ url_for('static', filename='pesquisa.svg') }}" alt="Pesquisa Rede Samar" loading="lazy"><span>Pesquisa Rede Samar</span></a>
-          <a href="{{ url_for('comunicados.view_comunicados') }}" class="grid-item" tabindex="0"><img src="{{ url_for('static', filename='comunicados.svg') }}" alt="Comunicados" loading="lazy"><span>Comunicados</span></a>
-          <a href="{{ url_for('beneficios.beneficios_page') }}" class="grid-item" tabindex="0"><img src="{{ url_for('static', filename='beneficios.svg') }}" alt="Benefícios" loading="lazy"><span>Benefícios</span></a>
-          </div>
+          <a href="{{ url_for('pesquisas_lista.lista_pesquisas_view') }}" class="grid-item" tabindex="0"><img src="{{ url_for('static', filename='acesso-pesquisa.png') }}" alt="Banner para a página de pesquisas" loading="lazy"><span>Pesquisa Rede Samar</span></a>
+          <a href="{{ url_for('comunicados.view_comunicados') }}" class="grid-item" tabindex="0"><img src="{{ url_for('static', filename='acesso-comunicados.png') }}" alt="Banner para a página de comunicados" loading="lazy"><span>Comunicados</span></a>
+          <a href="{{ url_for('beneficios.beneficios_page') }}" class="grid-item" tabindex="0"><img src="{{ url_for('static', filename='acesso-beneficios.png') }}" alt="Banner para a página de benefícios" loading="lazy"><span>Benefícios</span></a>
+        </div>
       </div>
     </section>
 

@@ -1,28 +1,46 @@
 /* app/src/views/base/base.css */
 
-/* ========== VARIÁVEIS (Paleta de cores refinada) ========= */
+/* ========== VARIÁVEIS (NOVA PALETA DE CORES SAMAR) ========= */
 :root {
   --container-max-width: 1200px;
   --section-gap: 2rem;
   --card-padding: 1.5rem;
-  --accent: #007aff;
-  --accent-hover: #0056b3;
-  --bg-light: #f8f9fa;
-  --bg-card: #ffffff;
-  --text-color: #212529;
-  --text-color-secondary: #6c757d;
-  --border-color: #dee2e6;
-  --danger: #dc3545; /* Adicionado para botões de perigo */
+
+  /* COR DE ACENTO PRINCIPAL (ROSA) */
+  --accent: #FD4289;
+  --accent-hover: #A81A50;
+
+  /* COR DE ACENTO SECUNDÁRIO (CIANO) */
+  --accent-secondary: #009BC4;
+
+  /* TEMA CLARO */
+  --bg-light: #F8F9FA; /* Fundo principal da página (cinza muito claro) */
+  --bg-card: #FFFFFF;
+  --text-color: #001549;
+  --text-color-secondary: #5A647F; /* Tom de cinza azulado para textos secundários */
+  --border-color: #DEE2E6;
+
+  /* CORES DE AVISO (Mantidas para funcionalidade) */
+  --danger: #dc3545;
   --danger-hover: #c82333;
 }
+
 html.dark {
-  --accent: #0a84ff;
-  --accent-hover: #3395ff;
-  --bg-light: #0d1117;
-  --bg-card: #161b22;
-  --text-color: #c9d1d9;
-  --text-color-secondary: #8b949e;
-  --border-color: #30363d;
+  /* COR DE ACENTO PRINCIPAL (ROSAS CLAROS) */
+  --accent: #FF72A7;
+  --accent-hover: #FFA7C8;
+
+  /* COR DE ACENTO SECUNDÁRIO (CIANOS CLAROS) */
+  --accent-secondary: #15D4F0;
+
+  /* TEMA ESCURO */
+  --bg-light: #001549;
+  --bg-card: #001B53; /* Tom de azul um pouco mais claro para os cards */
+  --text-color: #E2E8F0; /* Texto principal (branco suave) */
+  --text-color-secondary: #94A3B8; /* Texto secundário (cinza claro) */
+  --border-color: #002A7A;
+
+  /* CORES DE AVISO (Mantidas para funcionalidade) */
   --danger: #e5484d;
   --danger-hover: #f16267;
 }
