@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Portal do Colaborador</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="{{ url_for('views.static', filename='base/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('views.static', filename='Login/login.css') }}">
+</head>
+<body>
+
+    {# Adicionado o seletor de tema aqui, fora do main, para flutuar no canto #}
+    <div class="theme-toggle-fixed">
+        <label class="theme-switch" title="Alternar tema claro/escuro">
+            <input type="checkbox" id="theme-toggle" class="theme-checkbox" aria-label="Alternar tema claro/escuro" />
+            <div class="slider">
+                <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+            </div>
+        </label>
+    </div>
+
+    <main class="login-page">
+        <div class="login-container">
+            <div class="login-header">
+                <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo Rede Hospital Samar" class="login-logo">
+                <h1>Portal do Colaborador</h1>
+                <p>Use seu CPF e data de nascimento para acessar.</p>
+            </div>
+
+            <form action="{{ url_for('auth.login') }}" method="POST" class="login-form">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            {% if category == 'error' %}
+                                <div class="error-message">{{ message }}</div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+                <div class="form-group">
+                    <label for="cpf">CPF</label>
+                    <input type="text" id="cpf" name="cpf" placeholder="000.000.000-00" required>
+                </div>
+                <div class="form-group">
+                    <label for="data_nascimento">Data de Nascimento</label>
+                    <input type="date" id="data_nascimento" name="data_nascimento" required>
+                </div>
+
+                <button type="submit" class="login-button">Acessar</button>
+            </form>
+
+            <footer class="login-footer">
+                <p>Em caso de problemas com o acesso, entre em contato com o setor de RH.</p>
+            </footer>
+        </div>
+    </main>
+
+    {# Script para o tema escuro/claro #}
+    <script src="{{ url_for('views.static', filename='home/theme-toggle.js') }}" defer></script>
+    <script defer> {# Adicionado 'defer' aqui também #}
+        document.getElementById('cpf').addEventListener('input', function (e) {
+            let value = e.target.value.replace(/\D/g, '');
+            value = value.replace(/(\d{3})(\d)/, '$1.$2');
+            value = value.replace(/(\d{3})(\d)/, '$1.$2');
+            value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+            e.target.value = value;
+        });
+    </script>
+</body>
+</html>

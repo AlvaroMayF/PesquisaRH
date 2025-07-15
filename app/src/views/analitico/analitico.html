@@ -14,21 +14,23 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;600;700&display=swap"
     rel="stylesheet"
   />
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- O plugin datalabels não é mais necessário para os gráficos de barra -->
+  <!-- <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script> -->
 
   <link rel="stylesheet" href="{{ url_for('views.static', filename='base/base.css') }}" />
-
   <link rel="stylesheet" href="{{ url_for('views.static', filename='analitico/analitico.css') }}" />
 </head>
 <body>
   <header>
     <nav class="navbar">
       <div class="nav-container">
-        <div class="navbar-center">
+        <div class="navbar-left">
+          <span class="nav-logo">REDE HOSPITAL SAMAR</span>
           <label class="theme-switch" title="Alternar tema claro/escuro">
             <input type="checkbox"
                    id="theme-toggle"
@@ -39,34 +41,45 @@
                 <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
             </div>
           </label>
-          <span class="nav-logo">REDE HOSPITAL SAMAR</span>
         </div>
-
-        <button class="nav-toggle" aria-label="abrir menu de navegação">
-            <span class="hamburger"></span>
-        </button>
-
-        <ul class="nav-menu">
-            <li><a href="{{ url_for('home.home_view') }}">Início</a></li>
-            <li><a href="{{ url_for('pesquisa_login.login_pesquisa_view') }}">Pesquisa</a></li>
-            <li class="nav-item dropdown">
-              <a href="#" class="nav-link dropdown-toggle">Informativos</a>
-              <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="{{ url_for('comunicados.view_comunicados') }}">Comunicados</a></li>
-                <li><a class="dropdown-item" href="{{ url_for('beneficios.beneficios_page') }}">Benefícios</a></li>
-              </ul>
-            </li>
-            <li class="nav-item dropdown">
-              <a href="{{ url_for('admin.admin_panel') }}" class="nav-link dropdown-toggle active">Administrador</a>
-              <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="{{ url_for('analitico.analitico_view') }}">Analítico</a></li>
-                <li><a class="dropdown-item" href="{{ url_for('novo_colaborador.novo_colaborador_view') }}">Novo Colaborador</a></li>
-                <li><a class="dropdown-item" href="{{ url_for('novo_comunicado.novo_comunicado_view') }}">Novo Comunicado</a></li>
-                <li><a class="dropdown-item" href="{{ url_for('admin_feriados.gerenciar_feriados') }}">Gerenciar Feriados</a></li>
-              </ul>
-            </li>
-            <li><a href="{{ url_for('logout.logout_view') }}">Sair</a></li>
-        </ul>
+        <div class="navbar-center">
+          {% if session.get('colaborador_id') %}
+            <span class="header-user-greeting">Olá, {{ session.get('colaborador_nome', 'Colaborador') }}</span>
+          {% endif %}
+        </div>
+        <div class="navbar-right">
+          <button class="nav-toggle" aria-label="abrir menu de navegação">
+              <span class="hamburger"></span>
+          </button>
+          <ul class="nav-menu">
+              <li><a href="{{ url_for('home.home_view') }}">Início</a></li>
+              <li><a href="{{ url_for('pesquisas_lista.lista_pesquisas_view') }}">Pesquisa</a></li>
+              <li class="nav-item dropdown">
+                <a href="#" class="nav-link dropdown-toggle">Informativos</a>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="{{ url_for('comunicados.view_comunicados') }}">Comunicados</a></li>
+                  <li><a class="dropdown-item" href="{{ url_for('beneficios.beneficios_page') }}">Benefícios</a></li>
+                </ul>
+              </li>
+              {% if session.get('admin_logged_in') %}
+                <li class="nav-item dropdown">
+                  <a href="{{ url_for('admin.admin_panel') }}" class="nav-link dropdown-toggle active">Administrador</a>
+                  <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="{{ url_for('analitico.analitico_view') }}">Analítico</a></li>
+                    <li><a class="dropdown-item" href="{{ url_for('novo_colaborador.novo_colaborador_view') }}">Novo Colaborador</a></li>
+                    <li><a class="dropdown-item" href="{{ url_for('novo_comunicado.novo_comunicado_view') }}">Novo Comunicado</a></li>
+                    <li><a class="dropdown-item" href="{{ url_for('admin_feriados.gerenciar_feriados') }}">Gerenciar Feriados</a></li>
+                    <li><a class="dropdown-item" href="{{ url_for('admin_surveys.gerenciar_pesquisas_view') }}">Gerenciar Pesquisas</a></li>
+                  </ul>
+                </li>
+              {% else %}
+                <li><a href="{{ url_for('adminLogin.admin_login') }}">Administrador</a></li>
+              {% endif %}
+              {% if session.get('colaborador_id') or session.get('admin_logged_in') %}
+                <li><a href="{{ url_for('logout.logout_view') }}" class="btn-logout">Sair</a></li>
+              {% endif %}
+          </ul>
+        </div>
       </div>
     </nav>
   </header>
@@ -76,6 +89,39 @@
       <section class="page-header">
         <h1 class="page-title">Visão Analítica da Pesquisa</h1>
         <p class="page-subtitle">Resultados consolidados das respostas dos colaboradores.</p>
+      </section>
+
+      <section class="filter-section">
+        <form method="GET" action="{{ url_for('analitico.analitico_view') }}" class="filter-form">
+            <div class="filter-group">
+                <select name="survey_id" onchange="this.form.submit()" aria-label="Selecionar Pesquisa">
+                    {% for survey in surveys %}
+                        <option value="{{ survey.id }}" {% if survey.id == selected_survey_id %}selected{% endif %}>{{ survey.name }}</option>
+                    {% endfor %}
+                </select>
+                <select name="unidade" onchange="this.form.submit()" aria-label="Selecionar Unidade">
+                    <option value="">Todas as Unidades</option>
+                    {% for unidade in unidades %}
+                        <option value="{{ unidade }}" {% if unidade == selected_unidade %}selected{% endif %}>{{ unidade }}</option>
+                    {% endfor %}
+                </select>
+                <select name="setor" onchange="this.form.submit()" aria-label="Selecionar Setor">
+                    <option value="">Todos os Setores</option>
+                    {% for setor in setores %}
+                        <option value="{{ setor }}" {% if setor == selected_setor %}selected{% endif %}>{{ setor }}</option>
+                    {% endfor %}
+                </select>
+                <select name="cargo" onchange="this.form.submit()" aria-label="Selecionar Cargo">
+                    <option value="">Todos os Cargos</option>
+                    {% for cargo in cargos %}
+                        <option value="{{ cargo }}" {% if cargo == selected_cargo %}selected{% endif %}>{{ cargo }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="filter-actions">
+                <a href="{{ url_for('analitico.analitico_view') }}" class="btn-secondary">Limpar Filtros</a>
+            </div>
+        </form>
       </section>
 
       <section class="indicators-section">
@@ -145,14 +191,18 @@
         </div>
       {% else %}
         <div class="content-card no-data">
-            <p>Nenhum dado disponível para exibição no momento.</p>
+            <div class="no-data-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+            </div>
+            <h4>Dados Insuficientes para Exibição</h4>
+            <p>
+                Os resultados para este filtro não foram exibidos para proteger a confidencialidade dos colaboradores.
+                É necessário um mínimo de <strong>3 respostas</strong> para que os dados sejam mostrados.
+            </p>
         </div>
-      {% endif %}
+        {% endif %}
     </div>
   </main>
-
-  <footer class="site-footer">
-    </footer>
 
   <script>
     function copyQuestion(button) {
@@ -164,63 +214,77 @@
         .catch(() => alert('Falha ao copiar.'));
     }
 
-    // SCRIPT COMPLETO DO GRÁFICO RESTAURADO
     document.addEventListener('DOMContentLoaded', function() {
+        // ATUALIZADO: Mapa de cores completo com todas as opções
         const colorMap = {
-            'muito satisfeito': '#0d6efd', 'satisfeito': '#79aeff', 'neutro': '#6c757d',
-            'insatisfeito': '#ffc107', 'muito insatisfeito': '#dc3545',
-            'concordo totalmente': '#0d6efd', 'concordo': '#0d6efd', 'concordo em parte': '#79aeff',
-            'concordo parcialmen': '#79aeff', 'concordo em part': '#79aeff',
-            'discordo parcialmente': '#ffc107', 'discordo parcialmen': '#ffc107',
-            'discordo': '#dc3545', 'discordo totalmente': '#dc3545',
-            'diariamente': '#198754', 'semanalmente': '#20c997', 'mensalmente': '#0dcaf0',
-            'semestralmente': '#6f42c1', 'semestralment': '#6f42c1', 'raramente': '#fd7e14',
-            'nunca': '#d63384', 'positivas': '#198754', 'negativas': '#dc3545',
-            'não sei opinar': '#0dcaf0', 'neutras': '#6c757d',
-            'sim, muitas melhorias': '#0d6efd', 'sim, algumas melhorias': '#79aeff',
-            'não percebo melhorias': '#6c757d', 'as mudanças trouxeram mais problemas': '#dc3545',
-            'salário e benefícios não atrativos': '#d63384', 'falta de crescimento profissional': '#fd7e14',
-            'ambiente de trabalho estressante': '#ffc107',
-            'relacionamento insatisfatório com a liderança': '#6f42c1', 'outros motivos': '#adb5bd',
-            'sim, sempre clara e transparente': '#198754', 'em parte, algumas informações foram corretas': '#79aeff',
-            'não, a comunicação foi insuficiente': '#ffc107', 'não houve comunicação adequada': '#dc3545',
-            'sim, totalmente': '#0d6efd', 'em parte': '#79aeff',
-            'não, sinto falta de informações': '#ffc107', 'não tenho conhecimento sobre os objetivos': '#6c757d',
-            'não, sinto falta de treinamento': '#fd7e14', 'não recebi nenhum treinamento': '#dc3545',
-            'ótimo': '#0d6efd', 'bom': '#79aeff', 'regular': '#ffc107', 'ruim': '#dc3545',
-            'sim': '#198754', 'não': '#dc3545', 'menos de 12 meses': '#198754',
-            'de 1 ano a 2 anos': '#0dcaf0', 'de 3 anos a 4 anos': '#6f42c1',
-            'de 3 anos a 4 ano:': '#6f42c1', 'acima de 5 anos': '#fd7e14'
+            // Escala de Satisfação (Azul para Vermelho)
+            'muito satisfeito': '#2563eb',
+            'satisfeito': '#3b82f6',
+            'neutro': '#9ca3af',
+            'insatisfeito': '#f97316',
+            'muito insatisfeito': '#ef4444',
+
+            // Escala de Concordância (Azul para Vermelho)
+            'concordo totalmente': '#2563eb',
+            'concordo': '#3b82f6',
+            'concordo em parte': '#60a5fa',
+            'concordo parcialmente': '#60a5fa', // Variação
+            'discordo parcialmente': '#f97316',
+            'discordo': '#ef4444',
+            'discordo totalmente': '#dc2626',
+
+            // Escala de Frequência (Verde para Laranja)
+            'diariamente': '#16a34a',
+            'semanalmente': '#22c55e',
+            'mensalmente': '#84cc16',
+            'raramente': '#f59e0b',
+            'semestralmente': '#f97316',
+            'nunca': '#ef4444',
+
+            // Escala de Qualidade (Azul para Vermelho)
+            'ótimo': '#2563eb',
+            'bom': '#3b82f6',
+            'regular': '#f97316',
+            'ruim': '#ef4444',
+
+            // Sim/Não
+            'sim': '#16a34a',
+            'não': '#ef4444',
+
+            // Respostas Específicas
+            'positivas': '#16a34a',
+            'negativas': '#ef4444',
+            'neutras': '#9ca3af',
+            'não sei opinar': '#64748b',
+            'sim, muitas melhorias': '#16a34a',
+            'sim, algumas melhorias': '#22c55e',
+            'não percebo melhorias': '#f97316',
+            'as mudanças trouxeram mais problemas': '#ef4444',
+            'sim, sempre clara e transparente': '#16a34a',
+            'em parte, algumas informações foram confusas': '#f59e0b',
+            'não, a comunicação foi insuficiente': '#ef4444',
+            'não houve comunicação adequada': '#dc2626',
+            'sim, totalmente': '#16a34a',
+            'em parte': '#f59e0b',
+            'não, sinto falta de informações': '#ef4444',
+            'não tenho conhecimento sobre os objetivos': '#dc2626',
+            'não, sinto falta de treinamento': '#f97316',
+            'não recebi nenhum treinamento': '#ef4444',
+
+            // Tempo de Empresa
+            'menos de 12 meses': '#22c55e',
+            'de 1 ano a 2 anos': '#3b82f6',
+            'de 3 anos a 4 anos': '#8b5cf6',
+            'acima de 5 anos': '#ec4899',
+
+            // Motivos de Saída
+            'salário e benefícios não atrativos': '#ef4444',
+            'falta de crescimento profissional': '#f97316',
+            'ambiente de trabalho estressante': '#eab308',
+            'relacionamento insatisfatório com a liderança': '#8b5cf6',
+            'outros motivos': '#64748b'
         };
-        const defaultColor = '#adb5bd';
-
-        const centerTextPlugin = {
-          id: 'centerText',
-          afterDraw: (chart) => {
-            if (chart.config.type !== 'doughnut' || !chart.canvas.dataset.count || chart.canvas.dataset.count === '0') return;
-
-            let ctx = chart.ctx;
-            const totalResponses = chart.canvas.closest('.question-card').dataset.count;
-            const textColor = getComputedStyle(document.documentElement).getPropertyValue('--text-color').trim();
-
-            ctx.save();
-            const x = (chart.chartArea.left + chart.chartArea.right) / 2;
-            const y = (chart.chartArea.top + chart.chartArea.bottom) / 2;
-
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-
-            ctx.font = 'bold 2rem Inter';
-            ctx.fillStyle = textColor;
-            ctx.fillText(totalResponses, x, y - 10);
-
-            ctx.font = 'normal 0.9rem Inter';
-            ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--text-color-secondary').trim();
-            ctx.fillText('respostas', x, y + 20);
-
-            ctx.restore();
-          }
-        };
+        const defaultColor = '#9ca3af';
 
         document.querySelectorAll('.chart-canvas').forEach(canvas => {
             try {
@@ -231,49 +295,49 @@
                 });
 
                 chartData.datasets[0].backgroundColor = backgroundColors;
-                chartData.datasets[0].borderColor = getComputedStyle(document.documentElement).getPropertyValue('--bg-card').trim();
-                chartData.datasets[0].borderWidth = 3;
 
                 new Chart(canvas, {
-                    type: 'doughnut',
+                    type: 'bar',
                     data: chartData,
                     options: {
+                        indexAxis: 'y',
                         responsive: true,
                         maintainAspectRatio: false,
-                        cutout: '70%',
                         plugins: {
-                            legend: {
-                                display: true,
-                                position: 'right',
-                                labels: {
-                                    boxWidth: 12,
-                                    padding: 20,
-                                    font: { size: 12, family: 'Inter' },
-                                    color: getComputedStyle(document.documentElement).getPropertyValue('--text-color-secondary').trim()
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return ` ${context.parsed.x} respostas`;
+                                    }
                                 }
-                            },
-                            tooltip: {}
+                            }
+                        },
+                        scales: {
+                            x: {
+                                beginAtZero: true,
+                                ticks: {
+                                    stepSize: 1,
+                                    callback: function(value) { if (Number.isInteger(value)) { return value; } }
+                                }
+                            }
                         }
-                    },
-                    plugins: [centerTextPlugin]
+                    }
                 });
             } catch (e) {
                 console.error("Erro ao renderizar o gráfico:", e);
             }
         });
-    });
-  </script>
-  <script src="{{ url_for('views.static', filename='home/theme-toggle.js') }}" defer></script>
 
-  <script>
-    const navToggle = document.querySelector('.nav-toggle');
-    const navMenu = document.querySelector('.nav-menu');
-    if (navToggle && navMenu) {
-      navToggle.addEventListener('click', () => {
-          navMenu.classList.toggle('nav-menu--visible');
-          navToggle.classList.toggle('is-active');
-      });
-    }
+        const navToggle = document.querySelector('.nav-toggle');
+        const navMenu = document.querySelector('.nav-menu');
+        if (navToggle && navMenu) {
+          navToggle.addEventListener('click', () => {
+              navMenu.classList.toggle('nav-menu--visible');
+              navToggle.classList.toggle('is-active');
+          });
+        }
+    });
   </script>
 </body>
 </html>

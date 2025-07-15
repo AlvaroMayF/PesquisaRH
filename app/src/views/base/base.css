@@ -12,6 +12,8 @@
   --text-color: #212529;
   --text-color-secondary: #6c757d;
   --border-color: #dee2e6;
+  --danger: #dc3545; /* Adicionado para botões de perigo */
+  --danger-hover: #c82333;
 }
 html.dark {
   --accent: #0a84ff;
@@ -21,6 +23,8 @@ html.dark {
   --text-color: #c9d1d9;
   --text-color-secondary: #8b949e;
   --border-color: #30363d;
+  --danger: #e5484d;
+  --danger-hover: #f16267;
 }
 
 /* ========== RESET E NOVA FONTE ========= */
@@ -29,87 +33,167 @@ html.dark {
   margin: 0;
   padding: 0;
 }
+
+/* ATUALIZADO: Regra aplicada a ambos para máxima eficácia */
+html,
 body {
-  font-family: 'Inter', sans-serif;
+  overflow-x: hidden;
+}
+
+body {
+  font-family: 'Source Sans 3', sans-serif;
   background: var(--bg-light);
   color: var(--text-color);
   line-height: 1.6;
   transition: background 0.3s, color 0.3s;
 }
 
-/* ========== HEADER / NAV (Com transições) ========= */
+/* ========== HEADER / NAV (Estilo refinado e moderno) ========= */
 header {
   position: sticky;
   top: 0;
   z-index: 1000;
   background: var(--bg-card);
   border-bottom: 1px solid var(--border-color);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.02);
-  transition: background 0.3s, border-color 0.3s;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.03), 0 1px 6px rgba(0,0,0,0.02);
+  transition: background 0.3s, border-color 0.3s, box-shadow 0.3s;
 }
+
 .nav-container {
   max-width: var(--container-max-width);
   margin: 0 auto;
-  padding: 0.75rem 2rem;
+  padding: 0.5rem 2rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 1.5rem;
 }
+
+/* Estrutura de 3 colunas */
+.navbar-left, .navbar-right {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.navbar-left {
+  justify-content: flex-start;
+  gap: 1.5rem;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+.navbar-right {
+  justify-content: flex-end;
+}
+
 .navbar-center {
   display: flex;
   align-items: center;
   gap: 1.5rem;
+  flex-shrink: 0;
 }
-.navbar-brand-logo {
-  height: 40px;
-  width: auto;
-}
+
 .nav-logo {
   font-size: 1.1rem;
   font-weight: 600;
   color: var(--accent);
-  user-select: none;
 }
+
+/* Links de navegação */
 .nav-menu {
   display: flex;
-  gap: 1rem;
+  gap: 0.5rem;
   list-style: none;
   align-items: center;
 }
+
 .nav-menu a {
   text-decoration: none;
   color: var(--text-color-secondary);
   font-weight: 500;
-  padding: 0.5rem 1rem;
+  padding: 0.75rem 1rem;
   border-radius: 8px;
-  transition: background 0.2s, color 0.2s;
+  transition: color 0.2s, background-color 0.2s;
+  white-space: nowrap;
+  position: relative;
+  border: 2px solid transparent;
 }
+
+/* Efeito hover sutil, sem fundo */
 .nav-menu a:hover,
 .nav-menu a:focus {
   color: var(--text-color);
-  background: rgba(128, 128, 128, 0.1);
+  background-color: transparent;
   outline: none;
 }
+
+/* Link Ativo com indicador inferior */
 .nav-menu a.active {
-  background: var(--accent);
-  color: #fff;
-}
-html.dark .nav-menu a.active {
-    color: var(--bg-card);
+  color: var(--accent);
+  font-weight: 600;
+  background-color: transparent;
 }
 
+.nav-menu a.active::after {
+  content: '';
+  position: absolute;
+  bottom: 6px;
+  left: 1rem;
+  right: 1rem;
+  height: 2px;
+  background-color: var(--accent);
+  border-radius: 2px;
+}
+
+/* Saudação ao usuário mais discreta */
+.header-user-greeting {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-color-secondary);
+  background-color: color-mix(in srgb, var(--border-color) 50%, transparent);
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  white-space: nowrap;
+  transition: background-color 0.2s;
+}
+
+/* Estilo específico para o botão de SAIR dentro da navbar */
+.nav-menu .btn-logout {
+  color: var(--text-color-secondary);
+  background-color: transparent;
+  border: 2px solid var(--border-color);
+  padding: calc(0.75rem - 2px) calc(1rem - 2px);
+}
+
+.nav-menu .btn-logout:hover {
+  color: var(--text-color);
+  background-color: color-mix(in srgb, var(--border-color) 50%, transparent);
+  border-color: var(--text-color-secondary);
+}
+
+/* Em telas pequenas, esconde a saudação */
+@media (max-width: 992px) {
+  .header-user-greeting {
+    display: none;
+  }
+}
 
 /* ========== DROPDOWN (Estilo Padrão) ========= */
 .nav-item.dropdown {
   position: relative;
 }
+
+/* Seta do dropdown, SEM ANIMAÇÃO */
 .nav-link.dropdown-toggle::after {
   content: ' ▾';
   font-size: 0.8em;
   display: inline-block;
   margin-left: 0.25rem;
-  transition: transform 0.2s ease-in-out;
 }
+
 .dropdown-menu {
   position: absolute;
   top: 100%;
@@ -134,9 +218,6 @@ html.dark .nav-menu a.active {
   visibility: visible;
   transform: translateX(-50%) translateY(0);
 }
-.nav-item.dropdown:hover .dropdown-toggle::after {
-  transform: rotate(180deg);
-}
 .dropdown-item {
   display: block;
   padding: 0.75rem 1.5rem;
@@ -151,7 +232,6 @@ html.dark .nav-menu a.active {
   color: var(--text-color);
   outline: none;
 }
-
 
 /* ========== BOTÃO DE TEMA ========== */
 .theme-switch {
@@ -260,221 +340,6 @@ main {
 a:focus, button:focus {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
-}
-
-/* ========== CAROUSEL ========= */
-.carousel-card {
-  overflow: hidden;
-  height: auto;
-  margin-bottom: var(--section-gap);
-  border-radius: 16px;
-  border: 1px solid var(--border-color);
-}
-.carousel {
-  position: relative;
-  height: 350px;
-}
-.carousel-track {
-  display: flex;
-  transition: transform 0.5s ease-in-out;
-  height: 100%;
-}
-.carousel-slide {
-  flex: 0 0 100%;
-  position: relative;
-  height: 100%;
-}
-.carousel-slide img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-.carousel-caption {
-  display: none;
-}
-.carousel-button {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background: rgba(0,0,0,0.2);
-  border: 2px solid rgba(255,255,255,0.8);
-  color: #fff;
-  font-size: 1.5rem;
-  width: 2.8rem; height: 2.8rem;
-  border-radius: 50%;
-  cursor: pointer;
-  transition: background 0.2s, border 0.2s;
-  z-index: 10;
-}
-.carousel-button:hover, .carousel-button:focus {
-  background: rgba(0,0,0,0.4);
-  border-color: #fff;
-  outline: none;
-}
-.carousel-button.prev { left: 1rem; }
-.carousel-button.next { right: 1rem; }
-.carousel-indicators {
-  position: absolute;
-  bottom: 1rem;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  gap: 8px;
-  z-index: 10;
-}
-.indicator {
-  width: 10px; height: 10px;
-  border: none; border-radius: 50%;
-  background: rgba(255,255,255,0.6);
-  cursor: pointer;
-  transition: background 0.2s;
-}
-.indicator.active, .indicator:focus {
-  background: #fff;
-  outline: 2px solid var(--accent);
-}
-
-/* ========== QUICK ACCESS (Com animações de hover) ========= */
-.quick-access-section .content-card {
-  padding: 1rem var(--card-padding) var(--card-padding);
-}
-.quick-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px,1fr));
-  gap: var(--section-gap);
-  justify-content: center;
-}
-.grid-item {
-  text-decoration: none;
-  color: inherit;
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  border-radius: 12px;
-  display: flex; flex-direction: column;
-  overflow: hidden;
-  box-shadow: 0 1px 2px 0 rgba(0,0,0,0.03);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-.grid-item:hover, .grid-item:focus-within {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 15px -3px rgba(0,0,0,0.07), 0 4px 6px -4px rgba(0,0,0,0.07);
-}
-.grid-item img {
-  width: 100%; height: 140px;
-  object-fit: cover;
-}
-.grid-item span {
-  margin: 0.75rem 1rem;
-  font-size: 1rem; font-weight: 600;
-  color: var(--text-color);
-  text-align: center;
-  flex-grow: 1;
-}
-
-/* ========== MURAL DE AVISOS ========== */
-.notice-board-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 1.5rem;
-}
-.notice-card {
-  background-color: var(--bg-card);
-  border: 1px solid var(--border-color);
-  border-radius: 12px;
-  padding: var(--card-padding);
-  display: flex;
-  gap: 1rem;
-  align-items: flex-start;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-.notice-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 15px -3px rgba(0,0,0,0.07), 0 4px 6px -4px rgba(0,0,0,0.07);
-}
-.notice-card-icon {
-  color: var(--accent);
-  flex-shrink: 0;
-  background-color: color-mix(in srgb, var(--accent) 15%, transparent);
-  border-radius: 8px;
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.notice-card-content {
-  flex-grow: 1;
-}
-.notice-card-title {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: var(--text-color);
-  margin-bottom: 0.25rem;
-}
-.notice-card-body {
-  font-size: 0.95rem;
-  color: var(--text-color-secondary);
-  line-height: 1.5;
-}
-.notice-card-link {
-  display: inline-block;
-  margin-top: 0.75rem;
-  font-size: 0.95rem;
-  font-weight: 500;
-  color: var(--accent);
-  text-decoration: none;
-}
-.notice-card-link:hover {
-  text-decoration: underline;
-}
-
-/* ========== SEÇÃO DE ANIVERSARIANTES ========== */
-.birthday-section .no-birthdays {
-  text-align: center;
-  color: var(--text-color-secondary);
-  background-color: var(--bg-card);
-  padding: 2rem;
-  border-radius: 16px;
-  border: 1px solid var(--border-color);
-  font-style: italic;
-}
-.birthday-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 1rem;
-}
-.birthday-card {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  background-color: var(--bg-card);
-  padding: 1rem 1.5rem;
-  border-radius: 12px;
-  border: 1px solid var(--border-color);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-.birthday-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-}
-html.dark .birthday-card:hover {
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-}
-.birthday-icon {
-  flex-shrink: 0;
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: color-mix(in srgb, var(--accent) 15%, transparent);
-  border-radius: 50%;
-  color: var(--accent);
-}
-.birthday-name {
-  font-weight: 500;
-  font-size: 1.05rem;
-  color: var(--text-color);
 }
 
 /* ========== ANIMAÇÃO DE FADE-IN AO ROLAR ========= */
@@ -652,14 +517,8 @@ html.dark .birthday-card:hover {
     .nav-link.dropdown-toggle::after {
         display: none;
     }
-    .main {
+    main {
         padding: 0 1rem;
-    }
-    .notice-board-grid,
-    .quick-grid,
-    .birthday-grid,
-    .footer-main {
-        grid-template-columns: 1fr;
     }
     .footer-bottom {
         flex-direction: column-reverse;
@@ -673,18 +532,16 @@ html.dark .birthday-card:hover {
   flex-direction: column;
   min-height: 100vh;
 }
-/* base.css -> regra NOVA e CORRIGIDA */
 .login-page-main {
-  flex-grow: 1;            /* Permite que o main ocupe o espaço restante */
+  flex-grow: 1;
   display: flex;
-  align-items: center;     /* Centraliza o card de login verticalmente */
-  justify-content: center; /* Centraliza o card de login horizontalmente */
-  padding: 0 1rem;         /* Remove o padding vertical que causava o scroll */
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
 }
 .login-page-body .site-footer {
   margin-top: auto;
 }
-/* Adicionar ao final de app/src/views/base/base.css */
 
 /* ========== BOTÕES GLOBAIS ========== */
 .btn {
@@ -722,7 +579,6 @@ html.dark .btn-primary {
 .btn-danger:hover {
   background-color: var(--danger-hover);
 }
-/* Adicionar ao final de app/src/views/base/base.css */
 
 /* ========== MENSAGENS DE FEEDBACK (FLASH) ========== */
 .flash-messages-container {

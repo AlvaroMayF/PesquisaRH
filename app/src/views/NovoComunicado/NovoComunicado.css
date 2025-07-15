@@ -1,12 +1,10 @@
 /* Estilos específicos para a página 'Novo Comunicado' */
 
-/* A classe .login-page-body do base.css cuidará do layout principal */
-
 .page-container {
   max-width: 900px;
   width: 100%;
   margin: auto;
-  padding: 2rem 0; /* Adiciona espaçamento vertical */
+  padding: 2rem 0;
 }
 
 .page-header {
@@ -26,29 +24,7 @@
   color: var(--text-color-secondary);
 }
 
-/* Mensagens de feedback (flash) */
-.flash-messages-container {
-  margin-bottom: 1.5rem;
-}
-.alert {
-  padding: 1rem;
-  border-radius: 8px;
-  border: 1px solid transparent;
-  text-align: center;
-  font-weight: 500;
-}
-.alert-success {
-  color: #0f5132; background-color: #d1e7dd; border-color: #badbcc;
-}
-.alert-danger {
-  color: #842029; background-color: #f8d7da; border-color: #f5c2c7;
-}
-html.dark .alert-success {
-  color: #a3cfbb; background-color: #0f5132; border-color: #146c43;
-}
-html.dark .alert-danger {
-  color: #f1b0b7; background-color: #842029; border-color: #a52834;
-}
+/* Estilos de .alert removidos para herdar do base.css */
 
 /* Preview do Comunicado */
 .comunicado-preview-card {
@@ -108,7 +84,8 @@ html.dark .alert-danger {
   color: var(--text-color-secondary); margin: 0;
 }
 .form-group-categoria select {
-  font-family: 'Inter', sans-serif; font-weight: 600; font-size: 0.8rem;
+  font-family: inherit; /* Alterado para herdar a fonte */
+  font-weight: 600; font-size: 0.8rem;
   padding: 0.3rem 0.6rem; border-radius: 6px; border: 1px solid var(--border-color);
   background: var(--bg-card); color: var(--accent);
 }
@@ -122,13 +99,15 @@ html.dark .form-group-categoria select {
   width: 100%; border: none; background: transparent; padding: 0 0 1rem 0;
   font-size: 2rem; font-weight: 700; color: var(--text-color);
   border-bottom: 2px solid transparent; transition: border-color 0.3s;
+  font-family: inherit; /* Garantindo que use a fonte do body */
 }
 .comunicado-title-input:focus {
   outline: none; border-bottom-color: var(--accent);
 }
 .comunicado-content-textarea {
   width: 100%; border: none; background: transparent; padding: 1rem 0;
-  font-size: 1rem; font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  font-family: inherit; /* Alterado para herdar a fonte */
   color: var(--text-color-secondary); line-height: 1.7;
   resize: vertical; min-height: 200px;
 }

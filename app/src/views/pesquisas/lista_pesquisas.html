@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pesquisas Disponíveis | Portal RH</title>
+
+  <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="{{ url_for('views.static', filename='base/base.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('views.static', filename='pesquisas/lista_pesquisa.css') }}" />
+</head>
+<body>
+
+  <header>
+    <nav class="navbar">
+      <div class="nav-container">
+        <div class="navbar-left">
+          <span class="nav-logo">REDE HOSPITAL SAMAR</span>
+          <label class="theme-switch" title="Alternar tema claro/escuro">
+            <input type="checkbox" id="theme-toggle" class="theme-checkbox" aria-label="Alternar tema claro/escuro" />
+            <div class="slider">
+                <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+            </div>
+          </label>
+        </div>
+        <div class="navbar-center">
+          {% if session.get('colaborador_id') %}
+            <span class="header-user-greeting">Olá, {{ session.get('colaborador_nome', 'Colaborador') }}</span>
+          {% endif %}
+        </div>
+        <div class="navbar-right">
+          <button class="nav-toggle" aria-label="abrir menu de navegação">
+              <span class="hamburger"></span>
+          </button>
+          <ul class="nav-menu">
+            <li><a href="{{ url_for('home.home_view') }}">Início</a></li>
+            <li><a href="{{ url_for('pesquisas_lista.lista_pesquisas_view') }}" class="active">Pesquisa</a></li>
+            <li class="nav-item dropdown">
+              <a href="#" class="nav-link dropdown-toggle">Informativos</a>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="{{ url_for('comunicados.view_comunicados') }}">Comunicados</a></li>
+                <li><a class="dropdown-item" href="{{ url_for('beneficios.beneficios_page') }}">Benefícios</a></li>
+              </ul>
+            </li>
+
+            {% if session.get('admin_logged_in') %}
+              <li class="nav-item dropdown">
+                <a href="{{ url_for('admin.admin_panel') }}" class="nav-link dropdown-toggle">Administrador</a>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="{{ url_for('analitico.analitico_view') }}">Analítico</a></li>
+                  <li><a class="dropdown-item" href="{{ url_for('novo_colaborador.novo_colaborador_view') }}">Novo Colaborador</a></li>
+                  <li><a class="dropdown-item" href="{{ url_for('novo_comunicado.novo_comunicado_view') }}">Novo Comunicado</a></li>
+                  <li><a class="dropdown-item" href="{{ url_for('admin_feriados.gerenciar_feriados') }}">Gerenciar Feriados</a></li>
+                  <li><a class="dropdown-item" href="{{ url_for('admin_surveys.gerenciar_pesquisas_view') }}">Gerenciar Pesquisas</a></li>
+                </ul>
+              </li>
+            {% else %}
+              <li><a href="{{ url_for('adminLogin.admin_login') }}">Administrador</a></li>
+            {% endif %}
+
+            {% if session.get('colaborador_id') or session.get('admin_logged_in') %}
+              <li><a href="{{ url_for('logout.logout_view') }}" class="btn-logout">Sair</a></li>
+            {% endif %}
+          </ul>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main class="survey-list-container">
+    <h1 class="section-title">Pesquisas Disponíveis</h1>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash-messages-container">
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }}">{{ message }}</div>
+        {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    {% if surveys %}
+      <div class="survey-grid">
+        {% for survey in surveys %}
+          <div class="survey-card-detailed">
+            <div class="survey-card-body">
+              <div class="survey-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+              </div>
+              <div class="survey-content">
+                <div class="survey-card-header">
+                  <h3>{{ survey.name }}</h3>
+                  {% if survey.status == 'Respondido' %}
+                    <span class="status-badge responded">✓ Respondido</span>
+                  {% endif %}
+                </div>
+                <p>{{ survey.description or 'Participe e compartilhe sua opinião.' }}</p>
+
+                {% if survey.status == 'Respondido' %}
+                  <a href="#" class="btn btn-disabled btn-responder" disabled>Pesquisa Concluída</a>
+                {% else %}
+                  <a href="{{ url_for('pesquisa.pesquisa_view', survey_id=survey.id) }}" class="btn btn-primary btn-responder">Responder Pesquisa</a>
+                {% endif %}
+              </div>
+            </div>
+            {% if survey.end_date %}
+            <div class="survey-footer">
+              <span>Disponível até: {{ survey.end_date.strftime('%d de %B de %Y') }}</span>
+            </div>
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="content-card" style="text-align: center;">
+        <p>Nenhuma pesquisa disponível no momento. Volte mais tarde!</p>
+      </div>
+    {% endif %}
+  </main>
+
+  <script src="{{ url_for('views.static', filename='home/theme-toggle.js') }}" defer></script>
+  <script>
+      const navToggle = document.querySelector('.nav-toggle');
+      const navMenu = document.querySelector('.nav-menu');
+      if (navToggle && navMenu) {
+        navToggle.addEventListener('click', () => {
+            navMenu.classList.toggle('nav-menu--visible');
+            navToggle.classList.toggle('is-active');
+        });
+      }
+  </script>
+
+</body>
+</html>
