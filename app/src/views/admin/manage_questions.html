@@ -12,6 +12,9 @@
 
     <link rel="stylesheet" href="{{ url_for('views.static', filename='base/base.css') }}" />
     <link rel="stylesheet" href="{{ url_for('views.static', filename='admin/manage_questions.css') }}" />
+
+    <!-- Biblioteca SortableJS para drag-and-drop -->
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
 </head>
 <body>
     <header>
@@ -76,7 +79,7 @@
                     </div>
                     <div class="page-header-text">
                         <h1 class="page-title">{{ survey.name }}</h1>
-                        <p class="page-subtitle">Clique em uma pergunta para editar ou adicione novas.</p>
+                        <p class="page-subtitle">Clique em uma pergunta para editar ou arraste para reordenar.</p>
                     </div>
                 </div>
                 <div class="header-actions">
@@ -98,10 +101,13 @@
                 {% for section_title, questions_in_section in grouped_questions.items() %}
                     <section class="survey-section">
                         <h3 class="section-header">{{ section_title }}</h3>
-                        <div class="section-questions-list">
+                        <div id="section-{{ loop.index }}" class="section-questions-list">
                             {% for question in questions_in_section %}
                                 <div class="question-card" data-question-id="{{ question.id }}" tabindex="0">
                                     <div class="view-panel">
+                                        <div class="question-drag-handle" title="Arrastar para reordenar">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="12" r="1"></circle><circle cx="9" cy="5" r="1"></circle><circle cx="9" cy="19" r="1"></circle><circle cx="15" cy="12" r="1"></circle><circle cx="15" cy="5" r="1"></circle><circle cx="15" cy="19" r="1"></circle></svg>
+                                        </div>
                                         <div class="question-summary">
                                             <p class="question-view-text">{{ question.question_text }}</p>
                                             <div class="options-preview">
@@ -264,6 +270,10 @@
                 const target = event.target;
                 const card = target.closest('.question-card');
                 if (!card || card.closest('.is-locked')) return;
+
+                // CORRIGIDO: Não entra em modo de edição se o clique for na "pega" de arrastar
+                if (target.closest('.question-drag-handle')) return;
+
                 if (card !== activeCard && !target.closest('.edit-panel')) {
                     closeActiveCard();
                     card.classList.add('is-editing');
@@ -275,17 +285,78 @@
 
             questionsList.addEventListener('submit', async (event) => {
                 if (!event.target.classList.contains('question-edit-form')) return;
+
                 event.preventDefault();
-                // ... (lógica de salvar pergunta existente)
+                const form = event.target;
+                const card = form.closest('.question-card');
+                const questionId = card.dataset.questionId;
+                const saveButton = form.querySelector('button[type="submit"]');
+                const originalButtonText = saveButton.innerHTML;
+
+                saveButton.innerHTML = 'Salvando...';
+                saveButton.disabled = true;
+
+                const formData = {
+                    question_text: form.querySelector('textarea[name="question_text"]').value,
+                    section_title: form.querySelector('input[name="section_title"]').value,
+                    question_type: form.querySelector('select[name="question_type"]').value
+                };
+
+                try {
+                    const response = await fetch(`/admin/perguntas/${questionId}/update`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(formData)
+                    });
+                    const result = await response.json();
+
+                    if (response.ok) {
+                        const viewText = card.querySelector('.question-view-text');
+                        viewText.textContent = formData.question_text;
+                        closeActiveCard();
+                        showToast('Pergunta salva com sucesso!', 'success');
+
+                        if (card.closest('.survey-section').querySelector('.section-header').textContent !== formData.section_title) {
+                            setTimeout(() => window.location.reload(), 1000);
+                        }
+                    } else {
+                        showToast(`Erro: ${result.message || 'Não foi possível salvar.'}`, 'error');
+                    }
+                } catch (error) {
+                    showToast('Ocorreu um erro de rede. Tente novamente.', 'error');
+                } finally {
+                    saveButton.innerHTML = originalButtonText;
+                    saveButton.disabled = false;
+                }
             });
 
             questionsList.addEventListener('click', (event) => {
                 const deleteButton = event.target.closest('.btn-delete');
                 if (!deleteButton) return;
-                // ... (lógica de excluir pergunta)
+
+                const { surveyId, questionId } = deleteButton.dataset;
+                const card = deleteButton.closest('.question-card');
+
+                if (confirm('Tem certeza que deseja excluir esta pergunta?')) {
+                    fetch(`/admin/pesquisas/${surveyId}/perguntas/${questionId}/deletar`, { method: 'POST' })
+                        .then(res => {
+                            if (res.ok) {
+                                card.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+                                card.style.opacity = '0';
+                                card.style.transform = 'scale(0.95)';
+                                setTimeout(() => {
+                                    card.remove();
+                                    showToast('Pergunta excluída.', 'info');
+                                }, 300);
+                            } else {
+                                showToast('Erro ao excluir a pergunta.', 'error');
+                            }
+                        })
+                        .catch(() => showToast('Erro de rede.', 'error'));
+                }
             });
 
-            // --- LÓGICA PARA EDIÇÃO DE OPÇÕES ---
+            // Lógica para Edição de Opções
             questionsList.addEventListener('change', (event) => {
                 if (event.target.name === 'question_type') {
                     const editorContainer = event.target.closest('.edit-panel').querySelector('.options-editor-container');
@@ -356,7 +427,7 @@
                 }
             });
 
-            // --- LÓGICA PARA MODAL DE ADICIONAR PERGUNTA ---
+            // Lógica para Modal de Adicionar Pergunta
             const addQuestionModal = document.getElementById('add-question-modal');
             const addQuestionBtn = document.getElementById('add-question-btn');
 
@@ -372,7 +443,7 @@
                 const openAddModal = () => addQuestionModal.classList.add('active');
                 const closeAddModal = () => {
                     addQuestionModal.classList.remove('active');
-                    addForm.reset(); // Limpa o formulário ao fechar
+                    addForm.reset();
                 };
 
                 addQuestionBtn.addEventListener('click', openAddModal);
@@ -424,6 +495,39 @@
                     navToggle.classList.toggle('is-active');
                 });
             }
+
+            // Lógica de Reordenação
+            const sortableLists = document.querySelectorAll('.section-questions-list');
+            sortableLists.forEach(list => {
+                if (!list.closest('.questions-list-container.is-locked')) {
+                    new Sortable(list, {
+                        animation: 150,
+                        handle: '.question-drag-handle',
+                        ghostClass: 'sortable-ghost',
+                        chosenClass: 'sortable-chosen',
+                        dragClass: 'sortable-drag',
+                        onEnd: function (evt) {
+                            const allCards = document.querySelectorAll('.question-card');
+                            const orderedIds = Array.from(allCards).map(card => card.dataset.questionId);
+
+                            fetch('/admin/questions/reorder', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ ordered_ids: orderedIds })
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    showToast('Ordem das perguntas salva!', 'success');
+                                } else {
+                                    showToast('Erro ao salvar a nova ordem.', 'error');
+                                }
+                            })
+                            .catch(() => showToast('Erro de rede ao salvar a ordem.', 'error'));
+                        },
+                    });
+                }
+            });
         });
     </script>
 </body>

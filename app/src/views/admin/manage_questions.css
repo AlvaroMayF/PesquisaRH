@@ -453,3 +453,26 @@
     background-color: color-mix(in srgb, var(--danger) 15%, transparent);
     color: var(--danger);
 }
+
+/* --- NOVOS ESTILOS PARA REORDENAÇÃO (DRAG-AND-DROP) --- */
+.question-drag-handle {
+    color: var(--text-color-secondary);
+    cursor: grab;
+    opacity: 0.4;
+    padding-top: 0.2rem;
+    align-self: flex-start;
+}
+.sortable-drag .question-drag-handle {
+    cursor: grabbing !important;
+}
+.sortable-ghost {
+    opacity: 0.4;
+    background: var(--highlight-bg);
+    border-style: dashed;
+}
+.sortable-chosen,
+.sortable-drag {
+    opacity: 1 !important;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    transform: scale(1.02);
+}
