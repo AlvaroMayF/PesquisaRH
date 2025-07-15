@@ -1,46 +1,35 @@
 # factory.py
 
 import os
-import sys
 from flask import Flask, send_from_directory, session, redirect, url_for, request
 from markupsafe import escape, Markup
 from datetime import timedelta
 
-# --- INÍCIO DA CORREÇÃO DE CAMINHOS ---
-# Define o caminho absoluto para a pasta 'app', onde este ficheiro está.
-app_dir = os.path.abspath(os.path.dirname(__file__))
-
-# Adiciona a pasta 'app' ao path do Python para garantir que os imports de 'src' funcionem
-if app_dir not in sys.path:
-    sys.path.insert(0, app_dir)
-# --- FIM DA CORREÇÃO DE CAMINHOS ---
-
-
 # Import dos blueprints de rota
-from src.routers.admin import admin
-from src.routers.adminLogin import adminLogin
-from src.routers.homeView import home as home_bp
-from src.routers.logout import logout_bp
-from src.routers.analitico import analitico_bp
-from src.routers.pesquisa import pesquisa_bp
-from src.routers.comunicados import comunicados_bp
-from src.routers.novo_colaborador import novo_colaborador_bp
-from src.routers.novo_comunicado import novo_comunicado_bp
-from src.routers.admin_feriados import admin_feriados_bp
-from src.routers.beneficios import beneficios_bp
-from src.routers.auth import auth_bp
-from src.routers.pesquisas_lista import pesquisas_lista_bp
-from src.routers.admin_surveys import admin_surveys_bp
+# O ponto (.) no início indica um import relativo, dentro do mesmo pacote 'app'
+from .src.routers.admin import admin
+from .src.routers.adminLogin import adminLogin
+from .src.routers.homeView import home as home_bp
+from .src.routers.logout import logout_bp
+from .src.routers.analitico import analitico_bp
+from .src.routers.pesquisa import pesquisa_bp
+from .src.routers.comunicados import comunicados_bp
+from .src.routers.novo_colaborador import novo_colaborador_bp
+from .src.routers.novo_comunicado import novo_comunicado_bp
+from .src.routers.admin_feriados import admin_feriados_bp
+from .src.routers.beneficios import beneficios_bp
+from .src.routers.auth import auth_bp
+from .src.routers.pesquisas_lista import pesquisas_lista_bp
+from .src.routers.admin_surveys import admin_surveys_bp
 
 def create_app():
     # --- CRIAÇÃO DA APLICAÇÃO ---
-    # Usa os caminhos absolutos que definimos para não haver erros
+    # Com a pasta 'static' renomeada, não precisamos mais especificar o static_folder.
+    # O Flask encontra-o automaticamente.
     app = Flask(
-        __name__.split('.')[0],
-        instance_path=os.path.join(os.path.dirname(app_dir), 'instance'), # Pasta 'instance' na raiz
-        static_folder=os.path.join(app_dir, 'assets'), # Caminho absoluto para a pasta 'assets'
-        static_url_path='/static',
-        template_folder=os.path.join(app_dir, 'src', 'views') # Caminho absoluto para a pasta 'views'
+        __name__, # Usa o nome do pacote 'app'
+        instance_relative_config=True,
+        template_folder='src/views' # A única pasta que precisamos de especificar
     )
 
     # --- CONFIGURAÇÃO CENTRALIZADA ---
@@ -50,7 +39,7 @@ def create_app():
     app.config.from_mapping(
         SECRET_KEY=os.getenv('FLASK_SECRET_KEY', 'dev_key_super_secreta'),
         DATABASE=db_path,
-        UPLOAD_FOLDER=os.path.join(app_dir, 'src', 'uploads'),
+        UPLOAD_FOLDER=os.path.join(os.path.dirname(os.path.abspath(__file__)), 'src', 'uploads'),
         SEND_FILE_MAX_AGE_DEFAULT=31536000
     )
 
@@ -58,7 +47,7 @@ def create_app():
     os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
     # --- INICIALIZAÇÃO DE EXTENSÕES ---
-    from src.config import db
+    from .src.config import db
     db.init_app(app)
 
     # --- LÓGICA DA APLICAÇÃO ---
