@@ -27,6 +27,10 @@ from src.routers.auth import auth_bp
 from src.routers.pesquisas_lista import pesquisas_lista_bp
 from src.routers.admin_surveys import admin_surveys_bp
 
+# Imports para a rota de setup do banco de dados
+from src.config.db import init_db
+from src.config.seeder import seed_data
+
 
 def create_app():
     # Define os caminhos para as pastas de templates e assets (que agora são os próprios templates)
@@ -46,12 +50,18 @@ def create_app():
         SEND_FILE_MAX_AGE_DEFAULT=31536000
     )
 
-    os.makedirs(app.instance_path, exist_ok=True)
+    # Garante que os diretórios necessários existam
+    if is_production:
+        os.makedirs('/var/data', exist_ok=True)
+    else:
+        os.makedirs(app.instance_path, exist_ok=True)
     os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
     # --- INICIALIZAÇÃO DE EXTENSÕES ---
-    from src.config import db
-    db.init_app(app)
+    # Removido 'from src.config import db' e 'db.init_app(app)' pois a nova abordagem
+    # usa o 'db.py' diretamente quando necessário.
+    from src.config import db as db_manager
+    db_manager.init_app(app)
 
     # --- LÓGICA DA APLICAÇÃO ---
     app.permanent_session_lifetime = timedelta(minutes=30)
@@ -59,8 +69,8 @@ def create_app():
     @app.before_request
     def require_login():
         session.permanent = True
-        # Adicionamos a nossa nova rota 'serve_view_file' às exceções
-        allowed_endpoints = ['auth.login', 'static', 'serve_view_file']
+        # Adicionadas as rotas de setup e assets às exceções
+        allowed_endpoints = ['auth.login', 'static', 'serve_view_file', 'setup_database_route']
         if 'colaborador_id' not in session and request.endpoint not in allowed_endpoints:
             return redirect(url_for('auth.login'))
 
@@ -71,7 +81,6 @@ def create_app():
 
     # --- REGISTRO DOS BLUEPRINTS ---
     app.register_blueprint(admin, url_prefix='/admin')
-    # ... (todos os seus outros app.register_blueprint)
     app.register_blueprint(adminLogin)
     app.register_blueprint(home_bp)
     app.register_blueprint(logout_bp)
@@ -97,5 +106,28 @@ def create_app():
     @app.route('/uploads/<path:filename>')
     def uploaded_file(filename):
         return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+
+    # --- ROTA SECRETA DE SETUP ---
+    @app.route('/setup-database-one-time/<secret_key>')
+    def setup_database_route(secret_key):
+        # Defina uma chave secreta para proteger esta rota
+        SETUP_SECRET_KEY = "minha-chave-super-secreta-12345"
+
+        if secret_key != SETUP_SECRET_KEY:
+            return "Chave secreta inválida.", 403
+
+        try:
+            print("Iniciando setup do banco de dados via rota secreta...")
+            # Passo 1: Cria as tabelas a partir do schema.sql
+            init_db()
+            print("Tabelas criadas com sucesso.")
+
+            # Passo 2: Popula as tabelas com os dados iniciais
+            seed_data()
+            print("Dados inseridos com sucesso.")
+
+            return "<h1>Sucesso!</h1><p>O banco de dados foi inicializado e populado. Esta rota não deve ser usada novamente.</p>", 200
+        except Exception as e:
+            return f"<h1>Erro!</h1><p>Ocorreu um erro durante o setup: {e}</p>", 500
 
     return app
