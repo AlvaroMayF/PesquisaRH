@@ -1,4 +1,5 @@
 # factory.py
+# Forçando a atualização para o deploy de 15/07
 
 import os
 import sys
