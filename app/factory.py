@@ -42,7 +42,7 @@ def create_app():
     app = Flask(
         __name__.split('.')[0],
         instance_path=os.path.join(project_root_dir, 'instance'),
-        static_folder=os.path.join(project_root_dir, 'assets'),
+        static_folder=os.path.join(project_root_dir, 'app', 'assets'), # CORREÇÃO AQUI
         static_url_path='/static',
         template_folder=os.path.join(project_root_dir, 'app', 'src', 'views')
     )
