@@ -1,5 +1,4 @@
 # factory.py
-# Forçando a atualização para o deploy de 15/07
 
 import os
 import sys
@@ -7,35 +6,45 @@ from flask import Flask, send_from_directory, session, redirect, url_for, reques
 from markupsafe import escape, Markup
 from datetime import timedelta
 
-# Adiciona a raiz do projeto ao path do Python para garantir que os imports funcionem
-project_root = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
-if project_root not in sys.path:
-    sys.path.insert(0, project_root)
+# --- INÍCIO DA CORREÇÃO DE CAMINHOS ---
+# Define o caminho raiz do projeto (a pasta 'PesquisaRH')
+# __file__ é o caminho para este ficheiro (app/factory.py)
+# os.path.dirname(__file__) é a pasta 'app'
+# os.path.dirname(...) disso é a pasta 'PesquisaRH'
+project_root_dir = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
+
+# Adiciona a pasta 'app' ao path do Python para garantir que os imports funcionem
+app_dir = os.path.join(project_root_dir, 'app')
+if app_dir not in sys.path:
+    sys.path.insert(0, app_dir)
+# --- FIM DA CORREÇÃO DE CAMINHOS ---
+
 
 # Import dos blueprints de rota
-from app.src.routers.admin import admin
-from app.src.routers.adminLogin import adminLogin
-from app.src.routers.homeView import home as home_bp
-from app.src.routers.logout import logout_bp
-from app.src.routers.analitico import analitico_bp
-from app.src.routers.pesquisa import pesquisa_bp
-from app.src.routers.comunicados import comunicados_bp
-from app.src.routers.novo_colaborador import novo_colaborador_bp
-from app.src.routers.novo_comunicado import novo_comunicado_bp
-from app.src.routers.admin_feriados import admin_feriados_bp
-from app.src.routers.beneficios import beneficios_bp
-from app.src.routers.auth import auth_bp
-from app.src.routers.pesquisas_lista import pesquisas_lista_bp
-from app.src.routers.admin_surveys import admin_surveys_bp
+from src.routers.admin import admin
+from src.routers.adminLogin import adminLogin
+from src.routers.homeView import home as home_bp
+from src.routers.logout import logout_bp
+from src.routers.analitico import analitico_bp
+from src.routers.pesquisa import pesquisa_bp
+from src.routers.comunicados import comunicados_bp
+from src.routers.novo_colaborador import novo_colaborador_bp
+from src.routers.novo_comunicado import novo_comunicado_bp
+from src.routers.admin_feriados import admin_feriados_bp
+from src.routers.beneficios import beneficios_bp
+from src.routers.auth import auth_bp
+from src.routers.pesquisas_lista import pesquisas_lista_bp
+from src.routers.admin_surveys import admin_surveys_bp
 
 def create_app():
     # --- CRIAÇÃO DA APLICAÇÃO ---
-    # A app principal agora é responsável por servir os arquivos estáticos da pasta 'assets'
+    # Usa os caminhos absolutos que definimos para não haver erros
     app = Flask(
-        __name__,
-        instance_relative_config=True,
-        static_folder='assets',
-        static_url_path='/static'
+        __name__.split('.')[0],
+        instance_path=os.path.join(project_root_dir, 'instance'),
+        static_folder=os.path.join(project_root_dir, 'assets'),
+        static_url_path='/static',
+        template_folder=os.path.join(project_root_dir, 'app', 'src', 'views')
     )
 
     # --- CONFIGURAÇÃO CENTRALIZADA ---
@@ -45,7 +54,7 @@ def create_app():
     app.config.from_mapping(
         SECRET_KEY=os.getenv('FLASK_SECRET_KEY', 'dev_key_super_secreta'),
         DATABASE=db_path,
-        UPLOAD_FOLDER=os.path.join(project_root, 'app', 'src', 'uploads'),
+        UPLOAD_FOLDER=os.path.join(project_root_dir, 'app', 'src', 'uploads'),
         SEND_FILE_MAX_AGE_DEFAULT=31536000
     )
 
@@ -53,7 +62,7 @@ def create_app():
     os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
     # --- INICIALIZAÇÃO DE EXTENSÕES ---
-    from app.src.config import db
+    from src.config import db
     db.init_app(app)
 
     # --- LÓGICA DA APLICAÇÃO ---
@@ -62,7 +71,6 @@ def create_app():
     @app.before_request
     def require_login():
         session.permanent = True
-        # Agora só precisamos permitir o endpoint 'static' padrão
         allowed_endpoints = ['auth.login', 'static']
         if 'colaborador_id' not in session and request.endpoint not in allowed_endpoints:
             return redirect(url_for('auth.login'))
@@ -72,7 +80,6 @@ def create_app():
     app.jinja_env.filters['nl2br'] = nl2br
 
     # --- REGISTRO DOS BLUEPRINTS ---
-    # O views_bp foi removido para eliminar o conflito
     app.register_blueprint(admin, url_prefix='/admin')
     app.register_blueprint(adminLogin)
     app.register_blueprint(home_bp)
