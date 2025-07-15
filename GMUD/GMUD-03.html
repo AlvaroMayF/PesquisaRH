@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GMUD 03 - Gerenciamento de Mudanças | Portal RH</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@300;400;600;700&display=swap');
+
+        :root {
+            --primary-color: #007aff;
+            --secondary-color: #6c757d;
+            --background-light: #f8f9fa;
+            --background-card: #ffffff;
+            --text-color: #212529;
+            --border-color: #dee2e6;
+            --heading-color: #343a40;
+            --code-bg: #e9ecef;
+            --code-text: #c0392b;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+        }
+
+        body {
+            font-family: 'Source Sans 3', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--background-light);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            background-color: var(--background-card);
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            padding: 40px;
+            border: 1px solid var(--border-color);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 20px;
+        }
+
+        header h1 {
+            color: var(--primary-color);
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            color: var(--secondary-color);
+            font-size: 1.1em;
+        }
+
+        h2 {
+            color: var(--heading-color);
+            font-size: 1.8em;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 5px;
+        }
+
+        h3 {
+            color: var(--heading-color);
+            font-size: 1.4em;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        h4 {
+            color: var(--heading-color);
+            font-size: 1.2em;
+            margin-top: 15px;
+            margin-bottom: 8px;
+        }
+
+        ul {
+            list-style-type: disc;
+            margin-left: 25px;
+            margin-bottom: 15px;
+        }
+
+        ol {
+            list-style-type: decimal;
+            margin-left: 25px;
+            margin-bottom: 15px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        strong {
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        p {
+            margin-bottom: 15px;
+        }
+
+        pre {
+            background-color: var(--code-bg);
+            border: 1px solid var(--border-color);
+            border-left: 5px solid var(--primary-color);
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin-bottom: 20px;
+        }
+
+        code {
+            font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+            font-size: 0.9em;
+            color: var(--code-text);
+        }
+
+        .highlight {
+            background-color: #fff3cd; /* Light yellow for emphasis */
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+            color: var(--secondary-color);
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>GMUD 03 - Gerenciamento de Mudanças</h1>
+            <p>Portal RH - Relatório de Alterações Implementadas</p>
+            <p><strong>Data da Geração:</strong> 11 de Julho de 2025</p>
+        </header>
+
+        <h2>1. Título da Mudança:</h2>
+        <p>Implementação do Ciclo de Vida Completo de Pesquisas, Correções de Bugs e Restauração de Design.</p>
+
+        <h2>2. Descrição Detalhada da Mudança:</h2>
+        <p>Esta GMUD documenta a implementação de funcionalidades cruciais que permitem ao RH gerenciar o ciclo de vida completo de uma pesquisa, desde sua criação até a análise. Foi adicionada a capacidade de criar novas pesquisas, além de uma regra de negócio que "congela" a estrutura de uma pesquisa após o recebimento da primeira resposta. Adicionalmente, foram resolvidos bugs críticos que impediam a correta visualização dos formulários pelos colaboradores.</p>
+
+        <h2>3. Alterações Implementadas:</h2>
+
+        <h3>3.1. Autonomia do RH: Criação de Novas Pesquisas</h3>
+        <ul>
+            <li><strong>Objetivo:</strong> Permitir que usuários administradores (RH) criem novas pesquisas de forma autônoma, sem necessidade de intervenção técnica.</li>
+            <li><strong>Frontend:</strong>
+                <ul>
+                    <li>Um botão <strong>"Criar Nova Pesquisa"</strong> foi adicionado à tela de "Gerenciamento de Pesquisas".</li>
+                    <li>Este botão leva a um novo formulário (<code>survey_form.html</code>) onde o administrador pode definir o <strong>Nome</strong>, o <strong>Texto de Apresentação (Descrição)</strong>, as <strong>Datas de Início e Fim</strong>, e o status <strong>"Ativa"</strong>.</li>
+                </ul>
+            </li>
+            <li><strong>Backend (<code>admin_surveys.py</code>):</strong>
+                <ul>
+                    <li>A rota <code>/admin/pesquisas/nova</code> foi criada para renderizar o formulário e processar o envio (<code>POST</code>), salvando a nova pesquisa na tabela <code>surveys</code>.</li>
+                </ul>
+            </li>
+        </ul>
+
+        <h3>3.2. Implementação do "Congelamento" de Pesquisas:</h3>
+        <ul>
+            <li><strong>Objetivo:</strong> Impedir a edição da estrutura de uma pesquisa após ela ter recebido a primeira resposta, para garantir a consistência dos dados.</li>
+            <li><strong>Backend (<code>admin_surveys.py</code>):</strong>
+                <ul>
+                    <li>Criada a função <code>is_survey_locked(survey_id)</code> que verifica na tabela <code>responses</code> se uma pesquisa já tem respostas.</li>
+                    <li>As rotas <code>update_question</code>, <code>adicionar_pergunta_view</code>, e <code>deletar_pergunta_view</code> agora invocam essa função e bloqueiam a alteração caso a pesquisa esteja congelada.</li>
+                </ul>
+            </li>
+            <li><strong>Frontend (<code>manage_questions.html</code>):</strong>
+                <ul>
+                    <li>Um banner de aviso é exibido no topo da página se a pesquisa estiver congelada.</li>
+                    <li>O botão "Adicionar Pergunta" e os ícones de edição/exclusão são ocultados condicionalmente.</li>
+                </ul>
+            </li>
+        </ul>
+
+        <h3>3.3. Melhorias na Edição de Perguntas:</h3>
+        <ul>
+            <li><strong>Tipo de Resposta:</strong> O campo de seleção para alterar o tipo de resposta (Múltipla Escolha / Texto) foi habilitado no formulário de edição.</li>
+            <li><strong>Lógica de Edição:</strong> A rota <code>update_question</code> agora salva o novo tipo de pergunta e, caso a mudança seja para "Texto", apaga as opções de múltipla escolha antigas do banco de dados.</li>
+        </ul>
+
+        <h3>3.4. Correção de Bugs e Restauração de Design:</h3>
+        <ul>
+            <li><strong>Problema de Visualização:</strong> Corrigido o bug crítico que misturava perguntas de diferentes pesquisas no formulário do colaborador. A lógica em <code>pesquisa.py</code> foi ajustada para filtrar e agrupar corretamente as perguntas e opções por <code>survey_id</code>.</li>
+            <li><strong>Restauração do Design:</strong> Os arquivos <code>pesquisa.html</code> e <code>pesquisa.css</code> foram restaurados para a versão original do projeto, garantindo que o design escuro e profissional fosse aplicado corretamente.</li>
+            <li><strong>Correção da Logo:</strong> O caminho da imagem no <code>pesquisa.html</code> foi corrigido para <code>logo.png</code>.</li>
+        </ul>
+
+        <h2>4. Impacto da Mudança:</h2>
+        <ul>
+            <li><strong>Positivo:</strong>
+                <ul>
+                    <li>O RH agora possui total autonomia para criar e gerenciar pesquisas.</li>
+                    <li>Aumento significativo da integridade e confiabilidade dos dados com a nova regra de "congelamento".</li>
+                    <li>Resolução de bugs críticos, garantindo uma experiência correta para o colaborador.</li>
+                    <li>Restauração completa da interface do colaborador para o design aprovado.</li>
+                </ul>
+            </li>
+            <li><strong>Negativo:</strong> Nenhum impacto negativo direto esperado.</li>
+        </ul>
+
+        <h2>5. Plano de Rollback (Reversão):</h2>
+        <p>As alterações de código podem ser revertidas via <code>git revert</code>. As alterações nos dados (exclusão da pergunta de teste) exigem restauração de backup do banco de dados.</p>
+
+        <h2>6. Testes Realizados:</h2>
+        <ul>
+            <li>Criação de uma nova pesquisa de ponta a ponta.</li>
+            <li>Verificação visual da página de pesquisa para confirmar a restauração do design.</li>
+            <li>Teste de edição em uma pesquisa sem respostas (confirmando que a edição funciona).</li>
+            <li>Teste de edição em uma pesquisa com respostas (confirmando que a edição é bloqueada).</li>
+            <li>Validação do fluxo de resposta do colaborador para garantir que a coleta de dados continua funcionando.</li>
+        </ul>
+
+        <footer>
+            <p>Portal RH - Rede Hospitalar Samar</p>
+            <p>&copy; 2025. Todos os direitos reservados.</p>
+        </footer>
+    </div>
+</body>
+</html>

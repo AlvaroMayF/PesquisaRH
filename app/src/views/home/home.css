@@ -214,3 +214,44 @@ html.dark .birthday-card:hover {
   font-size: 1.05rem;
   color: var(--text-color);
 }
+/* Estilos para saudação e botão de logout no menu */
+
+/* Estilo para a saudação "Olá, ..." */
+.nav-user-greeting {
+    display: flex;
+    align-items: center;
+    padding: 0 1rem;
+    font-size: 0.9rem;
+    color: var(--text-color-secondary);
+    white-space: nowrap; /* Impede que o nome quebre a linha */
+}
+
+/* Estilo para o botão de Sair */
+.btn-logout {
+    background-color: color-mix(in srgb, var(--accent) 15%, transparent);
+    color: var(--accent) !important;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: background-color 0.2s, color 0.2s;
+    margin-left: 0.5rem; /* Adiciona um pequeno espaço */
+}
+
+.btn-logout:hover {
+    background-color: var(--accent);
+    color: white !important;
+    text-decoration: none;
+}
+
+/* Ajuste para o menu responsivo */
+@media (max-width: 768px) {
+    .nav-user-greeting {
+        padding: 0.75rem 1.5rem; /* Ajusta o padding no menu mobile */
+        justify-content: center;
+    }
+    .btn-logout {
+        display: block;
+        text-align: center;
+        margin: 0.5rem 1.5rem;
+    }
+}

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ 'Editar' if survey else 'Criar' }} Pesquisa | Portal RH</title>
+
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="{{ url_for('views.static', filename='base/base.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('views.static', filename='admin/survey_form.css') }}" />
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="nav-container">
+              <div class="navbar-left">
+                <span class="nav-logo">REDE HOSPITAL SAMAR</span>
+                <label class="theme-switch" title="Alternar tema claro/escuro">
+                  <input type="checkbox" id="theme-toggle" class="theme-checkbox" aria-label="Alternar tema claro/escuro" />
+                  <div class="slider">
+                      <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                      <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                  </div>
+                </label>
+              </div>
+              <div class="navbar-center">
+                {% if session.get('colaborador_id') or session.get('admin_logged_in') %}
+                  <span class="header-user-greeting">Olá, {{ session.get('admin_username') or session.get('colaborador_nome') }}</span>
+                {% endif %}
+              </div>
+              <div class="navbar-right">
+                <button class="nav-toggle" aria-label="abrir menu de navegação">
+                    <span class="hamburger"></span>
+                </button>
+                <ul class="nav-menu">
+                  <li><a href="{{ url_for('home.home_view') }}">Início</a></li>
+                  <li><a href="{{ url_for('pesquisas_lista.lista_pesquisas_view') }}">Pesquisa</a></li>
+                  <li class="nav-item dropdown">
+                    <a href="#" class="nav-link dropdown-toggle">Informativos</a>
+                    <ul class="dropdown-menu">
+                      <li><a class="dropdown-item" href="{{ url_for('comunicados.view_comunicados') }}">Comunicados</a></li>
+                      <li><a class="dropdown-item" href="{{ url_for('beneficios.beneficios_page') }}">Benefícios</a></li>
+                    </ul>
+                  </li>
+                  {% if session.get('admin_logged_in') %}
+                    <li class="nav-item dropdown">
+                      <a href="#" class="nav-link dropdown-toggle active">Administrador</a>
+                      <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="{{ url_for('analitico.analitico_view') }}">Analítico</a></li>
+                        <li><a class="dropdown-item" href="{{ url_for('novo_colaborador.novo_colaborador_view') }}">Novo Colaborador</a></li>
+                        <li><a class="dropdown-item" href="{{ url_for('novo_comunicado.novo_comunicado_view') }}">Novo Comunicado</a></li>
+                        <li><a class="dropdown-item" href="{{ url_for('admin_feriados.gerenciar_feriados') }}">Gerenciar Feriados</a></li>
+                        <li><a class="dropdown-item" href="{{ url_for('admin_surveys.gerenciar_pesquisas_view') }}">Gerenciar Pesquisas</a></li>
+                      </ul>
+                    </li>
+                  {% else %}
+                    <li><a href="{{ url_for('adminLogin.admin_login') }}">Administrador</a></li>
+                  {% endif %}
+                  {% if session.get('colaborador_id') or session.get('admin_logged_in') %}
+                    <li><a href="{{ url_for('logout.logout_view') }}" class="btn-logout">Sair</a></li>
+                  {% endif %}
+                </ul>
+              </div>
+            </div>
+          </nav>
+    </header>
+
+    <main>
+        <div class="page-container">
+            <section class="page-header">
+                <h1 class="page-title">{{ 'Editar Pesquisa' if survey else 'Criar Nova Pesquisa' }}</h1>
+                <p class="page-subtitle">Preencha os detalhes abaixo para configurar a pesquisa.</p>
+            </section>
+
+            <div class="content-card form-card">
+                <form method="POST">
+                    <div class="form-group">
+                        <label for="name">Nome da Pesquisa</label>
+                        <input type="text" id="name" name="name" value="{{ survey.name or '' }}" placeholder="Ex: Pesquisa de Clima 2025" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description">Texto de Apresentação (Descrição)</label>
+                        <textarea id="description" name="description" rows="8" placeholder="Digite aqui o texto que aparecerá para o colaborador no início da pesquisa. Você pode usar HTML para formatação, como <strong> para negrito.">{{ survey.description or '' }}</textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="start_date">Data de Início (Opcional)</label>
+                            <input type="date" id="start_date" name="start_date" value="{{ survey.start_date.strftime('%Y-%m-%d') if survey and survey.start_date else '' }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="end_date">Data de Fim (Opcional)</label>
+                            <input type="date" id="end_date" name="end_date" value="{{ survey.end_date.strftime('%Y-%m-%d') if survey and survey.end_date else '' }}">
+                        </div>
+                    </div>
+
+                    <div class="form-group form-group-checkbox">
+                        <input type="checkbox" id="is_active" name="is_active" value="1" {% if survey and survey.is_active %}checked{% endif %}>
+                        <label for="is_active">Marcar como ativa?</label>
+                        <p class="checkbox-hint">Se marcada, a pesquisa ficará visível para os colaboradores responderem (desde que esteja dentro do período de datas, se definido).</p>
+                    </div>
+
+                    <div class="form-actions">
+                        <a href="{{ url_for('admin_surveys.gerenciar_pesquisas_view') }}" class="btn-secondary">Cancelar</a>
+                        <button type="submit" class="btn btn-primary">{{ 'Salvar Alterações' if survey else 'Criar Pesquisa' }}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <script src="{{ url_for('views.static', filename='home/theme-toggle.js') }}" defer></script>
+    <script>
+      const navToggle = document.querySelector('.nav-toggle');
+      const navMenu = document.querySelector('.nav-menu');
+      if (navToggle && navMenu) {
+        navToggle.addEventListener('click', () => {
+            navMenu.classList.toggle('nav-menu--visible');
+            navToggle.classList.toggle('is-active');
+        });
+      }
+    </script>
+</body>
+</html>

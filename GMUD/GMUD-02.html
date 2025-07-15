@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GMUD 02 - Gerenciamento de Mudanças | Portal RH</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@300;400;600;700&display=swap');
+
+        :root {
+            --primary-color: #007aff;
+            --secondary-color: #6c757d;
+            --background-light: #f8f9fa;
+            --background-card: #ffffff;
+            --text-color: #212529;
+            --border-color: #dee2e6;
+            --heading-color: #343a40;
+            --code-bg: #e9ecef;
+            --code-text: #c0392b;
+        }
+
+        body {
+            font-family: 'Source Sans 3', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--background-light);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            background-color: var(--background-card);
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            padding: 40px;
+            border: 1px solid var(--border-color);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 20px;
+        }
+
+        header h1 {
+            color: var(--primary-color);
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            color: var(--secondary-color);
+            font-size: 1.1em;
+        }
+
+        h2 {
+            color: var(--heading-color);
+            font-size: 1.8em;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 5px;
+        }
+
+        h3 {
+            color: var(--heading-color);
+            font-size: 1.4em;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        h4 {
+            color: var(--heading-color);
+            font-size: 1.2em;
+            margin-top: 15px;
+            margin-bottom: 8px;
+        }
+
+        ul {
+            list-style-type: disc;
+            margin-left: 25px;
+            margin-bottom: 15px;
+        }
+
+        ol {
+            list-style-type: decimal;
+            margin-left: 25px;
+            margin-bottom: 15px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        strong {
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        p {
+            margin-bottom: 15px;
+        }
+
+        pre {
+            background-color: var(--code-bg);
+            border: 1px solid var(--border-color);
+            border-left: 5px solid var(--primary-color);
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin-bottom: 20px;
+        }
+
+        code {
+            font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+            font-size: 0.9em;
+            color: var(--code-text);
+        }
+
+        .highlight {
+            background-color: #fff3cd; /* Light yellow for emphasis */
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+            color: var(--secondary-color);
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>GMUD 02 - Gerenciamento de Mudanças</h1>
+            <p>Portal RH - Relatório de Alterações Implementadas</p>
+            <p><strong>Data da Geração:</strong> 10 de Julho de 2025</p>
+        </header>
+
+        <h2>1. Título da Mudança:</h2>
+        <p>Padronização Global da Interface, Carga de Dados Demográficos e Validação da Funcionalidade de Múltiplas Pesquisas.</p>
+
+        <h2>2. Descrição Detalhada da Mudança:</h2>
+        <p>Esta GMUD documenta uma série de atualizações evolutivas e de padronização em todo o Portal RH. O trabalho focou em unificar a experiência do usuário (UI/UX) através da implementação de uma nova fonte e um layout de navegação padrão. Adicionalmente, concluiu-se a carga de dados demográficos essenciais dos colaboradores e realizou-se a validação completa da funcionalidade de múltiplas pesquisas, confirmando sua robustez e prontidão para uso.</p>
+
+        <h2>3. Alterações Implementadas:</h2>
+        <h3>3.1. Padronização da Interface de Usuário (UI/UX):</h3>
+        <ul>
+            <li><strong>Objetivo:</strong> Criar uma identidade visual coesa e profissional em todas as páginas do portal.</li>
+            <li><strong>Tipografia:</strong> A fonte padrão do sistema foi alterada de <code>'Inter'</code> para <code>'Source Sans 3'</code>. A alteração foi feita no arquivo <code>base.css</code> e nos links do Google Fonts em todos os templates HTML.</li>
+            <li><strong>Barra de Navegação (Navbar):</strong> A estrutura da navbar foi padronizada para um layout de 3 colunas (logo/tema à esquerda, saudação ao centro, menu à direita). A lógica de exibição do menu "Administrador" foi unificada em todos os templates.</li>
+            <li><strong>Rodapé (Footer):</strong> Conforme nova diretriz de design, o rodapé foi removido de todas as páginas do sistema para uma interface mais limpa e focada no conteúdo.</li>
+            <li><strong>Arquivos HTML Padronizados:</strong>
+                <ul>
+                    <li><code>analitico.html</code></li>
+                    <li><code>NovoComunicado.html</code></li>
+                    <li><code>gerenciar_feriados.html</code></li>
+                    <li><code>beneficios.html</code></li>
+                    <li><code>comunicados.html</code></li>
+                    <li><code>lista_pesquisas.html</code></li>
+                </ul>
+            </li>
+             <li><strong>CSS Refatorado:</strong> Arquivos CSS específicos de páginas (ex: <code>comunicados.css</code>) foram limpos para remover regras duplicadas que agora são herdadas do <code>base.css</code>.</li>
+        </ul>
+
+        <h3>3.2. Carga de Dados e Sincronização de Colaboradores:</h3>
+        <ul>
+            <li><strong>Objetivo:</strong> Popular o banco de dados com as informações demográficas completas e atualizadas dos colaboradores, recebidas do DP.</li>
+            <li><strong>Backend (<code>scripts/load_colaboradores.py</code>):</strong> O script foi corrigido para apontar para o nome de arquivo Excel correto. Sua lógica de UPSERT (INSERT/UPDATE) foi executada com sucesso.</li>
+            <li><strong>Banco de Dados (SQL):</strong> A importação foi verificada com o comando <code>SELECT</code>, confirmando que as colunas <code>setor</code>, <code>cargo</code> e <code>unidade</code> na tabela <code>colaboradores</code> foram corretamente preenchidas.</li>
+        </ul>
+
+        <h3>3.3. Validação da Funcionalidade "Múltiplas Pesquisas":</h3>
+        <ul>
+            <li><strong>Objetivo:</strong> Garantir o funcionamento completo do fluxo de seleção e resposta de pesquisas distintas por um mesmo colaborador.</li>
+            <li><strong>Teste de Ponta a Ponta:</strong> Foi executado um teste completo que validou:
+                <ol>
+                    <li>A exibição correta da lista de pesquisas ativas.</li>
+                    <li>A exibição do formulário com as perguntas específicas da pesquisa selecionada.</li>
+                    <li>O envio e salvamento bem-sucedido das respostas.</li>
+                    <li>A atualização de status da pesquisa para "Respondido" na interface.</li>
+                    <li>O bloqueio que impede um usuário de responder a mesma pesquisa duas vezes.</li>
+                </ol>
+            </li>
+            <li><strong>Verificação no Banco de Dados:</strong> Confirmação de que as tabelas <code>responses</code> (com dados demográficos), <code>response_answers</code> e <code>colaborador_survey_status</code> foram todas populadas corretamente após o teste.</li>
+        </ul>
+
+        <h2>4. Impacto da Mudança:</h2>
+        <ul>
+            <li><strong>Positivo:</strong>
+                <ul>
+                    <li>Experiência de usuário consistente e profissional em todo o sistema.</li>
+                    <li>Base de dados de colaboradores enriquecida, habilitando futuras análises estratégicas.</li>
+                    <li>Funcionalidade de múltiplas pesquisas 100% validada e pronta para uso.</li>
+                    <li>Código mais limpo e de fácil manutenção com a remoção de CSS duplicado.</li>
+                </ul>
+            </li>
+            <li><strong>Negativo:</strong> Nenhum impacto negativo direto esperado.</li>
+        </ul>
+
+        <h2>5. Plano de Rollback (Reversão):</h2>
+        <p>Em caso de problemas, as alterações podem ser revertidas através do sistema de controle de versão (Git). As alterações no banco de dados exigem restauração de backup ou execução de um script de limpeza manual, se necessário.</p>
+
+        <h2>6. Testes Realizados:</h2>
+        <ul>
+            <li>Testes visuais em todas as páginas padronizadas.</li>
+            <li>Validação do script de importação de dados e verificação dos resultados no banco de dados.</li>
+            <li>Execução de um roteiro de teste completo (end-to-end) para a funcionalidade de múltiplas pesquisas, incluindo a verificação final da integridade dos dados salvos.</li>
+        </ul>
+
+        <footer>
+            <p>Portal RH - Rede Hospitalar Samar</p>
+            <p>&copy; 2025. Todos os direitos reservados.</p>
+        </footer>
+    </div>
+</body>
+</html>

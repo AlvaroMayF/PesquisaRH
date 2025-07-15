@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GMUD - Gerenciamento de Mudanças | Portal RH</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+        :root {
+            --primary-color: #007aff;
+            --secondary-color: #6c757d;
+            --background-light: #f8f9fa;
+            --background-card: #ffffff;
+            --text-color: #212529;
+            --border-color: #dee2e6;
+            --heading-color: #343a40;
+            --code-bg: #e9ecef;
+            --code-text: #c0392b;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--background-light);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            background-color: var(--background-card);
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            padding: 40px;
+            border: 1px solid var(--border-color);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 20px;
+        }
+
+        header h1 {
+            color: var(--primary-color);
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            color: var(--secondary-color);
+            font-size: 1.1em;
+        }
+
+        h2 {
+            color: var(--heading-color);
+            font-size: 1.8em;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 5px;
+        }
+
+        h3 {
+            color: var(--heading-color);
+            font-size: 1.4em;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        h4 {
+            color: var(--heading-color);
+            font-size: 1.2em;
+            margin-top: 15px;
+            margin-bottom: 8px;
+        }
+
+        ul {
+            list-style-type: disc;
+            margin-left: 25px;
+            margin-bottom: 15px;
+        }
+
+        ol {
+            list-style-type: decimal;
+            margin-left: 25px;
+            margin-bottom: 15px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        strong {
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        p {
+            margin-bottom: 15px;
+        }
+
+        pre {
+            background-color: var(--code-bg);
+            border: 1px solid var(--border-color);
+            border-left: 5px solid var(--primary-color);
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin-bottom: 20px;
+        }
+
+        code {
+            font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+            font-size: 0.9em;
+            color: var(--code-text);
+        }
+
+        .highlight {
+            background-color: #fff3cd; /* Light yellow for emphasis */
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+            color: var(--secondary-color);
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>GMUD - Gerenciamento de Mudanças</h1>
+            <p>Portal RH - Relatório de Alterações Implementadas</p>
+            <p><strong>Data da Geração:</strong> 09 de Julho de 2025 - 11:46 PM (Horário de Porto Velho)</p>
+        </header>
+
+        <h2>1. Título da Mudança:</h2>
+        <p>Implementação de Prazo de Pesquisa e Correções de Navegação e Lógica da Navbar.</p>
+
+        <h2>2. Descrição Detalhada da Mudança:</h2>
+        <p>Esta GMUD abrange um conjunto de alterações no frontend (HTML, CSS) e no backend (Python, Banco de Dados) do Portal RH com o objetivo principal de exibir o prazo de encerramento das pesquisas e corrigir múltiplos erros de navegação que impediam o acesso a diferentes seções do sistema, além de refinar a lógica de exibição do link de administrador na barra de navegação.</p>
+
+        <h2>3. Alterações Implementadas:</h2>
+        <h3>3.1. Exibição do Prazo de Encerramento da Pesquisa (Frontend & Backend):</h3>
+        <ul>
+            <li><strong>Objetivo:</strong> Adicionar a data de encerramento (<code>end_date</code>) nas informações visíveis de cada pesquisa disponível para o colaborador.</li>
+            <li><strong>Backend (<code>app/src/routers/pesquisas_lista.py</code>):</strong> Modificação da query SQL para incluir a coluna <code>end_date</code> na recuperação dos dados das pesquisas ativas.</li>
+            <li><strong>Banco de Dados (SQL):</strong> Execução de comando <code>UPDATE</code> na tabela <code>surveys</code> para inserir a <code>end_date</code> para a "Pesquisa de Clima Organizacional" (ID 1).
+                <pre><code>UPDATE surveys
+SET end_date = '2025-07-15'  -- Substitua '2025-07-15' pela data de encerramento desejada
+WHERE id = 1;</code></pre>
+            </li>
+            <li><strong>Frontend (<code>app/src/views/pesquisas/lista_pesquisas.html</code>):</strong> Inclusão de um bloco condicional <code>{% if survey.end_date %}</code> e um <code>div</code> com a classe <code>survey-footer</code> para exibir o prazo formatado (<code>Disponível até: DD de Mês de AAAA</code>).</li>
+            <li><strong>Estilização (<code>app/src/views/pesquisas/lista_pesquisa.css</code>):</strong> Atualização dos estilos para o <code>.survey-card-detailed</code>, <code>.survey-card-body</code> e <code>.survey-footer</code> para garantir a correta visualização e posicionamento do prazo dentro do card, com separação visual adequada.</li>
+        </ul>
+
+        <h3>3.2. Correção de Erros de Navegação (<code>BuildError</code>):</h3>
+        <ul>
+            <li><strong>Objetivo:</strong> Resolver o erro <code>BuildError: Could not build url for endpoint 'pesquisa_login.login_pesquisa_view'</code> que impedia o acesso a diversas páginas ao clicar no link "Pesquisa" na barra de navegação.</li>
+            <li><strong>Causa Raiz:</strong> Uso de um endpoint <code>url_for</code> incorreto (<code>pesquisa_login.login_pesquisa_view</code>) em múltiplos templates, onde o correto seria <code>pesquisas_lista.lista_pesquisas_view</code>.</li>
+            <li><strong>Arquivos Impactados e Corrigidos (localizados manualmente):</strong>
+                <ul>
+                    <li><code>app/src/views/home/home.html</code></li>
+                    <li><code>app/src/views/pesquisas/lista_pesquisas.html</code></li>
+                    <li><code>app/src/views/comunicados/comunicados.html</code></li>
+                    <li><code>app/src/views/beneficios/beneficios.html</code></li>
+                    <li><code>app/src/views/admin/admin_login.html</code></li>
+                    <li><code>app/src/views/admin/admin.html</code></li>
+                </ul>
+            </li>
+            <li><strong>Ação:</strong> Alteração de <code>url_for('pesquisa_login.login_pesquisa_view')</code> para <code>url_for('pesquisas_lista.lista_pesquisas_view')</code> em todos os locais onde o erro se manifestou.</li>
+        </ul>
+
+        <h3>3.3. Refinamento da Lógica e Exibição do Link "Administrador" na Navbar:</h3>
+        <ul>
+            <li><strong>Objetivo:</strong> Garantir que o link "Administrador" na barra de navegação se comporte como um dropdown apenas quando um administrador estiver logado, e como um link simples para a página de login de administrador caso contrário.</li>
+            <li><strong>Frontend (<code>app/src/views/home/home.html</code>):</strong> Reestruturação do bloco condicional na <code>navbar-right</code> para diferenciar a exibição do link "Administrador":
+                <ul>
+                    <li>Se <code>session.get('admin_logged_in')</code> for <code>True</code>: exibe como <code>nav-item dropdown</code> com sub-itens (Analítico, Novo Colaborador, etc.).</li>
+                    <li>Se <code>session.get('admin_logged_in')</code> for <code>False</code>: exibe como um <code>&lt;li&gt;</code> simples com link para <code>adminLogin.admin_login</code>.</li>
+                </ul>
+            </li>
+            <li>A lógica do botão "Sair" foi ajustada para aparecer para qualquer usuário logado (colaborador ou administrador).</li>
+        </ul>
+
+        <h2>4. Impacto da Mudança:</h2>
+        <ul>
+            <li><strong>Positivo:</strong>
+                <ul>
+                    <li>Melhora a clareza e a informação para o colaborador ao exibir o prazo das pesquisas.</li>
+                    <li>Resolve erros críticos de navegação, permitindo o acesso fluido entre as seções do portal.</li>
+                    <li>Aprimora a experiência de usuário/admin ao adaptar a interface de acordo com o status de login.</li>
+                    <li>Aumenta a estabilidade geral do sistema ao corrigir referências de rota.</li>
+                </ul>
+            </li>
+            <li><strong>Negativo:</strong> Nenhum impacto negativo direto esperado.</li>
+        </ul>
+
+        <h2>5. Plano de Rollback (Reversão):</h2>
+        <p>Em caso de problemas inesperados ou necessidade de reversão, as seguintes ações podem ser tomadas:</p>
+        <ul>
+            <li><strong>Frontend (HTML/CSS):</strong> Reverter os arquivos <code>home.html</code>, <code>lista_pesquisas.html</code>, <code>lista_pesquisa.css</code>, <code>comunicados.html</code>, <code>beneficios.html</code>, <code>admin_login.html</code>, <code>admin.html</code> para suas versões anteriores (pré-GMUD) utilizando o histórico de controle de versão (Git) ou backups locais.</li>
+            <li><strong>Backend (Python):</strong> Reverter o arquivo <code>pesquisas_lista.py</code> para sua versão anterior (remover a adição da coluna <code>end_date</code> na query e o print de debug).</li>
+            <li><strong>Banco de Dados:</strong> Reverter a alteração da <code>end_date</code> na tabela <code>surveys</code> para <code>NULL</code> ou a data anterior, se houver necessidade (ex: <code>UPDATE surveys SET end_date = NULL WHERE id = 1;</code>).</li>
+        </ul>
+
+        <h2>6. Testes Realizados:</h2>
+        <ul>
+            <li><strong>Verificação Visual:</strong> Confirmação da exibição do prazo da pesquisa na página de listagem.</li>
+            <li><strong>Testes de Navegação:</strong> Teste de clique em todos os links da navbar (Início, Pesquisa, Comunicados, Benefícios, Administrador) a partir de diferentes páginas e estados de login (não logado, colaborador logado, administrador logado).</li>
+            <li><strong>Testes de Lógica de Login/Dropdown:</strong> Validação do comportamento do link "Administrador" (link simples vs. dropdown) de acordo com o status de login do usuário.</li>
+        </ul>
+
+        <footer>
+            <p>Portal RH - Rede Hospital Samar</p>
+            <p>&copy; 2025. Todos os direitos reservados.</p>
+        </footer>
+    </div>
+</body>
+</html>

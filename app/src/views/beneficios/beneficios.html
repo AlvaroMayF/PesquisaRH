@@ -11,8 +11,8 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+
   <link rel="stylesheet"
         href="{{ url_for('views.static', filename='base/base.css') }}" />
 
@@ -23,7 +23,8 @@
   <header>
     <nav class="navbar">
       <div class="nav-container">
-        <div class="navbar-center">
+        <div class="navbar-left">
+          <span class="nav-logo">REDE HOSPITAL SAMAR</span>
           <label class="theme-switch" title="Alternar tema claro/escuro">
             <input type="checkbox"
                    id="theme-toggle"
@@ -34,16 +35,19 @@
                 <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
             </div>
           </label>
-          <span class="nav-logo">REDE HOSPITAL SAMAR</span>
         </div>
-
-        <button class="nav-toggle" aria-label="abrir menu de navegação">
-            <span class="hamburger"></span>
-        </button>
-
-        <ul class="nav-menu">
+        <div class="navbar-center">
+          {% if session.get('colaborador_id') %}
+            <span class="header-user-greeting">Olá, {{ session.get('colaborador_nome', 'Colaborador') }}</span>
+          {% endif %}
+        </div>
+        <div class="navbar-right">
+          <button class="nav-toggle" aria-label="abrir menu de navegação">
+              <span class="hamburger"></span>
+          </button>
+          <ul class="nav-menu">
             <li><a href="{{ url_for('home.home_view') }}">Início</a></li>
-            <li><a href="{{ url_for('pesquisa_login.login_pesquisa_view') }}">Pesquisa</a></li>
+            <li><a href="{{ url_for('pesquisas_lista.lista_pesquisas_view') }}">Pesquisa</a></li>
             <li class="nav-item dropdown">
               <a href="#" class="nav-link dropdown-toggle active">Informativos</a>
               <ul class="dropdown-menu">
@@ -59,62 +63,78 @@
                   <li><a class="dropdown-item" href="{{ url_for('novo_colaborador.novo_colaborador_view') }}">Novo Colaborador</a></li>
                   <li><a class="dropdown-item" href="{{ url_for('novo_comunicado.novo_comunicado_view') }}">Novo Comunicado</a></li>
                   <li><a class="dropdown-item" href="{{ url_for('admin_feriados.gerenciar_feriados') }}">Gerenciar Feriados</a></li>
+                  <li><a class="dropdown-item" href="{{ url_for('admin_surveys.gerenciar_pesquisas_view') }}">Gerenciar Pesquisas</a></li>
                 </ul>
               </li>
-              <li><a href="{{ url_for('logout.logout_view') }}">Sair</a></li>
             {% else %}
               <li><a href="{{ url_for('adminLogin.admin_login') }}">Administrador</a></li>
             {% endif %}
+            {% if session.get('colaborador_id') or session.get('admin_logged_in') %}
+              <li><a href="{{ url_for('logout.logout_view') }}" class="btn-logout">Sair</a></li>
+            {% endif %}
           </ul>
+        </div>
       </div>
     </nav>
   </header>
 
   <main>
     <div class="beneficios-container">
-        <h1 class="beneficios-title">Nossos Benefícios</h1>
-        <p class="beneficios-subtitle">Conheça os benefícios e vantagens de fazer parte da equipe Rede Hospitalar Samar.</p>
+        <h1 class="beneficios-title">Benefícios Exclusivos para Colaboradores</h1>
+        <p class="beneficios-subtitle">Na Rede Hospitalar Samar, valorizamos nossos colaboradores e seus familiares, oferecendo parcerias exclusivas em diversas áreas.</p>
 
         <div class="beneficios-grid">
           <div class="beneficio-card">
             <div class="beneficio-icon">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"></path><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path><line x1="6" y1="1" x2="6" y2="4"></line><line x1="10" y1="1" x2="10" y2="4"></line><line x1="14" y1="1" x2="14" y2="4"></line></svg>
             </div>
-            <h3>Plano de Saúde</h3>
-            <p>Acesso a um plano de saúde completo para você e seus dependentes, garantindo tranquilidade e bem-estar.</p>
+            <h3>Restaurante Cabral</h3>
+            <p>10% de desconto no valor das refeições para todos os colaboradores.</p>
           </div>
 
           <div class="beneficio-card">
             <div class="beneficio-icon">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12.58A5 5 0 0 0 18 10h-1.26A8 8 0 1 0 4 16.25"></path><path d="M8 16h.01"></path></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"></circle><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline></svg>
             </div>
-            <h3>Vale Alimentação</h3>
-            <p>Um valor mensal creditado para suas compras em supermercados, restaurantes e estabelecimentos credenciados.</p>
+            <h3>Parcerias Educacionais</h3>
+            <p>Descontos de até 70% para colaboradores e familiares em cursos (técnicos, graduação e pós) nas faculdades Unicesumar, UNAMA, UNOPAR e FIMCA.</p>
           </div>
 
           <div class="beneficio-card">
             <div class="beneficio-icon">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><polyline points="17 11 19 13 23 9"></polyline></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
             </div>
-            <h3>Seguro de Vida</h3>
-            <p>Proteção e segurança para você e sua família em momentos inesperados, oferecendo suporte financeiro.</p>
+            <h3>Escola Galileu</h3>
+            <p>Parceria com método de ensino positivo para filhos e netos de colaboradores.</p>
           </div>
 
+          <div class="beneficio-card">
+            <div class="beneficio-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+            </div>
+            <h3>Academia Caia</h3>
+            <p>Descontos exclusivos em diversas modalidades: Musculação, Natação, CrossFit, Treino Funcional e mais!</p>
           </div>
+
+          <div class="beneficio-card">
+            <div class="beneficio-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+            </div>
+            <h3>Carteirinha do SESC</h3>
+            <p>Acesso a academias, esportes, cultura e lazer em todo o Brasil para colaboradores e dependentes.</p>
+          </div>
+
+          <div class="beneficio-card">
+            <div class="beneficio-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+            </div>
+            <h3>Descontos em Combustível</h3>
+            <p>Vantagens exclusivas no Posto Miriam (Carlos Gomes - Salgado Filho) e em posto de Ji-Paraná.</p>
+          </div>
+
+        </div>
       </div>
   </main>
-
-  <footer class="site-footer">
-    <div class="footer-container">
-      <div class="footer-main">
-        <div class="footer-column"><h4 class="footer-heading">Samar Ji-Paraná</h4><address class="footer-address"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg><span>R. Padre Adolfo Rhol, 1267 - Casa Preta, Ji-Paraná - RO, 76907-554</span></address></div>
-        <div class="footer-column"><h4 class="footer-heading">Samar Cacoal</h4><address class="footer-address"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg><span>Av. São Paulo, 2326 - Centro, Cacoal - RO, 76963-970</span></address></div>
-        <div class="footer-column"><h4 class="footer-heading">Samar Porto Velho</h4><address class="footer-address"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg><span>Av. Calama, 2585 - Liberdade, Porto Velho - RO, 76803-883</span></address></div>
-        <div class="footer-column"><h4 class="footer-heading">Contato</h4><a href="tel:08000330393" class="footer-link"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg> 0800 033 0393</a><h4 class="footer-heading" style="margin-top: 1.5rem;">Siga nossas redes</h4><ul class="social-links"><li><a href="https://www.facebook.com/hospitalsamar/?locale=pt_BR" target="_blank" rel="noopener noreferrer" class="footer-link"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg> Facebook</a></li><li><a href="https://www.instagram.com/hospitalsamar/" target="_blank" rel="noopener noreferrer" class="footer-link"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg> Instagram</a></li><li><a href="https://www.linkedin.com/company/hospital-samar/posts/?feedView=all" target="_blank" rel="noopener noreferrer" class="footer-link"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg> LinkedIn</a></li></ul></div>
-      </div>
-      <div class="footer-bottom"><p class="copyright-text"> Copyright © 2025. Todos os direitos reservados. </p><a href="https://alvaromayf.github.io" class="footer-link"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline></svg> Política de acesso</a></div>
-    </div>
-  </footer>
 
   <script src="{{ url_for('views.static', filename='home/theme-toggle.js') }}" defer></script>
 

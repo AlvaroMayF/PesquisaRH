@@ -1,0 +1,478 @@
+/* app/src/views/admin/manage_questions.css */
+
+/* --- Layout Principal e Cabeçalho --- */
+.page-container {
+    max-width: 900px;
+    margin: var(--section-gap) auto;
+    padding: 0 1rem;
+}
+.page-header {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 1.5rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+.page-header-content {
+    display: flex; align-items: center;
+    gap: 1.5rem; flex-grow: 1;
+}
+.page-header-icon {
+    flex-shrink: 0; width: 48px; height: 48px;
+    display: flex; align-items: center; justify-content: center;
+    background-color: color-mix(in srgb, var(--accent) 15%, transparent);
+    color: var(--accent); border-radius: 12px;
+}
+.page-header-icon svg { width: 24px; height: 24px; }
+.page-header-text { flex-grow: 1; }
+.page-title {
+    font-size: 1.75rem; font-weight: 700;
+    margin: 0; line-height: 1.2;
+}
+.page-subtitle {
+    font-size: 1rem; color: var(--text-color-secondary);
+    margin-top: 0.25rem;
+}
+.header-actions {
+    display: flex; gap: 0.75rem;
+    flex-shrink: 0; align-items: center;
+}
+.header-actions .btn {
+    width: auto; padding: 0.7rem 1.3rem;
+    font-size: 0.9rem; font-weight: 600;
+}
+
+/* --- Container da Lista de Perguntas --- */
+.questions-list-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+}
+
+/* --- Estilo da Seção --- */
+.survey-section {
+    width: 100%;
+}
+.section-header {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-color);
+    padding-bottom: 1rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+.section-questions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* --- Card de Pergunta (Estilo Google Forms) --- */
+.question-card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    transition: box-shadow 0.2s ease, border-left-width 0.2s ease;
+    border-left: 4px solid transparent;
+    cursor: pointer;
+}
+.question-card:focus-within,
+.question-card.is-editing {
+    border-left: 4px solid var(--accent);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    cursor: default;
+    outline: none;
+}
+.view-panel {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1.5rem;
+}
+.question-card.is-editing .view-panel {
+    display: none;
+}
+.question-summary {
+    flex-grow: 1;
+}
+.question-view-text {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--text-color);
+    margin: 0;
+}
+.options-preview {
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+.option-preview-item {
+    font-size: 1rem;
+    color: var(--text-color-secondary);
+}
+.option-preview-item.text-input {
+    border-bottom: 1px dotted var(--border-color);
+    padding-bottom: 0.5rem;
+    width: 70%;
+}
+.view-panel-actions {
+    flex-shrink: 0;
+}
+.action-btn-icon {
+    background: transparent;
+    border: none;
+    border-radius: 50%;
+    width: 40px; height: 40px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-color-secondary);
+    opacity: 0;
+    transition: opacity 0.2s, background-color 0.2s;
+}
+.question-card:hover .action-btn-icon {
+    opacity: 1;
+}
+.action-btn-icon:hover {
+    background-color: color-mix(in srgb, var(--accent) 15%, transparent);
+    color: var(--accent);
+}
+
+/* Painel de Edição */
+.edit-panel {
+    display: none;
+    padding: 1.5rem;
+    border-top: 1px solid var(--border-color);
+}
+.question-card.is-editing .edit-panel {
+    display: block;
+}
+.question-edit-form .form-row {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+.question-edit-form .form-group { margin-bottom: 1.5rem; }
+.question-edit-form .flex-grow { flex-grow: 1; }
+.question-edit-form label {
+    display: block;
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+.question-edit-form input,
+.question-edit-form textarea,
+.question-edit-form select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background-color: var(--bg-light);
+    color: var(--text-color);
+    font-family: inherit;
+    font-size: 1rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+.question-edit-form input:focus,
+.question-edit-form textarea:focus,
+.question-edit-form select:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 20%, transparent);
+}
+.question-edit-form textarea { resize: vertical; }
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-color);
+}
+.form-actions .btn { width: auto; }
+.btn-danger-outline {
+    background: transparent;
+    color: var(--danger);
+    border: 1px solid transparent;
+    text-decoration: none;
+}
+.btn-danger-outline:hover {
+    background-color: color-mix(in srgb, var(--danger) 15%, transparent);
+}
+
+/* --- ESTILOS DA MODAL DE ADICIONAR PERGUNTA --- */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(5px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease;
+}
+.modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+.modal-content {
+    background: var(--bg-card);
+    border-radius: 16px;
+    width: 90%;
+    max-width: 600px;
+    transform: scale(0.95);
+    transition: transform 0.3s ease;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+.modal-overlay.active .modal-content {
+    transform: scale(1);
+}
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid var(--border-color);
+}
+.modal-header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: var(--text-color);
+}
+.modal-close-btn {
+    font-size: 2.25rem;
+    font-weight: 300;
+    line-height: 1;
+    color: var(--text-color-secondary);
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+.modal-close-btn:hover {
+    color: var(--text-color);
+}
+.modal-body {
+    padding: 2rem;
+    max-height: 70vh;
+    overflow-y: auto;
+}
+.modal-body .form-group { margin-bottom: 1.5rem; }
+.modal-body .form-group label { display: block; font-weight: 600; margin-bottom: 0.5rem; }
+.modal-body .form-group input, .modal-body .form-group textarea, .modal-body .form-group select {
+    width: 100%; padding: 0.75rem; border: 1px solid var(--border-color);
+    border-radius: 8px; background-color: var(--bg-light); color: var(--text-color);
+    font-family: inherit; font-size: 1rem;
+}
+.modal-body .form-group textarea { resize: vertical; min-height: 80px; }
+.modal-body .form-actions { margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color); display: flex; justify-content: flex-end; gap: 1rem; }
+.modal-body .form-actions .btn { width: auto; }
+.options-container {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-color);
+}
+.options-container label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+#options-list, #options-list-add {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+.option-input-group {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+.option-input {
+    width: 100%;
+}
+.btn-add-option {
+    display: inline-block;
+    margin-top: 1rem;
+    font-weight: 600;
+    color: var(--accent);
+    background: none;
+    border: 1px solid transparent;
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    transition: background-color 0.2s;
+}
+.btn-add-option:hover {
+    background-color: color-mix(in srgb, var(--accent) 15%, transparent);
+}
+.btn-remove-option {
+    border: none;
+    background: transparent;
+    color: var(--text-color-secondary);
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0 0.5rem;
+    border-radius: 4px;
+}
+.btn-remove-option:hover {
+    color: var(--danger);
+    background-color: color-mix(in srgb, var(--danger) 15%, transparent);
+}
+.btn-remove-option[disabled] {
+    opacity: 0.3;
+    cursor: not-allowed;
+    background: none !important;
+    color: var(--text-color-secondary) !important;
+}
+
+/* --- ESTILOS PARA NOTIFICAÇÕES "TOAST" --- */
+#toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-end;
+}
+.toast {
+    background-color: var(--text-primary);
+    color: var(--bg-card);
+    padding: 12px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    font-weight: 500;
+    font-size: 0.95rem;
+    opacity: 0;
+    transform: translateX(100%);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+.toast.show {
+    opacity: 1;
+    transform: translateX(0);
+}
+.toast.success {
+    background-color: #28a745;
+    color: white;
+}
+.toast.error {
+    background-color: #dc3545;
+    color: white;
+}
+.toast.info {
+    background-color: #0dcaf0;
+    color: white;
+}
+
+/* --- BANNER DE PESQUISA CONGELADA --- */
+.survey-locked-banner {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background-color: color-mix(in srgb, var(--accent) 10%, transparent);
+    color: var(--text-color-secondary);
+    border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    margin-bottom: 2.5rem;
+    font-weight: 500;
+}
+.survey-locked-banner svg {
+    flex-shrink: 0;
+    color: var(--accent);
+}
+.questions-list-container.is-locked .question-card {
+    cursor: default;
+}
+.questions-list-container.is-locked .question-card:hover {
+    border-color: var(--border-color);
+    box-shadow: none;
+}
+
+/* --- NOVOS ESTILOS PARA O EDITOR DE OPÇÕES --- */
+.options-editor-container {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-color);
+}
+.options-editor-label {
+    display: block;
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+    color: var(--text-color-secondary);
+}
+.options-editor-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+.option-edit-group {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+.option-icon-radio {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--text-color-secondary);
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+.option-input-edit {
+    flex-grow: 1;
+}
+.btn-icon {
+    background: transparent;
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--text-color-secondary);
+    transition: background-color 0.2s, color 0.2s;
+}
+.btn-icon:hover {
+    background-color: color-mix(in srgb, var(--border-color) 50%, transparent);
+}
+.btn-delete-option:hover {
+    background-color: color-mix(in srgb, var(--danger) 15%, transparent);
+    color: var(--danger);
+}
+
+/* --- NOVOS ESTILOS PARA REORDENAÇÃO (DRAG-AND-DROP) --- */
+.question-drag-handle {
+    color: var(--text-color-secondary);
+    cursor: grab;
+    opacity: 0.4;
+    padding-top: 0.2rem;
+    align-self: flex-start;
+}
+.sortable-drag .question-drag-handle {
+    cursor: grabbing !important;
+}
+.sortable-ghost {
+    opacity: 0.4;
+    background: var(--highlight-bg);
+    border-style: dashed;
+}
+.sortable-chosen,
+.sortable-drag {
+    opacity: 1 !important;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    transform: scale(1.02);
+}
