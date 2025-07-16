@@ -154,4 +154,4 @@ def editar_comunicado(comunicado_id):
         return redirect(url_for('comunicados.view_comunicados'))
 
     admin_username = session.get('username', 'Admin')
-    return render_template('Comunicados/editar_comunicado.html', comunicado=comunicado, admin_username=admin_username)
+    return render_template('comunicados/editar_comunicado.html', comunicado=comunicado, admin_username=admin_username)
