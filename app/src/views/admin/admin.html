@@ -1,197 +1,338 @@
 <!DOCTYPE html>
-
 <html lang="pt-br">
-
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard de RH | Portal RH</title>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-<meta charset="UTF-8">
+    <link rel="stylesheet" href="{{ url_for('views.static', filename='base/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('views.static', filename='admin/admin.css') }}">
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Painel do RH | Portal RH</title>
-
-
-
-<link rel="shortcut icon"
-
-href="{{ url_for('static', filename='favicon.ico') }}"
-
-type="image/x-icon" />
-
-
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-
-
-<link rel="stylesheet" href="{{ url_for('views.static', filename='base/base.css') }}" />
-
-
-
-<link rel="stylesheet" href="{{ url_for('views.static', filename='admin/admin.css') }}" />
-
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-
-<body>
-
+<body data-api-url="{{ url_for('admin.get_rh_data') }}">
 <header>
+    <nav class="navbar">
+      <div class="nav-container">
 
-<nav class="navbar">
+        <div class="navbar-left">
+          <span class="nav-logo">REDE HOSPITAL SAMAR</span>
+          <label class="theme-switch" title="Alternar tema claro/escuro">
+            <input type="checkbox"
+                   id="theme-toggle"
+                   class="theme-checkbox"
+                   aria-label="Alternar tema claro/escuro" />
+            <div class="slider">
+                <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+            </div>
+          </label>
+        </div>
 
-<div class="nav-container">
+        <div class="navbar-center">
+          {% if session.get('colaborador_id') %}
+            <span class="header-user-greeting">Olá, {{ session.get('colaborador_nome', 'Colaborador') }}</span>
+          {% endif %}
+        </div>
 
-<div class="navbar-center">
+        <div class="navbar-right">
+          <button class="nav-toggle" aria-label="abrir menu de navegação">
+              <span class="hamburger"></span>
+          </button>
 
-<label class="theme-switch" title="Alternar tema claro/escuro">
+          <ul class="nav-menu">
+            <li><a href="{{ url_for('home.home_view') }}" class="active">Início</a></li>
+            <li><a href="{{ url_for('pesquisas_lista.lista_pesquisas_view') }}">Pesquisa</a></li>
 
-<input type="checkbox"
+            <li class="nav-item dropdown">
+              <a href="#" class="nav-link dropdown-toggle">Informativos</a>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="{{ url_for('comunicados.view_comunicados') }}">Comunicados</a></li>
+                <li><a class="dropdown-item" href="{{ url_for('beneficios.beneficios_page') }}">Benefícios</a></li>
+              </ul>
+            </li>
 
-id="theme-toggle"
+            {% if session.get('admin_logged_in') %}
+              <li class="nav-item dropdown">
+                <a href="{{ url_for('admin.admin_panel') }}" class="nav-link dropdown-toggle">Administrador</a>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="{{ url_for('analitico.analitico_view') }}">Analítico</a></li>
+                  <li><a class="dropdown-item" href="{{ url_for('novo_colaborador.novo_colaborador_view') }}">Novo Colaborador</a></li>
+                  <li><a class="dropdown-item" href="{{ url_for('novo_comunicado.novo_comunicado_view') }}">Novo Comunicado</a></li>
+                  <li><a class="dropdown-item" href="{{ url_for('admin_feriados.gerenciar_feriados') }}">Gerenciar Feriados</a></li>
+                  <li><a class="dropdown-item" href="{{ url_for('admin_surveys.gerenciar_pesquisas_view') }}">Gerenciar Pesquisas</a></li>
+                </ul>
+              </li>
+            {% else %}
+              <li><a href="{{ url_for('adminLogin.admin_login') }}">Administrador</a></li>
+            {% endif %}
 
-class="theme-checkbox"
+            {% if session.get('colaborador_id') or session.get('admin_logged_in') %}
+              <li><a href="{{ url_for('logout.logout_view') }}" class="btn-logout">Sair</a></li>
+            {% endif %}
+          </ul>
+        </div>
 
-aria-label="Alternar tema claro/escuro" />
-
-<div class="slider">
-
-<svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
-
-<svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
-
-</div>
-
-</label>
-
-<span class="nav-logo">REDE HOSPITAL SAMAR</span>
-
-</div>
-
-
-
-<button class="nav-toggle" aria-label="abrir menu de navegação">
-
-<span class="hamburger"></span>
-
-</button>
-
-
-
-<ul class="nav-menu">
-
-<li><a href="{{ url_for('home.home_view') }}">Início</a></li>
-
-<li><a href="{{ url_for('pesquisas_lista.lista_pesquisas_view') }}">Pesquisa</a></li>
-
-<li class="nav-item dropdown">
-
-<a href="#" class="nav-link dropdown-toggle">Informativos</a>
-
-<ul class="dropdown-menu">
-
-<li><a class="dropdown-item" href="{{ url_for('comunicados.view_comunicados') }}">Comunicados</a></li>
-
-<li><a class="dropdown-item" href="{{ url_for('beneficios.beneficios_page') }}">Benefícios</a></li>
-
-</ul>
-
-</li>
-
-
-
-{% if session.get('admin_logged_in') %}
-
-<li class="nav-item dropdown">
-
-<a href="{{ url_for('admin.admin_panel') }}" class="nav-link dropdown-toggle active">Administrador</a>
-
-<ul class="dropdown-menu">
-
-<li><a class="dropdown-item" href="{{ url_for('analitico.analitico_view') }}">Analítico</a></li>
-
-<li><a class="dropdown-item" href="{{ url_for('novo_colaborador.novo_colaborador_view') }}">Novo Colaborador</a></li>
-
-<li><a class="dropdown-item" href="{{ url_for('novo_comunicado.novo_comunicado_view') }}">Novo Comunicado</a></li>
-
-<li><a class="dropdown-item" href="{{ url_for('admin_feriados.gerenciar_feriados') }}">Gerenciar Feriados</a></li>
-
-</ul>
-
-</li>
-
-<li><a href="{{ url_for('logout.logout_view') }}">Sair</a></li>
-
-{% else %}
-
-<li><a href="{{ url_for('adminLogin.admin_login') }}" class="active">Administrador</a></li>
-
-{% endif %}
-
-</ul>
-
-</div>
-
-</nav>
-
-</header>
-
-
+      </div>
+    </nav>
+  </header>
 
 <main>
+    <div class="page-container">
+        <section class="page-header">
+            <h1 class="page-title">Dashboard de Colaboradores</h1>
+            <p class="page-subtitle">Análise interativa da sua força de trabalho.</p>
+        </section>
 
-<div class="page-container">
+        <section class="dashboard-filters content-card">
+            <div class="filter-group">
+                <label for="unidade-filtro">Filtrar por Unidade</label>
+                <select id="unidade-filtro"><option value="">Todas as Unidades</option></select>
+            </div>
+            <div class="filter-group">
+                <label for="setor-filtro">Filtrar por Setor</label>
+                <select id="setor-filtro" disabled><option value="">Todos os Setores</option></select>
+            </div>
+            <button id="reset-filters-btn" class="btn btn-secondary">Limpar Filtros</button>
+        </section>
 
-<section class="page-header">
+        <section class="kpi-grid">
+            <div class="kpi-card"><h3 class="kpi-title">Colaboradores Ativos</h3><p id="kpi-total-ativos" class="kpi-value">...</p></div>
+            <div class="kpi-card"><h3 class="kpi-title">Turnover (30 dias)</h3><p id="kpi-turnover" class="kpi-value">N/D</p><small class="kpi-note">Requer dados de admissão/desligamento</small></div>
+            <div class="kpi-card"><h3 class="kpi-title">Tempo Médio de Casa</h3><p id="kpi-tempo-medio" class="kpi-value">N/D</p><small class="kpi-note">Requer dados de admissão</small></div>
+        </section>
 
-<h1 class="page-title">Painel do Administrador</h1>
+        <section class="dashboard-grid">
+            <div class="dashboard-card"><h3 class="card-title">Colaboradores por Unidade</h3><div class="chart-container"><canvas id="unidadeChart"></canvas></div></div>
+            <div class="dashboard-card"><h3 class="card-title">Distribuição por Faixa Etária</h3><div class="chart-container chart-container-pie"><canvas id="faixaEtariaChart"></canvas></div></div>
+            <div class="dashboard-card full-width"><h3 class="card-title">Top 10 Setores (Colaboradores Ativos)</h3><div class="chart-container"><canvas id="setorChart"></canvas></div></div>
+        </section>
 
-<p class="page-subtitle">Bem-vindo(a), {{ username }}! Aqui você pode gerenciar os comunicados e outras funcionalidades do portal.</p>
+        <section class="content-card">
+            <div class="table-header">
+                <h2 class="table-title">Gerenciar Colaboradores</h2>
+                <div class="table-actions">
+                    <input type="text" id="search-input" class="search-input" placeholder="Buscar por nome ou CPF...">
+                    <button id="add-colaborador-btn" class="btn btn-primary">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                        <span>Adicionar</span>
+                    </button>
+                </div>
+            </div>
 
-</section>
+            <div class="filter-controls">
+                <div class="status-filter">
+                    <label for="inactive-toggle" class="toggle-label">Mostrar apenas inativos</label>
+                    <label class="switch">
+                        <input type="checkbox" id="inactive-toggle">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+            </div>
 
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead><tr><th>Nome</th><th>CPF</th><th>Setor / Cargo</th><th>Unidade</th><th>Status</th><th>Ações</th></tr></thead>
+                    <tbody id="colaboradores-table-body"><tr><td colspan="6" class="text-center">Carregando dados...</td></tr></tbody>
+                </table>
+            </div>
 
-
-<div class="content-card">
-
-<p>Em construção...</p>
-
-</div>
-
-</div>
-
+            <div class="pagination-footer">
+                <span id="pagination-info"></span>
+                <div class="pagination-controls" id="pagination-controls"></div>
+            </div>
+        </section>
+    </div>
 </main>
 
+<div id="add-colaborador-modal" class="modal-overlay">
+    </div>
 
-
-
+<div id="toast-container"></div>
 
 <script src="{{ url_for('views.static', filename='home/theme-toggle.js') }}" defer></script>
-
-
-
 <script>
+    // JS completo e funcional
+    document.addEventListener('DOMContentLoaded', () => {
+        const apiUrlBase = document.body.dataset.apiUrl;
+        const ui = {
+            unidadeFiltro: document.getElementById('unidade-filtro'),
+            setorFiltro: document.getElementById('setor-filtro'),
+            resetBtn: document.getElementById('reset-filters-btn'),
+            tableBody: document.getElementById('colaboradores-table-body'),
+            kpiTotalAtivos: document.getElementById('kpi-total-ativos'),
+            kpiTurnover: document.getElementById('kpi-turnover'),
+            kpiTempoMedio: document.getElementById('kpi-tempo-medio'),
+            chartCanvases: {
+                unidade: document.getElementById('unidadeChart'),
+                setor: document.getElementById('setorChart'),
+                faixaEtaria: document.getElementById('faixaEtariaChart')
+            },
+            addModal: document.getElementById('add-colaborador-modal'),
+            addBtn: document.getElementById('add-colaborador-btn'),
+            searchInput: document.getElementById('search-input'),
+            inactiveToggle: document.getElementById('inactive-toggle'),
+            paginationInfo: document.getElementById('pagination-info'),
+            paginationControls: document.getElementById('pagination-controls')
+        };
 
-const navToggle = document.querySelector('.nav-toggle');
+        let charts = {};
+        let currentFilters = { page: 1, search: '', inactive: false, unidade: '', setor: '' };
+        let searchDebounceTimer;
 
-const navMenu = document.querySelector('.nav-menu');
+        async function fetchAndRenderData() {
+            const params = new URLSearchParams(currentFilters);
+            const apiUrl = `${apiUrlBase}?${params.toString()}`;
+            try {
+                const response = await fetch(apiUrl);
+                if (!response.ok) throw new Error(`Erro na rede! Status: ${response.status}`);
+                const data = await response.json();
+                if (data.error) throw new Error(data.error);
+                updateUI(data);
+            } catch (error) {
+                console.error('Erro CRÍTICO no bloco fetch/render:', error);
+                ui.tableBody.innerHTML = `<tr><td colspan="6" class="text-center" style="color: #dc3545; font-weight: bold;">Falha ao carregar os dados.</td></tr>`;
+            }
+        }
 
-if (navToggle && navMenu) {
+        function updateUI(data) {
+            try {
+                updateFiltersUI(data.filters);
+                updateKPIs(data.kpi);
+                renderCharts(data.chartData);
+                renderTable(data.tableData);
+                renderPagination(data.pagination);
+            } catch (e) {
+                console.error("ERRO DENTRO DE updateUI!", e);
+            }
+        }
 
-navToggle.addEventListener('click', () => {
+        function updateFiltersUI(filters) {
+            const currentUnidade = ui.unidadeFiltro.value;
+            if (ui.unidadeFiltro.options.length <= 1) {
+                filters.unidades.forEach(u => ui.unidadeFiltro.add(new Option(u, u)));
+            }
+             ui.unidadeFiltro.value = currentUnidade;
+            const currentSetor = ui.setorFiltro.value;
+            ui.setorFiltro.innerHTML = '<option value="">Todos os Setores</option>';
+            if (filters.setores && filters.setores.length > 0) {
+                filters.setores.forEach(s => ui.setorFiltro.add(new Option(s, s)));
+                ui.setorFiltro.disabled = false;
+                ui.setorFiltro.value = currentSetor;
+            } else {
+                ui.setorFiltro.disabled = true;
+            }
+        }
+        function updateKPIs(kpi) {
+            ui.kpiTotalAtivos.textContent = kpi.totalAtivos;
+            ui.kpiTurnover.textContent = kpi.turnover;
+            ui.kpiTempoMedio.textContent = kpi.tempoMedio;
+        }
+        function renderCharts(chartData) {
+            const textColor = getComputedStyle(document.documentElement).getPropertyValue('--text-color').trim() || '#000';
+            Chart.defaults.color = textColor;
+            Chart.defaults.borderColor = 'rgba(128, 128, 128, 0.1)';
+            const chartConfigs = {
+                unidade: { type: 'bar', data: chartData.porUnidade, options: { onClick: (e, els) => handleChartClick(e, els, 'unidade') } },
+                setor: { type: 'bar', data: chartData.porSetor, options: { indexAxis: 'y' } },
+                faixaEtaria: { type: 'doughnut', data: chartData.porFaixaEtaria, options: { plugins: { legend: { position: 'right' } } } }
+            };
+            for (const key in chartConfigs) {
+                if (charts[key]) charts[key].destroy();
+                const canvas = ui.chartCanvases[key];
+                if (!canvas) continue;
+                const config = chartConfigs[key];
+                charts[key] = new Chart(canvas, {
+                    type: config.type,
+                    data: {
+                        labels: config.data.labels,
+                        datasets: [{
+                            data: config.data.data,
+                            backgroundColor: config.type === 'doughnut' ? ['#FD4289', '#009BC4', '#FFC107', '#28A745', '#6F42C1'] : (key === 'unidade' ? '#FD4289' : '#009BC4'),
+                            label: 'Colaboradores'
+                        }]
+                    },
+                    options: { ...config.options, responsive: true, maintainAspectRatio: false, plugins: { ...config.options.plugins, legend: { display: config.type === 'doughnut' } } }
+                });
+            }
+        }
+        function handleChartClick(event, elements, filterType) {
+            if (elements.length === 0) return;
+            const chart = event.chart;
+            const elementIndex = elements[0].index;
+            const label = chart.data.labels[elementIndex];
+            if (filterType === 'unidade') {
+                currentFilters.unidade = label;
+                ui.unidadeFiltro.value = label;
+                currentFilters.page = 1;
+                fetchAndRenderData();
+            }
+        }
+        function renderTable(colaboradores) {
+            ui.tableBody.innerHTML = '';
+            if (!colaboradores || colaboradores.length === 0) {
+                ui.tableBody.innerHTML = `<tr><td colspan="6" class="text-center">Nenhum colaborador encontrado.</td></tr>`;
+                return;
+            }
+            colaboradores.forEach(c => {
+                const statusBadge = c.ativo ? '<span class="status-badge active">Ativo</span>' : '<span class="status-badge inactive">Inativo</span>';
+                const actionButton = c.ativo ? `<button type="submit" class="btn-table-action danger" title="Desligar"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>` : `<button type="submit" class="btn-table-action success" title="Reativar"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg></button>`;
+                ui.tableBody.insertAdjacentHTML('beforeend', `<tr data-id="${c.id}"><td data-label="Nome">${c.nome}</td><td data-label="CPF">${c.cpf}</td><td data-label="Setor / Cargo"><div class="stacked-text"><span>${c.setor || 'N/A'}</span><small>${c.cargo || 'N/A'}</small></div></td><td data-label="Unidade">${c.unidade || 'N/A'}</td><td data-label="Status">${statusBadge}</td><td data-label="Ações"><form class="toggle-status-form" action="/admin/colaborador/toggle-status/${c.id}" method="POST">${actionButton}</form></td></tr>`);
+            });
+        }
+        function renderPagination(pagination) {
+            if (!pagination) { ui.paginationInfo.textContent = ''; ui.paginationControls.innerHTML = ''; return; }
+            const { page, totalPages, totalItems } = pagination;
+            ui.paginationInfo.textContent = `Página ${page} de ${totalPages} (${totalItems} resultados)`;
+            ui.paginationControls.innerHTML = '';
+            if (totalPages <= 1) return;
+            const prevBtn = document.createElement('button');
+            prevBtn.innerHTML = '&laquo;';
+            prevBtn.disabled = page === 1;
+            prevBtn.addEventListener('click', () => { currentFilters.page--; fetchAndRenderData(); });
+            ui.paginationControls.appendChild(prevBtn);
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === 1 || i === totalPages || (i >= page - 1 && i <= page + 1)) {
+                    const pageBtn = document.createElement('button');
+                    pageBtn.textContent = i;
+                    if (i === page) pageBtn.classList.add('active');
+                    pageBtn.addEventListener('click', () => { currentFilters.page = i; fetchAndRenderData(); });
+                    ui.paginationControls.appendChild(pageBtn);
+                } else if (i === page - 2 || i === page + 2) {
+                    const dots = document.createElement('span');
+                    dots.textContent = '...';
+                    ui.paginationControls.appendChild(dots);
+                }
+            }
+            const nextBtn = document.createElement('button');
+            nextBtn.innerHTML = '&raquo;';
+            nextBtn.disabled = page === totalPages;
+            nextBtn.addEventListener('click', () => { currentFilters.page++; fetchAndRenderData(); });
+            ui.paginationControls.appendChild(nextBtn);
+        }
 
-navMenu.classList.toggle('nav-menu--visible');
+        // Add event listeners
+        ui.unidadeFiltro.addEventListener('change', () => { currentFilters.unidade = ui.unidadeFiltro.value; currentFilters.setor = ''; currentFilters.page = 1; fetchAndRenderData(); });
+        ui.setorFiltro.addEventListener('change', () => { currentFilters.setor = ui.setorFiltro.value; currentFilters.page = 1; fetchAndRenderData(); });
+        ui.resetBtn.addEventListener('click', () => { currentFilters = { unidade: '', setor: '', search: '', inactive: false, page: 1 }; ui.unidadeFiltro.value = ''; ui.setorFiltro.value = ''; ui.searchInput.value = ''; ui.inactiveToggle.checked = false; fetchAndRenderData(); });
+        ui.searchInput.addEventListener('keyup', () => { clearTimeout(searchDebounceTimer); searchDebounceTimer = setTimeout(() => { currentFilters.search = ui.searchInput.value; currentFilters.page = 1; fetchAndRenderData(); }, 300); });
+        ui.inactiveToggle.addEventListener('change', (e) => { currentFilters.inactive = e.target.checked; currentFilters.page = 1; fetchAndRenderData(); });
+        if (ui.addBtn) ui.addBtn.addEventListener('click', () => ui.addModal.classList.add('active'));
+        if (ui.addModal) {
+            const closeModalBtn = ui.addModal.querySelector('#close-modal-btn');
+            const cancelModalBtn = ui.addModal.querySelector('#cancel-add-btn');
+            if (closeModalBtn) closeModalBtn.addEventListener('click', () => ui.addModal.classList.remove('active'));
+            if (cancelModalBtn) cancelModalBtn.addEventListener('click', () => ui.addModal.classList.remove('active'));
+            ui.addModal.addEventListener('click', (e) => { if (e.target === ui.addModal) ui.addModal.classList.remove('active'); });
+        }
+        ui.tableBody.addEventListener('submit', async (e) => { if (e.target.classList.contains('toggle-status-form')) { e.preventDefault(); const form = e.target; try { const response = await fetch(form.action, { method: 'POST' }); const result = await response.json(); if (result.success) { console.log(result.message); fetchAndRenderData(); } else { console.error(result.message); } } catch (err) { console.error("Erro ao submeter formulário de status:", err); } } });
 
-navToggle.classList.toggle('is-active');
-
-});
-
-}
-
+        fetchAndRenderData();
+    });
 </script>
-
 </body>
-
 </html>

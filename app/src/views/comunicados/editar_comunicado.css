@@ -1,0 +1,196 @@
+/* app/src/views/comunicados/editar_comunicado.css */
+
+/* ========== LAYOUT PRINCIPAL ========== */
+.page-container {
+    max-width: 900px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* ========== CABEÇALHO DA PÁGINA ========== */
+.page-header {
+    text-align: center;
+}
+
+.page-title {
+    font-size: 2.25rem;
+    font-weight: 700;
+}
+
+.page-subtitle {
+    font-size: 1.1rem;
+    color: var(--text-color-secondary);
+    margin-top: 0.5rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* ========== CARD PRINCIPAL DO FORMULÁRIO ========== */
+.comunicado-preview-card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -2px rgba(0,0,0,0.05);
+}
+
+/* ========== ÁREA DE UPLOAD DE IMAGEM ========== */
+#image-upload-area {
+    background-color: var(--bg-light);
+    border-bottom: 1px solid var(--border-color);
+    min-height: 250px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#image-upload-area:hover {
+    background-color: color-mix(in srgb, var(--border-color) 30%, transparent);
+}
+
+.image-upload-label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    color: var(--text-color-secondary);
+    font-weight: 500;
+    text-align: center;
+}
+
+.image-upload-label svg {
+    width: 32px;
+    height: 32px;
+}
+
+#image-upload-area input[type="file"] {
+    display: none;
+}
+
+#image-preview {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+#image-upload-area.has-image .image-upload-label {
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+#image-upload-area.has-image:hover .image-upload-label {
+    opacity: 1;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+#image-upload-area.has-image:hover .image-upload-label svg {
+    stroke: white;
+}
+
+/* ========== CABEÇALHO DO COMUNICADO (METADADOS E CATEGORIA) ========== */
+.comunicado-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    background-color: var(--bg-light);
+    border-bottom: 1px solid var(--border-color);
+    font-size: 0.9rem;
+}
+
+.comunicado-meta {
+    color: var(--text-color-secondary);
+}
+
+.form-group-categoria {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.form-group-categoria label {
+    font-weight: 500;
+}
+
+.form-group-categoria select {
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: 500;
+    padding: 0.25rem 0.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background-color: var(--bg-card);
+    color: var(--text-color);
+}
+
+/* ========== CORPO DO COMUNICADO (INPUTS DE TÍTULO E CONTEÚDO) ========== */
+.comunicado-body {
+    padding: 1.5rem 2rem;
+}
+
+.comunicado-title-input,
+.comunicado-content-textarea {
+    width: 100%;
+    border: none;
+    background-color: transparent;
+    color: var(--text-color);
+    padding: 0.5rem 0;
+    font-family: 'Inter', sans-serif; /* Garante a mesma fonte do resto da página */
+}
+
+.comunicado-title-input:focus,
+.comunicado-content-textarea:focus {
+    outline: none;
+}
+
+.comunicado-title-input {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    border-bottom: 1px dashed var(--border-color);
+}
+
+.comunicado-content-textarea {
+    font-size: 1.1rem;
+    line-height: 1.7;
+    resize: vertical;
+}
+
+/* ========== BOTÃO DE PUBLICAÇÃO ========== */
+.btn-publish {
+    display: block;
+    width: 100%;
+    max-width: 300px;
+    margin: 1.5rem auto 0;
+    padding: 0.9rem 1.5rem;
+    background-color: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.btn-publish:hover {
+    background-color: var(--accent-hover);
+}
+
+html.dark .btn-publish {
+    color: var(--text-color);
+}

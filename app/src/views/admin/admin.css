@@ -1,40 +1,281 @@
-/* Estilos específicos para a página do Painel de Administrador */
+/* app/src/views/admin/admin.css */
 
-main {
-  max-width: var(--container-max-width);
-  margin: var(--section-gap) auto;
-  padding: 0 1rem;
-}
-
+/* ========== LAYOUT E CABEÇALHO DA PÁGINA ========== */
 .page-container {
-  max-width: 900px;
-  margin: 0 auto;
+    max-width: 1400px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0 2rem;
+    width: 100%;
 }
 
 .page-header {
-  text-align: center;
-  margin-bottom: 2.5rem;
+    text-align: center;
+    margin-bottom: 2rem;
 }
 
 .page-title {
-  font-size: 2.5rem;
-  font-weight: 700;
-  color: var(--text-color);
-  margin-bottom: 0.5rem;
+    font-size: 2.25rem;
+    font-weight: 700;
 }
 
 .page-subtitle {
-  font-size: 1.1rem;
-  color: var(--text-color-secondary);
-  max-width: 600px;
-  margin: 0 auto;
+    font-size: 1.1rem;
+    color: var(--text-color-secondary);
+    margin-top: 0.5rem;
 }
 
+/* ========== FILTROS GERAIS DO DASHBOARD ========== */
+.dashboard-filters {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.filter-group label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-color-secondary);
+}
+
+.filter-group select {
+    font-family: inherit;
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background-color: var(--bg-card);
+    color: var(--text-color);
+    min-width: 220px;
+}
+
+#reset-filters-btn {
+    margin-left: auto;
+    align-self: flex-end;
+}
+
+/* ========== CARDS DE KPI ========== */
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.kpi-card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 1.5rem;
+    text-align: center;
+}
+
+.kpi-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-color-secondary);
+    margin-bottom: 0.5rem;
+}
+
+.kpi-value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--accent);
+    line-height: 1;
+}
+
+.kpi-note {
+    font-size: 0.8rem;
+    color: var(--text-color-secondary);
+    opacity: 0.8;
+    margin-top: 0.25rem;
+    display: block;
+}
+
+/* ========== GRID DE GRÁFICOS ========== */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+}
+
+.dashboard-card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -2px rgba(0,0,0,0.05);
+}
+
+.dashboard-card.full-width {
+    grid-column: 1 / -1;
+}
+
+.card-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.chart-container {
+    position: relative;
+    height: 300px;
+}
+
+.chart-container-pie {
+    height: 260px;
+    max-width: 260px;
+    margin: auto;
+}
+
+/* ========== SEÇÃO DE GERENCIAMENTO (TABELA) ========== */
 .content-card {
-  background: var(--bg-card);
-  border-radius: 16px;
-  border: 1px solid var(--border-color);
-  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -2px rgba(0,0,0,0.05);
-  padding: var(--card-padding);
-  transition: background 0.3s, border-color 0.3s, box-shadow 0.3s;
+    background: var(--bg-card);
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+    padding: 1.5rem 2rem;
+    margin-top: 2.5rem;
+}
+
+.table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.table-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.table-actions {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.search-input {
+    font-family: inherit;
+    font-size: 1rem;
+    padding: 0.6rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    width: 100%;
+    max-width: 350px;
+}
+
+.table-actions .btn-primary {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.filter-controls {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.status-filter {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.toggle-label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-color-secondary);
+}
+
+/* Tabela Redesenhada */
+.table-responsive { width: 100%; overflow-x: auto; }
+.data-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+.data-table th, .data-table td { padding: 0.8rem 1rem; text-align: left; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
+.data-table thead th { font-weight: 600; color: var(--text-color-secondary); background-color: transparent; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.5px; }
+.data-table tbody tr:hover { background-color: var(--bg-light); }
+.stacked-text { display: flex; flex-direction: column; }
+.stacked-text small { font-size: 0.8rem; color: var(--text-color-secondary); }
+.status-badge { display: inline-block; padding: 0.2rem 0.6rem; border-radius: 20px; font-weight: 600; font-size: 0.75rem; text-transform: uppercase; }
+.status-badge.active { background-color: var(--status-concluido-bg); color: var(--status-concluido-text); }
+.status-badge.inactive { background-color: #f8d7da; color: #842029; }
+
+/* Botões de Ação Redesenhados */
+.btn-table-action { background: none; border: none; padding: 0.5rem; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background-color 0.2s; }
+.btn-table-action svg { width: 18px; height: 18px; }
+.btn-table-action.danger { color: #dc3545; }
+.btn-table-action.danger:hover { background-color: rgba(220, 53, 69, 0.1); }
+.btn-table-action.success { color: #28a745; }
+.btn-table-action.success:hover { background-color: rgba(40, 167, 69, 0.1); }
+
+/* Paginação */
+.pagination-footer{display:flex;justify-content:space-between;align-items:center;padding-top:1.5rem;margin-top:1rem;border-top:1px solid var(--border-color);flex-wrap:wrap;gap:1rem}.pagination-info{font-size:.9rem;color:var(--text-color-secondary)}.pagination-controls{display:flex;gap:.5rem}.pagination-controls button{background:var(--bg-card);border:1px solid var(--border-color);color:var(--text-color);padding:.5rem .9rem;border-radius:6px;cursor:pointer;transition:background-color .2s,border-color .2s}.pagination-controls button:hover{background-color:var(--bg-light);border-color:var(--accent-light)}.pagination-controls button.active{background-color:var(--accent);color:#fff;border-color:var(--accent)}.pagination-controls button:disabled{opacity:.5;cursor:not-allowed}.pagination-controls span{padding:0 .5rem;align-self:center}
+
+/* Estilos do Modal e Notificações */
+.modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background-color:rgba(0,21,73,.6);display:flex;justify-content:center;align-items:center;z-index:2000;opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s}.modal-overlay.active{opacity:1;visibility:visible}.modal-content{background-color:var(--bg-card);padding:2rem;border-radius:16px;width:100%;max-width:700px;box-shadow:0 10px 25px rgba(0,0,0,.1);transform:scale(.95);transition:transform .3s}.modal-overlay.active .modal-content{transform:scale(1)}.modal-header{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border-color);padding-bottom:1rem;margin-bottom:1.5rem}.modal-title{font-size:1.5rem;font-weight:600;color:var(--text-color)}.modal-close-btn{background:0 0;border:none;font-size:2rem;font-weight:300;color:var(--text-color-secondary);cursor:pointer;line-height:1}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}.form-group{display:flex;flex-direction:column;gap:.5rem}.form-group.full-width{grid-column:1 / -1}.form-group label{font-weight:600;font-size:.9rem}.form-group input,.form-group select{width:100%;padding:.75rem 1rem;font-size:1rem;border:1px solid var(--border-color);border-radius:8px;background-color:var(--bg-card);color:var(--text-color)}.form-actions{display:flex;justify-content:flex-end;gap:1rem;margin-top:2rem;border-top:1px solid var(--border-color);padding-top:1.5rem}.form-group .error-message{color:#dc3545;font-size:.8rem;font-weight:500;min-height:1.2em;margin-top:.25rem}.form-group.error input,.form-group.error select{border-color:#dc3545}.form-group.error input:focus,.form-group.error select:focus{box-shadow:0 0 0 2px rgba(220,53,69,.25)}#toast-container{position:fixed;top:2rem;right:2rem;z-index:9999;display:flex;flex-direction:column;gap:1rem}.toast{background-color:var(--bg-card);color:var(--text-color);padding:1rem 1.5rem;border-radius:8px;box-shadow:0 5px 15px rgba(0,0,0,.1);border-left:5px solid;min-width:300px;opacity:0;transform:translateX(100%);transition:opacity .4s ease,transform .4s ease}.toast.show{opacity:1;transform:translateX(0)}.toast.success{border-left-color:#28a745}.toast.error{border-left-color:#dc3545}
+
+/* ========== REGRAS DE RESPONSIVIDADE ========== */
+
+/* Para tablets e telas menores */
+@media (max-width: 992px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr; /* Gráficos empilhados verticalmente */
+    }
+
+    .chart-container-pie {
+        height: 280px;
+        max-width: 280px;
+    }
+
+    .table-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .table-actions {
+        width: 100%;
+    }
+
+    .search-input {
+        max-width: none;
+    }
+}
+
+/* Para celulares */
+@media (max-width: 768px) {
+    .page-container {
+        padding: 0 1rem;
+    }
+
+    .dashboard-filters {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    #reset-filters-btn {
+        margin-left: 0;
+        margin-top: 0.5rem;
+    }
+
+    .pagination-footer {
+        flex-direction: column;
+        align-items: center;
+    }
 }

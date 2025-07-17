@@ -61,7 +61,7 @@ body {
 body {
   font-family: 'Source Sans 3', sans-serif;
   background: var(--bg-light);
-  color: var(--text-color);
+    color: var(--text-color);
   line-height: 1.6;
   transition: background 0.3s, color 0.3s;
 }
@@ -270,7 +270,7 @@ header {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: #ccc;
+
   border-radius: 28px;
   transition: background-color 0.4s;
 }
@@ -325,7 +325,6 @@ main {
   max-width: var(--container-max-width);
   margin: var(--section-gap) auto;
   padding: 0 1rem;
-  display: flex;
   flex-direction: column;
   gap: var(--section-gap);
   position: relative;
