@@ -29,6 +29,7 @@
   <header>
     <nav class="navbar">
       <div class="nav-container">
+
         <div class="navbar-left">
           <span class="nav-logo">REDE HOSPITAL SAMAR</span>
           <label class="theme-switch" title="Alternar tema claro/escuro">
@@ -42,47 +43,54 @@
             </div>
           </label>
         </div>
+
         <div class="navbar-center">
           {% if session.get('colaborador_id') %}
             <span class="header-user-greeting">Olá, {{ session.get('colaborador_nome', 'Colaborador') }}</span>
           {% endif %}
         </div>
+
         <div class="navbar-right">
           <button class="nav-toggle" aria-label="abrir menu de navegação">
               <span class="hamburger"></span>
           </button>
+
           <ul class="nav-menu">
-              <li><a href="{{ url_for('home.home_view') }}">Início</a></li>
-              <li><a href="{{ url_for('pesquisas_lista.lista_pesquisas_view') }}">Pesquisa</a></li>
+            <li><a href="{{ url_for('home.home_view') }}" class="active">Início</a></li>
+            <li><a href="{{ url_for('pesquisas_lista.lista_pesquisas_view') }}">Pesquisa</a></li>
+
+            <li class="nav-item dropdown">
+              <a href="#" class="nav-link dropdown-toggle">Informativos</a>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="{{ url_for('comunicados.view_comunicados') }}">Comunicados</a></li>
+                <li><a class="dropdown-item" href="{{ url_for('beneficios.beneficios_page') }}">Benefícios</a></li>
+              </ul>
+            </li>
+
+            {% if session.get('admin_logged_in') %}
               <li class="nav-item dropdown">
-                <a href="#" class="nav-link dropdown-toggle">Informativos</a>
+                <a href="{{ url_for('admin.admin_panel') }}" class="nav-link dropdown-toggle">Administrador</a>
                 <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="{{ url_for('comunicados.view_comunicados') }}">Comunicados</a></li>
-                  <li><a class="dropdown-item" href="{{ url_for('beneficios.beneficios_page') }}">Benefícios</a></li>
+                  <li><a class="dropdown-item" href="{{ url_for('analitico.analitico_view') }}">Analítico</a></li>
+                  <li><a class="dropdown-item" href="{{ url_for('novo_colaborador.novo_colaborador_view') }}">Novo Colaborador</a></li>
+                  <li><a class="dropdown-item" href="{{ url_for('novo_comunicado.novo_comunicado_view') }}">Novo Comunicado</a></li>
+                  <li><a class="dropdown-item" href="{{ url_for('admin_feriados.gerenciar_feriados') }}">Gerenciar Feriados</a></li>
+                  <li><a class="dropdown-item" href="{{ url_for('admin_surveys.gerenciar_pesquisas_view') }}">Gerenciar Pesquisas</a></li>
                 </ul>
               </li>
-              {% if session.get('admin_logged_in') %}
-                <li class="nav-item dropdown">
-                  <a href="{{ url_for('admin.admin_panel') }}" class="nav-link dropdown-toggle active">Administrador</a>
-                  <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="{{ url_for('analitico.analitico_view') }}">Analítico</a></li>
-                    <li><a class="dropdown-item" href="{{ url_for('novo_colaborador.novo_colaborador_view') }}">Novo Colaborador</a></li>
-                    <li><a class="dropdown-item" href="{{ url_for('novo_comunicado.novo_comunicado_view') }}">Novo Comunicado</a></li>
-                    <li><a class="dropdown-item" href="{{ url_for('admin_feriados.gerenciar_feriados') }}">Gerenciar Feriados</a></li>
-                    <li><a class="dropdown-item" href="{{ url_for('admin_surveys.gerenciar_pesquisas_view') }}">Gerenciar Pesquisas</a></li>
-                  </ul>
-                </li>
-              {% else %}
-                <li><a href="{{ url_for('adminLogin.admin_login') }}">Administrador</a></li>
-              {% endif %}
-              {% if session.get('colaborador_id') or session.get('admin_logged_in') %}
-                <li><a href="{{ url_for('logout.logout_view') }}" class="btn-logout">Sair</a></li>
-              {% endif %}
+            {% else %}
+              <li><a href="{{ url_for('adminLogin.admin_login') }}">Administrador</a></li>
+            {% endif %}
+
+            {% if session.get('colaborador_id') or session.get('admin_logged_in') %}
+              <li><a href="{{ url_for('logout.logout_view') }}" class="btn-logout">Sair</a></li>
+            {% endif %}
           </ul>
         </div>
+
       </div>
     </nav>
-  </header>
+</header>
 
   <main>
     <div class="page-container">
