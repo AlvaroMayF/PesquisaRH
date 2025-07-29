@@ -22,7 +22,7 @@ home = Blueprint('home', __name__, url_prefix='')
 @home.route('/', methods=['GET'])
 def home_view():
     """
-    Renderiza o painel RH com métricas dinâmicas, sparklines, o último comunicado e o próximo feriado.
+    Renderiza o painel RH com métricas dinâmicas, sparklines, o último comunicado, o próximo feriado e a contagem de vagas.
     """
     # Inicializa as variáveis para evitar erros caso a consulta falhe
     total_colaboradores = 0
@@ -33,6 +33,8 @@ def home_view():
     proximo_feriado = None
     labels = []
     data = []
+    # >>> ADICIONADO: Variável para o total de vagas
+    total_vagas = 0
 
     try:
         # Conecta ao banco
@@ -78,10 +80,7 @@ def home_view():
         """)
         ultimo_comunicado = cur.fetchone()
 
-        # =======================================================
-        #      *** LÓGICA DO PRÓXIMO FERIADO CORRIGIDA AQUI ***
-        # A consulta agora busca diretamente na tabela 'feriados'
-        # =======================================================
+        # 4) Busca o próximo feriado (código existente)
         cur.execute("""
             SELECT 
                 data,
@@ -93,6 +92,15 @@ def home_view():
             LIMIT 1
         """)
         proximo_feriado = cur.fetchone()
+
+        # =======================================================
+        #      *** ADICIONADO: LÓGICA PARA CONTAR VAGAS ***
+        #      Consulta o total de vagas com status 'Aberta'
+        # =======================================================
+        cur.execute("SELECT COUNT(id) AS total FROM vagas WHERE status = 'Aberta'")
+        resultado_vagas = cur.fetchone()
+        total_vagas = resultado_vagas['total'] if resultado_vagas else 0
+        # =======================================================
 
         cur.close()
         conn.close()
@@ -107,7 +115,7 @@ def home_view():
     except Exception as e:
         print(f"Erro ao buscar dados para a home page: {e}")
 
-    # Renderiza template com todas as variáveis
+    # Renderiza template com todas as variáveis, incluindo a nova contagem de vagas
     return render_template(
         'home/home.html',
         active_endpoint=request.endpoint,
@@ -118,5 +126,7 @@ def home_view():
         sparkline_labels=labels,
         sparkline_data=data,
         ultimo_comunicado=ultimo_comunicado,
-        proximo_feriado=proximo_feriado
+        proximo_feriado=proximo_feriado,
+        # >>> ADICIONADO: Passa a variável para o template
+        total_vagas=total_vagas
     )

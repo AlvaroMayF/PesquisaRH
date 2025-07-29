@@ -65,6 +65,8 @@
                   <li><a class="dropdown-item" href="{{ url_for('novo_comunicado.novo_comunicado_view') }}">Novo Comunicado</a></li>
                   <li><a class="dropdown-item" href="{{ url_for('admin_feriados.gerenciar_feriados') }}">Gerenciar Feriados</a></li>
                   <li><a class="dropdown-item" href="{{ url_for('admin_surveys.gerenciar_pesquisas_view') }}">Gerenciar Pesquisas</a></li>
+                  <li><a class="dropdown-item" href="{{ url_for('admin_vagas.gerenciar_vagas') }}">Gerenciar Vagas</a></li>
+                  <li><a class="dropdown-item" href="{{ url_for('admin_candidaturas.gerenciar_candidaturas') }}">Gerenciar Candidaturas</a></li>
                 </ul>
               </li>
             {% else %}
@@ -79,7 +81,7 @@
 
       </div>
     </nav>
-</header>
+  </header>
 
   <main class="survey-list-container">
     <h1 class="section-title">Pesquisas Disponíveis</h1>

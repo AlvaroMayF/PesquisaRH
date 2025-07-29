@@ -2,8 +2,9 @@
 
 .beneficios-container {
   max-width: 1200px;
-  margin: 2rem auto;
-  padding: 2rem;
+  /* Ajuste de margens e padding para controlar o scroll */
+  margin: 1.5rem auto; /* Reduz a margem superior e inferior */
+  padding: 1.5rem 2rem; /* Reduz o padding vertical, mantém o horizontal */
 }
 
 .beneficios-title {
@@ -20,7 +21,7 @@
   text-align: center;
   /* Usa a variável de cor de texto secundária do tema */
   color: var(--text-color-secondary);
-  margin-bottom: 3rem;
+  margin-bottom: 2.5rem; /* Levemente reduzido para compactar */
   max-width: 600px;
   margin-left: auto;
   margin-right: auto;
@@ -29,7 +30,7 @@
 .beneficios-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 1.5rem;
+  gap: 1.25rem; /* Levemente reduzido para compactar */
 }
 
 .beneficio-card {
@@ -37,7 +38,7 @@
   background-color: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: 12px;
-  padding: 2rem;
+  padding: 1.5rem; /* Levemente reduzido para compactar */
   text-align: center;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
@@ -48,27 +49,27 @@
 }
 
 .beneficio-icon {
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem; /* Levemente reduzido */
 }
 
 .beneficio-icon svg {
-  width: 48px;
-  height: 48px;
+  width: 44px; /* Levemente menor para otimizar espaço */
+  height: 44px; /* Levemente menor para otimizar espaço */
   /* Usa a variável de cor de destaque do tema */
   color: var(--accent);
 }
 
 .beneficio-card h3 {
-  font-size: 1.5rem;
+  font-size: 1.4rem; /* Levemente menor */
   font-weight: 600;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.6rem; /* Levemente reduzido */
   /* Usa a variável de cor de texto principal do tema */
   color: var(--text-color);
 }
 
 .beneficio-card p {
-  font-size: 1rem;
+  font-size: 0.95rem; /* Levemente menor */
   /* Usa a variável de cor de texto secundária do tema */
   color: var(--text-color-secondary);
-  line-height: 1.6;
+  line-height: 1.5; /* Ajuste para melhor legibilidade com fonte menor */
 }

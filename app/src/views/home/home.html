@@ -71,6 +71,8 @@
                   <li><a class="dropdown-item" href="{{ url_for('novo_comunicado.novo_comunicado_view') }}">Novo Comunicado</a></li>
                   <li><a class="dropdown-item" href="{{ url_for('admin_feriados.gerenciar_feriados') }}">Gerenciar Feriados</a></li>
                   <li><a class="dropdown-item" href="{{ url_for('admin_surveys.gerenciar_pesquisas_view') }}">Gerenciar Pesquisas</a></li>
+                  <li><a class="dropdown-item" href="{{ url_for('admin_vagas.gerenciar_vagas') }}">Gerenciar Vagas</a></li>
+                  <li><a class="dropdown-item" href="{{ url_for('admin_candidaturas.gerenciar_candidaturas') }}">Gerenciar Candidaturas</a></li>
                 </ul>
               </li>
             {% else %}
@@ -152,15 +154,26 @@
           </div>
         </div>
 
+        <!-- ======================================================= -->
+        <!--      *** CARD DE RECONHECIMENTO SUBSTITUÍDO *** -->
+        <!-- ======================================================= -->
         <div class="notice-card">
           <div class="notice-card-icon">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
           </div>
           <div class="notice-card-content">
-            <h3 class="notice-card-title">Reconhecimento</h3>
-            <p class="notice-card-body">Parabéns à equipe de Enfermagem do 3º andar pela excelência no atendimento e dedicação, que resultou na maior nota de satisfação do mês.</p>
+            {% if total_vagas > 0 %}
+              <h3 class="notice-card-title">Oportunidades em Aberto</h3>
+              <p class="notice-card-body">Temos <strong>{{ total_vagas }}</strong> vaga(s) esperando por você em nossas unidades!</p>
+              <a href="{{ url_for('carreiras.index') }}" class="notice-card-link">Ver todas as vagas</a>
+            {% else %}
+              <h3 class="notice-card-title">Oportunidades</h3>
+              <p class="notice-card-body">Nenhuma vaga em aberto no momento. Fique de olho neste espaço para futuras oportunidades!</p>
+            {% endif %}
           </div>
         </div>
+        <!-- ======================================================= -->
+
       </div>
     </section>
 

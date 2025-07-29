@@ -1,0 +1,281 @@
+/* app/src/views/admin/gerenciar_vagas.css */
+
+/* Estrutura Principal da Página Admin */
+.admin-page-container {
+    max-width: var(--container-max-width);
+    margin: 2.5rem auto;
+    padding: 0 1.5rem;
+    animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.page-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-color);
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+/* Barra de Ações (Botão Adicionar) */
+.action-bar {
+    margin-bottom: 2rem;
+    display: flex;
+    justify-content: flex-end;
+}
+
+/* Card de Conteúdo que envolve a tabela */
+.content-card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -2px rgba(0,0,0,0.05);
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    overflow-x: auto;
+}
+
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+}
+
+/* Estilo da Tabela */
+table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 0.95rem;
+    color: var(--text-color);
+}
+
+th, td {
+    padding: 1rem 1.2rem;
+    border-bottom: 1px solid var(--border-color);
+    text-align: left;
+}
+
+th {
+    background-color: color-mix(in srgb, var(--border-color) 50%, transparent);
+    font-weight: 600;
+    color: var(--text-color);
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+}
+
+/* Arredondar cantos da tabela */
+table thead tr:first-child th:first-child {
+    border-top-left-radius: 8px;
+}
+table thead tr:first-child th:last-child {
+    border-top-right-radius: 8px;
+}
+table tbody tr:last-child td:first-child {
+    border-bottom-left-radius: 8px;
+}
+table tbody tr:last-child td:last-child {
+    border-bottom-right-radius: 8px;
+}
+
+/* Remover borda inferior da última linha do corpo da tabela */
+table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Estilo para as Ações (Editar) */
+.actions {
+    white-space: nowrap;
+}
+
+.action-link {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+.action-link:hover {
+    color: var(--accent-hover);
+    text-decoration: underline;
+}
+
+.text-center {
+    text-align: center;
+}
+
+/* Estilo para a mensagem "Nenhuma vaga cadastrada" */
+.no-data-message {
+    text-align: center;
+    font-style: italic;
+    color: var(--text-color-secondary);
+    padding: 2rem;
+}
+
+/* Estilo para os Status Badges (Aberta/Fechada) */
+.status-badge {
+    display: inline-block;
+    padding: 0.4em 0.8em;
+    border-radius: 20px;
+    font-size: 0.8em;
+    font-weight: 600;
+    text-transform: uppercase;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.status-aberta {
+    background-color: color-mix(in srgb, var(--accent-secondary) 15%, transparent);
+    color: var(--accent-secondary);
+}
+
+.status-fechada {
+    background-color: color-mix(in srgb, var(--danger) 15%, transparent);
+    color: var(--danger);
+}
+
+/* --- NOVO ESTILO PARA O INDICADOR DE CANDIDATURAS --- */
+.candidaturas-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-weight: 600;
+    color: var(--accent); /* Cor do link, como o rosa principal */
+    text-decoration: none;
+    transition: color 0.2s ease, text-decoration 0.2s ease;
+}
+
+.candidaturas-link:hover {
+    color: var(--accent-hover);
+    text-decoration: underline;
+}
+
+.candidaturas-link .icon-eye {
+    color: var(--accent); /* Cor do ícone de olho */
+    transition: color 0.2s ease;
+}
+
+.candidaturas-link:hover .icon-eye {
+    color: var(--accent-hover); /* Muda a cor do ícone no hover */
+}
+
+.no-candidaturas {
+    color: var(--text-color-secondary); /* Cor para o '0' quando não há candidaturas */
+    font-weight: 500;
+}
+/* --- FIM DO NOVO ESTILO --- */
+
+
+/* Link Voltar ao Painel Admin */
+.back-link-container {
+    margin-top: 2rem;
+    text-align: left;
+}
+
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-color-secondary);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+.back-link:hover {
+    color: var(--text-color);
+}
+
+.back-link .icon-arrow-left {
+    color: var(--accent);
+    transition: color 0.2s ease;
+}
+
+.back-link:hover .icon-arrow-left {
+    color: var(--text-color);
+}
+
+/* Responsividade da Tabela */
+@media (max-width: 768px) {
+    .admin-page-container {
+        padding: 0 1rem;
+    }
+
+    .page-title {
+        font-size: 1.8rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .action-bar {
+        justify-content: center;
+        margin-bottom: 1.5rem;
+    }
+
+    /* Força a tabela a se comportar como blocos em telas muito pequenas */
+    table, thead, tbody, th, td, tr {
+        display: block;
+    }
+
+    /* Esconde o cabeçalho original da tabela */
+    thead tr {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+    }
+
+    /* Estiliza as linhas como cards */
+    table tr {
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        padding: 1rem;
+        display: flex;
+        flex-direction: column;
+        background-color: var(--bg-light);
+    }
+
+    /* Exibe os cabeçalhos como labels para cada célula */
+    table td {
+        border: none;
+        position: relative;
+        padding-left: 50%;
+        text-align: right;
+    }
+
+    table td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 0.5rem;
+        width: 45%;
+        padding-right: 10px;
+        white-space: nowrap;
+        text-align: left;
+        font-weight: 600;
+        color: var(--text-color);
+    }
+
+    /* Adicionar data-label para cada td no HTML! */
+    table td:nth-of-type(1)::before { content: "Título:"; }
+    table td:nth-of-type(2)::before { content: "Unidade:"; }
+    table td:nth-of-type(3)::before { content: "Status:"; }
+    table td:nth-of-type(4)::before { content: "Candidaturas:"; } {# NOVO DATA-LABEL #}
+    table td:nth-of-type(5)::before { content: "Ações:"; } {# AJUSTADO #}
+
+    .status-badge {
+        display: block;
+        width: fit-content;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .actions {
+        text-align: center;
+        padding-top: 1rem;
+        border-top: 1px solid var(--border-color);
+        margin-top: 1rem;
+    }
+}

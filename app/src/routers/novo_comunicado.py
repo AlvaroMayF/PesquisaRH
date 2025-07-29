@@ -30,6 +30,18 @@ def novo_comunicado_view():
         categoria = request.form.get('categoria')
         admin_id = session.get('admin_id', 1)
 
+        conteudo = conteudo.replace('\r\n', '\n')  # Padroniza para \n
+        conteudo = conteudo.replace('<br>', '\n')   # Remove qualquer <br> literal
+        conteudo = conteudo.replace('&lt;br&gt;', '\n') # Remove qualquer &lt;br&gt; literal
+        # ------------------------------------
+
+        # === LINHAS DE DEBUG PÓS-LIMPEZA ===
+        print(f"\nDEBUG NOVO COMUNICADO: Após a limpeza")
+        print(f"  Conteúdo após limpeza (repr): {repr(conteudo)}")
+        print(f"  Contém '\\n'? {'\\n' in conteudo}")
+        print(f"  Contém '<br>'? {'<br>' in conteudo}")
+        # === FIM DAS LINHAS DE DEBUG ===
+
         imagem_url = None
 
         if not titulo or not conteudo or not categoria:
@@ -55,11 +67,11 @@ def novo_comunicado_view():
             conn.close()
 
             flash('Comunicado publicado com sucesso!', 'success')
-            # --- MUDANÇA PRINCIPAL: Redireciona para a mesma página para mostrar a mensagem ---
             return redirect(url_for('novo_comunicado.novo_comunicado_view'))
 
         except Exception as e:
             flash(f'Ocorreu um erro ao publicar o comunicado: {e}', 'danger')
+            current_app.logger.error(f"Erro ao publicar comunicado: {e}")
             return redirect(url_for('novo_comunicado.novo_comunicado_view'))
 
     admin_username = session.get('username', 'Admin')

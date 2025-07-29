@@ -1,0 +1,414 @@
+/* app/src/views/admin/gerenciar_candidaturas.css */
+
+/* Estrutura Principal da Página Admin */
+.admin-page-container {
+    max-width: var(--container-max-width); /* Usa a variável global */
+    margin: 2.5rem auto; /* Mais espaçamento superior/inferior */
+    padding: 0 1.5rem; /* Padding lateral */
+    animation: fadeIn 0.5s ease-out; /* Reutiliza a animação */
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.page-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-color);
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+/* Flash Messages */
+.flash-messages-container {
+    margin-bottom: 1.5rem;
+}
+
+/* Barra de Filtro e Busca */
+.filter-search-bar {
+    margin-bottom: 2rem;
+    display: flex;
+    flex-wrap: wrap; /* Permite quebrar linha em telas menores */
+    gap: 1rem;
+    align-items: flex-end; /* Alinha os itens na base */
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+}
+
+.filter-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: flex-end;
+    width: 100%;
+}
+
+.form-group-inline {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1; /* Permite que os grupos cresçam */
+    min-width: 150px; /* Largura mínima para os campos */
+}
+
+.filter-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-color-secondary);
+    margin-bottom: 0.4rem;
+}
+
+.form-select, .form-input {
+    padding: 0.6rem 0.8rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background-color: var(--bg-light); /* Fundo dos inputs dentro do card de filtro */
+    color: var(--text-color);
+    font-size: 0.9rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-input:focus, .form-select:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 15%, transparent);
+}
+
+/* Estilo específico para o select de filtro (seta customizada) */
+.form-select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%235A647F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>');
+    background-repeat: no-repeat;
+    background-position: right 0.7rem center;
+    background-size: 13px;
+    padding-right: 2rem;
+    cursor: pointer;
+}
+
+html.dark .form-select {
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%2394A3B8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>');
+}
+
+/* Campo de busca com ícone */
+.search-input-container {
+    position: relative;
+}
+
+.search-input {
+    padding-right: 2.5rem; /* Espaço para o ícone */
+}
+
+.btn-icon-search {
+    position: absolute;
+    right: 0.5rem;
+    bottom: 0.5rem; /* Ajusta a posição vertical */
+    background: none;
+    border: none;
+    color: var(--text-color-secondary);
+    cursor: pointer;
+    padding: 0.3rem;
+    border-radius: 4px;
+    transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+.btn-icon-search:hover {
+    color: var(--accent);
+    background-color: color-mix(in srgb, var(--accent) 10%, transparent);
+}
+
+.btn-filter-submit {
+    flex-shrink: 0; /* Impede que o botão encolha */
+    padding: 0.6rem 1.2rem;
+    font-size: 0.95rem;
+    margin-top: 0.5rem; /* Alinha o botão com os campos */
+}
+
+/* Card de Conteúdo que envolve a tabela */
+.content-card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -2px rgba(0,0,0,0.05);
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    overflow-x: auto;
+}
+
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+}
+
+/* Estilo da Tabela */
+table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 0.95rem;
+    color: var(--text-color);
+}
+
+th, td {
+    padding: 1rem 1.2rem;
+    border-bottom: 1px solid var(--border-color);
+    text-align: left;
+}
+
+th {
+    background-color: color-mix(in srgb, var(--border-color) 50%, transparent);
+    font-weight: 600;
+    color: var(--text-color);
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+}
+
+/* Arredondar cantos da tabela */
+table thead tr:first-child th:first-child {
+    border-top-left-radius: 8px;
+}
+table thead tr:first-child th:last-child {
+    border-top-right-radius: 8px;
+}
+table tbody tr:last-child td:first-child {
+    border-bottom-left-radius: 8px;
+}
+table tbody tr:last-child td:last-child {
+    border-bottom-right-radius: 8px;
+}
+
+/* Remover borda inferior da última linha do corpo da tabela */
+table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Estilo para as Ações (Download) */
+.actions {
+    white-space: nowrap;
+}
+
+.action-link {
+    color: var(--accent-secondary); /* Ciano para download */
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s ease;
+    display: inline-flex; /* Para alinhar o SVG */
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.action-link:hover {
+    color: color-mix(in srgb, var(--accent-secondary) 85%, black);
+    text-decoration: none; /* Remove underline no hover para links com icones */
+}
+
+.action-link svg {
+    color: var(--accent-secondary); /* Garante cor do ícone */
+}
+
+.text-center {
+    text-align: center;
+}
+
+/* Estilo para a mensagem "Nenhuma candidatura encontrada" */
+.no-data-message {
+    text-align: center;
+    font-style: italic;
+    color: var(--text-color-secondary);
+    padding: 2rem;
+}
+
+/* Estilo para os Status Select na Tabela */
+.status-form {
+    display: inline-block; /* Permite que o select não quebre a linha */
+}
+
+.status-select {
+    padding: 0.4em 0.8em;
+    border-radius: 20px; /* Forma de badge */
+    font-size: 0.8em;
+    font-weight: 600;
+    text-transform: uppercase;
+    text-align: center;
+    white-space: nowrap;
+    border: 1px solid transparent; /* Borda transparente por padrão */
+    background-color: var(--bg-light); /* Fundo claro para o select */
+    color: var(--text-color);
+    cursor: pointer;
+
+    -webkit-appearance: none; /* Remove seta padrão */
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%239e9e9e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>');
+    background-repeat: no-repeat;
+    background-position: right 0.5em center;
+    background-size: 10px;
+    padding-right: 1.5em; /* Espaço para a seta */
+}
+
+html.dark .status-select {
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%2394A3B8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>');
+}
+
+
+/* Cores para os Status (background-color base e color do texto) */
+.status-select.status-nova {
+    background-color: color-mix(in srgb, var(--accent) 15%, transparent);
+    color: var(--accent);
+}
+
+/* Nota: para "Em Análise", use "em-analise" no Jinja (replace(' ', '-')) */
+.status-select.status-em-analise {
+    background-color: color-mix(in srgb, var(--accent-secondary) 15%, transparent);
+    color: var(--accent-secondary);
+}
+
+.status-select.status-aprovada {
+    background-color: color-mix(in srgb, #28a745 15%, transparent); /* Verde */
+    color: #28a745;
+}
+
+.status-select.status-rejeitada {
+    background-color: color-mix(in srgb, var(--danger) 15%, transparent);
+    color: var(--danger);
+}
+
+
+/* Link Voltar ao Painel Admin */
+.back-link-container {
+    margin-top: 2rem;
+    text-align: left;
+}
+
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-color-secondary);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+.back-link:hover {
+    color: var(--text-color);
+}
+
+.back-link .icon-arrow-left {
+    color: var(--accent);
+    transition: color 0.2s ease;
+}
+
+.back-link:hover .icon-arrow-left {
+    color: var(--text-color);
+}
+
+/* Responsividade da Tabela */
+@media (max-width: 768px) {
+    .admin-page-container {
+        padding: 0 1rem;
+    }
+
+    .page-title {
+        font-size: 1.8rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .filter-search-bar {
+        padding: 1rem;
+        gap: 0.75rem;
+    }
+
+    .filter-form {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .form-group-inline {
+        width: 100%; /* Campos de filtro ocupam a largura total */
+        min-width: unset;
+    }
+
+    .btn-filter-submit {
+        width: 100%; /* Botão de filtro ocupa a largura total */
+        margin-top: 0.5rem;
+    }
+
+    /* Força a tabela a se comportar como blocos em telas muito pequenas */
+    table, thead, tbody, th, td, tr {
+        display: block;
+    }
+
+    /* Esconde o cabeçalho original da tabela */
+    thead tr {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+    }
+
+    /* Estiliza as linhas como cards */
+    table tr {
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        padding: 1rem;
+        display: flex;
+        flex-direction: column;
+        background-color: var(--bg-light);
+    }
+
+    /* Exibe os cabeçalhos como labels para cada célula */
+    table td {
+        border: none;
+        position: relative;
+        padding-left: 50%; /* Espaço para o label */
+        text-align: right;
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+    }
+
+    table td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 0.5rem;
+        width: 45%;
+        padding-right: 10px;
+        white-space: nowrap;
+        text-align: left;
+        font-weight: 600;
+        color: var(--text-color);
+    }
+
+    /* Adicionar data-label para cada td no HTML! (já feito no template acima) */
+    table td:nth-of-type(1)::before { content: "Candidato:"; }
+    table td:nth-of-type(2)::before { content: "Contato:"; }
+    table td:nth-of-type(3)::before { content: "Vaga (Unidade):"; }
+    table td:nth-of-type(4)::before { content: "Tipo:"; }
+    table td:nth-of-type(5)::before { content: "Indicador:"; }
+    table td:nth-of-type(6)::before { content: "Data:"; }
+    table td:nth-of-type(7)::before { content: "Status:"; }
+    table td:nth-of-type(8)::before { content: "Ações:"; }
+
+    .status-form {
+        width: 100%;
+    }
+    .status-select {
+        width: 100%; /* Ocupa a largura total na célula do mobile */
+        margin-left: auto;
+        margin-right: auto;
+        display: block; /* Garante que o select se comporte como bloco */
+    }
+
+    .actions {
+        text-align: center;
+        padding-top: 1rem;
+        border-top: 1px solid var(--border-color);
+        margin-top: 1rem;
+    }
+}

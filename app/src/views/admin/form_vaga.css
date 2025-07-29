@@ -1,0 +1,145 @@
+/* app/src/views/admin/form_vaga.css */
+
+/* Estrutura Principal da Página Admin */
+.admin-page-container {
+    max-width: 700px; /* Largura ideal para formulários */
+    margin: 2.5rem auto;
+    padding: 0 1.5rem;
+    animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.page-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-color);
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+/* Card que envolve o Formulário */
+.form-card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -2px rgba(0,0,0,0.05);
+    padding: 2rem; /* Padding interno do card */
+}
+
+/* Grupos de Formulário */
+.form-group {
+    margin-bottom: 1.5rem; /* Espaçamento entre os grupos de campo */
+}
+
+.form-group:last-of-type {
+    margin-bottom: 2rem; /* Mais espaço antes dos botões */
+}
+
+label {
+    display: block;
+    margin-bottom: 0.6rem; /* Espaçamento entre label e input */
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+/* Estilo para Inputs, Selects e Textareas */
+.form-input,
+.form-select,
+.form-textarea {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background-color: var(--bg-light); /* Fundo sutil */
+    color: var(--text-color);
+    font-size: 1rem;
+    box-sizing: border-box; /* Garante que padding não aumente a largura */
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 20%, transparent);
+}
+
+.form-textarea {
+    min-height: 120px; /* Altura mínima para textareas */
+    resize: vertical; /* Permite redimensionar apenas verticalmente */
+}
+
+/* Estilo para Selects (Dropdowns) */
+.form-select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%235A647F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>');
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 14px;
+    padding-right: 2.5rem; /* Espaço para a seta */
+    cursor: pointer;
+}
+
+html.dark .form-select {
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%2394A3B8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>');
+}
+
+/* Ações do Formulário (Botões Salvar/Cancelar) */
+.form-actions {
+    display: flex;
+    gap: 1rem; /* Espaçamento entre os botões */
+    justify-content: flex-end; /* Alinha os botões à direita */
+    margin-top: 1.5rem; /* Espaçamento superior */
+}
+
+/* Botão Secundário (Cancelar) */
+.btn-secondary {
+    background-color: transparent;
+    color: var(--text-color-secondary);
+    border: 1px solid var(--border-color);
+    padding: 0.8rem 1.2rem;
+    font-weight: 600;
+    text-decoration: none; /* Para o link */
+    border-radius: 8px;
+    transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.btn-secondary:hover {
+    background-color: color-mix(in srgb, var(--border-color) 50%, transparent);
+    color: var(--text-color);
+    border-color: var(--text-color);
+}
+
+/* Responsividade */
+@media (max-width: 600px) {
+    .admin-page-container {
+        padding: 0 1rem;
+    }
+
+    .page-title {
+        font-size: 1.8rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .form-card {
+        padding: 1.5rem;
+    }
+
+    .form-actions {
+        flex-direction: column; /* Empilha os botões em telas pequenas */
+        gap: 0.8rem;
+    }
+
+    .btn, .btn-secondary {
+        width: 100%; /* Botões ocupam a largura total */
+        text-align: center;
+    }
+}

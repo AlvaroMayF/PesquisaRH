@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oportunidades - Rede Samar</title>
+
+    <link rel="stylesheet" href="{{ url_for('views.static', filename='base/base.css') }}">
+
+    <link rel="stylesheet" href="{{ url_for('views.static', filename='carreiras/carreiras.css') }}">
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+          <div class="nav-container">
+            <div class="navbar-left">
+              <span class="nav-logo">REDE HOSPITAL SAMAR</span>
+              <label class="theme-switch" title="Alternar tema claro/escuro">
+                <input type="checkbox" id="theme-toggle" class="theme-checkbox" aria-label="Alternar tema claro/escuro" />
+                <div class="slider">
+                    <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                    <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                </div>
+              </label>
+            </div>
+            <div class="navbar-center">
+              {% if session.get('colaborador_id') %}
+                <span class="header-user-greeting">Olá, {{ session.get('colaborador_nome', 'Colaborador') }}</span>
+              {% endif %}
+            </div>
+            <div class="navbar-right">
+              <button class="nav-toggle" aria-label="abrir menu de navegação">
+                  <span class="hamburger"></span>
+              </button>
+              <ul class="nav-menu">
+                <li><a href="{{ url_for('home.home_view') }}">Início</a></li>
+                <li><a href="{{ url_for('pesquisas_lista.lista_pesquisas_view') }}">Pesquisa</a></li>
+                <li class="nav-item dropdown">
+                  <a href="#" class="nav-link dropdown-toggle">Informativos</a>
+                  <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="{{ url_for('comunicados.view_comunicados') }}">Comunicados</a></li>
+                    <li><a class="dropdown-item" href="{{ url_for('beneficios.beneficios_page') }}">Benefícios</a></li>
+                  </ul>
+                </li>
+                {% if session.get('admin_logged_in') %}
+                  <li class="nav-item dropdown">
+                    <a href="{{ url_for('admin.admin_panel') }}" class="nav-link dropdown-toggle">Administrador</a>
+                    <ul class="dropdown-menu">
+                      <li><a class="dropdown-item" href="{{ url_for('analitico.analitico_view') }}">Analítico</a></li>
+                      <li><a class="dropdown-item" href="{{ url_for('novo_colaborador.novo_colaborador_view') }}">Novo Colaborador</a></li>
+                      <li><a class="dropdown-item" href="{{ url_for('novo_comunicado.novo_comunicado_view') }}">Novo Comunicado</a></li>
+                      <li><a class="dropdown-item" href="{{ url_for('admin_feriados.gerenciar_feriados') }}">Gerenciar Feriados</a></li>
+                      <li><a class="dropdown-item" href="{{ url_for('admin_surveys.gerenciar_pesquisas_view') }}">Gerenciar Pesquisas</a></li>
+                      <li><a class="dropdown-item" href="{{ url_for('admin_vagas.gerenciar_vagas') }}">Gerenciar Vagas</a></li>
+                    </ul>
+                  </li>
+                {% else %}
+                  <li><a href="{{ url_for('adminLogin.admin_login') }}">Administrador</a></li>
+                {% endif %}
+                {% if session.get('colaborador_id') or session.get('admin_logged_in') %}
+                  <li><a href="{{ url_for('logout.logout_view') }}" class="btn-logout">Sair</a></li>
+                {% endif %}
+              </ul>
+            </div>
+          </div>
+        </nav>
+    </header>
+
+    <main id="carreiras-page">
+        <div class="page-container">
+            <header class="page-header">
+                <h1 class="page-title">Mural de Oportunidades</h1>
+                <p class="page-subtitle">Fique por dentro das últimas vagas e oportunidades da empresa.</p>
+            </header>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="flash-messages-container">
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }}">{{ message }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            <div class="filter-section">
+                <label for="unidade-filter" class="filter-label">Filtrar por Unidade:</label>
+                <select id="unidade-filter" class="filter-select" onchange="window.location.href = this.value;">
+                    <option value="{{ url_for('carreiras.index') }}">Todas as Unidades</option>
+                    {% for unidade in unidades %}
+                        <option value="{{ url_for('carreiras.index', unidade=unidade.id) }}"
+                                {% if unidade.id == unidade_selecionada %}selected{% endif %}>
+                            {{ unidade.nome }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            {% set ns = namespace(total_vagas=0) %}
+            {% if vagas_por_unidade %}
+                {% for vagas_list in vagas_por_unidade.values() %}
+                    {% set ns.total_vagas = ns.total_vagas + vagas_list|length %}
+                {% endfor %}
+            {% endif %}
+
+            {% if ns.total_vagas > 0 %}
+                {% for unidade, vagas in vagas_por_unidade.items() %}
+                    <section class="unidade-section">
+                        <h2 class="unidade-title">{{ unidade }}</h2>
+
+                        <div class="vagas-list">
+                            {% if vagas %}
+                                {% for vaga in vagas %}
+                                    <article class="content-card vaga-card">
+                                        <div class="vaga-card-icon">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+                                        </div>
+                                        <div class="vaga-card-content">
+                                            <h3 class="vaga-title">{{ vaga.titulo }}</h3>
+                                            <div class="vaga-details">
+                                                {% if vaga.descricao %}
+                                                    <p><strong>Descrição:</strong> {{ vaga.descricao | nl2br }}</p>
+                                                {% endif %}
+                                                {% if vaga.requisitos %}
+                                                    <p><strong>Requisitos:</strong> {{ vaga.requisitos | nl2br }}</p>
+                                                {% endif %}
+                                            </div>
+
+                                            <button type="button" class="btn btn-primary btn-expand-form" data-target="candidatura_form_{{ vaga.id }}">
+                                                Candidatar-se ou Indicar
+                                                <svg class="icon-chevron-down" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                                            </button>
+
+                                            <div class="candidatura-form-wrapper" id="candidatura_form_{{ vaga.id }}">
+                                                <h4 class="candidatura-form-title">Preencha seus dados</h4>
+                                                <form action="{{ url_for('carreiras.index') }}" method="POST" enctype="multipart/form-data">
+                                                    <input type="hidden" name="vaga_id" value="{{ vaga.id }}">
+
+                                                    <div class="form-group">
+                                                        <label for="nome_completo_{{ vaga.id }}">Seu Nome Completo / Nome do Candidato</label>
+                                                        <input type="text" id="nome_completo_{{ vaga.id }}" name="nome_completo" class="form-input" required>
+                                                    </div>
+
+                                                    <div class="form-group">
+                                                        <label for="email_{{ vaga.id }}">Seu E-mail / E-mail do Candidato</label>
+                                                        <input type="email" id="email_{{ vaga.id }}" name="email" class="form-input" required>
+                                                    </div>
+
+                                                    <div class="form-group">
+                                                        <label for="telefone_{{ vaga.id }}">Telefone (Opcional)</label>
+                                                        <input type="tel" id="telefone_{{ vaga.id }}" name="telefone" class="form-input">
+                                                    </div>
+
+                                                    <div class="form-group">
+                                                        <label for="tipo_candidatura_{{ vaga.id }}">Tipo de Candidatura</label>
+                                                        <select id="tipo_candidatura_{{ vaga.id }}" name="tipo_candidatura" class="form-select tipo-candidatura-select" onchange="toggleIndicadorField(this, 'indicador_field_{{ vaga.id }}')" required>
+                                                            <option value="Propria">Candidatura Própria</option>
+                                                            <option value="Indicacao">Indicação</option>
+                                                        </select>
+                                                    </div>
+
+                                                    <div class="form-group" id="indicador_field_{{ vaga.id }}" style="display: none;">
+                                                        <label for="nome_indicador_{{ vaga.id }}">Nome de quem está indicando (Se diferente do candidato)</label>
+                                                        <input type="text" id="nome_indicador_{{ vaga.id }}" name="nome_indicador" class="form-input">
+                                                    </div>
+
+                                                    <div class="form-group">
+                                                        <label for="curriculo_{{ vaga.id }}">Anexar Currículo (PDF, DOC, DOCX)</label>
+                                                        <input type="file" id="curriculo_{{ vaga.id }}" name="curriculo" accept=".pdf,.doc,.docx" class="form-input-file" required>
+                                                    </div>
+
+                                                    <button type="submit" class="btn btn-primary btn-submit-candidatura">Enviar Candidatura</button>
+                                                </form>
+                                            </div>
+                                            </div>
+                                    </article>
+                                {% endfor %}
+                            {% else %}
+                                <div class="content-card no-vagas-message">
+                                    <p>Nenhuma vaga em aberto nesta unidade no momento.</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </section>
+                {% endfor %}
+            {% else %}
+                <div class="content-card no-vagas-message">
+                    <p>Não há vagas em aberto em nenhuma de nossas unidades no momento.</p>
+                </div>
+            {% endif %}
+        </div>
+    </main>
+
+    <script>
+        // Função para mostrar/esconder o campo de "Nome do Indicador"
+        function toggleIndicadorField(selectElement, fieldId) {
+            var indicadorField = document.getElementById(fieldId);
+            if (indicadorField) { // Verifica se o elemento existe
+                if (selectElement.value === 'Indicacao') {
+                    indicadorField.style.display = 'block';
+                    var input = indicadorField.querySelector('input');
+                    if (input) {
+                        input.setAttribute('required', 'required');
+                    }
+                } else {
+                    indicadorField.style.display = 'none';
+                    var input = indicadorField.querySelector('input');
+                    if (input) {
+                        input.removeAttribute('required');
+                        input.value = '';
+                    }
+                }
+            }
+        }
+
+        // Função para expandir/colapsar o formulário
+        function toggleFormVisibility(button) {
+            const targetId = button.dataset.target;
+            const formWrapper = document.getElementById(targetId);
+            const icon = button.querySelector('.icon-chevron-down');
+
+            if (formWrapper.classList.contains('expanded')) {
+                // Colapsa
+                formWrapper.style.maxHeight = '0';
+                formWrapper.style.paddingTop = '0';
+                formWrapper.style.borderTopWidth = '0';
+                icon.style.transform = 'rotate(0deg)';
+                button.classList.remove('active');
+                formWrapper.classList.remove('expanded');
+            } else {
+                // Expande
+                // Definir uma altura máxima suficientemente grande para evitar cortes
+                formWrapper.style.maxHeight = '1500px'; // Um valor grande o suficiente para a maioria dos formulários
+                formWrapper.style.paddingTop = '1.5rem'; // Padding que você definiu no CSS
+                formWrapper.style.borderTopWidth = '1px'; // Borda que você definiu no CSS
+                icon.style.transform = 'rotate(180deg)';
+                button.classList.add('active');
+                formWrapper.classList.add('expanded');
+            }
+        }
+
+        // Adiciona listeners aos botões de expandir
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.btn-expand-form').forEach(button => {
+                button.addEventListener('click', () => toggleFormVisibility(button));
+
+                // Garante que o formulário está inicialmente colapsado ao carregar a página
+                const targetId = button.dataset.target;
+                const formWrapper = document.getElementById(targetId);
+                if (formWrapper) {
+                    formWrapper.style.maxHeight = '0';
+                    formWrapper.style.overflow = 'hidden'; // Esconde o conteúdo que exceder
+                    formWrapper.style.paddingTop = '0';
+                    formWrapper.style.borderTopWidth = '0';
+                    formWrapper.style.transition = 'max-height 0.4s ease-out, padding-top 0.4s ease-out, border-top-width 0.4s ease-out';
+                }
+            });
+
+            // Inicializa o estado correto do campo de indicador ao carregar a página para cada vaga
+            document.querySelectorAll('.tipo-candidatura-select').forEach(function(select) {
+                var vagaId = select.id.split('_')[2];
+                toggleIndicadorField(select, 'indicador_field_' + vagaId);
+            });
+        });
+
+        // Opcional: Recalcular maxHeight se o campo de indicador for toggled ENQUANTO o form estiver aberto
+        // Isso é para o caso de o usuário abrir, mudar o tipo, e o formulário parecer cortado
+        document.querySelectorAll('.tipo-candidatura-select').forEach(function(select) {
+            select.addEventListener('change', function() {
+                const vagaId = this.id.split('_')[2];
+                const formWrapper = document.getElementById(`candidatura_form_${vagaId}`);
+                if (formWrapper && formWrapper.classList.contains('expanded')) {
+                    // Recalcula a altura máxima se o formulário estiver expandido
+                    // Um pequeno atraso para permitir que o DOM se ajuste
+                    setTimeout(() => {
+                        formWrapper.style.maxHeight = formWrapper.scrollHeight + 'px';
+                    }, 50);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

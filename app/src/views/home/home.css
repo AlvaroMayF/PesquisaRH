@@ -4,16 +4,14 @@
 .carousel-card {
   overflow: hidden;
   height: auto;
-  margin-bottom: var(--section-gap);
+  margin-bottom: var(--section-gap); /* Já usa --section-gap */
   border-radius: 16px;
   border: 1px solid var(--border-color);
 }
 .carousel {
   position: relative;
   width: 100%;
-  /* ADICIONADO: Altura máxima para controlar o tamanho */
-  max-height: 450px; /* Você pode ajustar este valor se achar melhor (ex: 400px, 500px) */
-  /* ADICIONADO: Proporção para manter o formato da imagem */
+  max-height: 450px;
   aspect-ratio: 16 / 9;
 }
 .carousel-track {
@@ -29,7 +27,6 @@
 .carousel-slide img {
   width: 100%;
   height: 100%;
-  /* Usar 'contain' é a melhor opção com max-height para garantir que nada seja cortado */
   object-fit: contain;
 }
 .carousel-caption {
@@ -76,6 +73,39 @@
   background: #fff;
   outline: 2px solid var(--accent);
 }
+
+/* --- Ajuste Geral: Títulos de Seção e Espaçamento de Seções --- */
+
+/* Estilo para os títulos das seções */
+main .section-title {
+    margin-top: 3.5rem; /* Mais espaçamento acima do título */
+    margin-bottom: 2rem; /* Mais espaçamento abaixo do título para o conteúdo */
+    font-size: 1.8rem; /* Consistente com outros títulos de seção */
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    color: var(--text-color);
+    text-align: center;
+    position: relative;
+}
+
+/* Remove a linha de baixo padrão para permitir um design mais flexível */
+main .section-title::after {
+    content: none;
+}
+
+/* Espaçamento entre as seções (opcional, se não estiver usando --section-gap para isso) */
+/* Se cada seção já tiver margin-bottom: var(--section-gap), não é necessário adicionar mais aqui */
+/* Mas se o objetivo é *mais* espaço entre elas, podemos adicionar um valor explícito */
+.quick-access-section,
+.notice-board-section,
+.birthday-section {
+    margin-bottom: 3.5rem; /* Aumenta o espaçamento entre as seções */
+}
+/* A primeira seção (carousel) já tem margin-bottom, então não precisa aqui */
+.quick-access-section {
+    margin-top: var(--section-gap); /* Garante espaço após o carousel */
+}
+
 
 /* ========== QUICK ACCESS (Com animações de hover) - ESTILOS ORIGINAIS MANTIDOS ========= */
 .quick-access-section .content-card {
@@ -239,4 +269,5 @@ html.dark .birthday-card:hover {
     border-radius: 8px;
     font-weight: 600;
     transition: background-color 0.2s, color 0.2s;
-    margin-left: 0.5rem; /* Adiciona
+    margin-left: 0.5rem;
+}

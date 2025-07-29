@@ -1,0 +1,486 @@
+/* src/views/carreiras/carreiras.css */
+
+/* Estrutura Principal da Página */
+#carreiras-page .page-container {
+    max-width: 1000px;
+    margin: 3rem auto;
+    padding: 0 1.5rem;
+    animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+#carreiras-page .page-header {
+    text-align: center;
+    margin-bottom: 3.5rem;
+}
+
+#carreiras-page .page-title {
+    font-size: 2.25rem;
+    font-weight: 700;
+    color: var(--text-color);
+    margin-bottom: 0.75rem;
+    letter-spacing: -0.02em;
+}
+
+#carreiras-page .page-subtitle {
+    font-size: 1.05rem;
+    color: var(--text-color-secondary);
+    max-width: 550px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+/* Flash messages container */
+#carreiras-page .flash-messages-container {
+    margin-bottom: 2rem;
+    padding: 0 1.5rem;
+    max-width: 1000px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+
+/* --- Estilo para o Filtro de Unidades --- */
+#carreiras-page .filter-section {
+    margin-bottom: 3rem;
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+}
+
+#carreiras-page .filter-label {
+    font-size: 0.95rem;
+    color: var(--text-color-secondary);
+    font-weight: 500;
+}
+
+#carreiras-page .filter-select {
+    padding: 0.7rem 1.1rem;
+    padding-right: 2.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background-color: var(--bg-card);
+    color: var(--text-color);
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%235A647F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>');
+    background-repeat: no-repeat;
+    background-position: right 0.8rem center;
+    background-size: 14px;
+}
+
+html.dark #carreiras-page .filter-select {
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%2394A3B8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>');
+}
+
+#carreiras-page .filter-select:hover {
+    border-color: var(--accent-secondary);
+}
+
+#carreiras-page .filter-select:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 20%, transparent);
+}
+
+#carreiras-page .filter-select option {
+    background-color: var(--bg-card);
+    color: var(--text-color);
+}
+/* --- Fim do Estilo Refinado para o Filtro --- */
+
+
+/* Secção de cada Unidade */
+#carreiras-page .unidade-section {
+    margin-bottom: 3.5rem;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 2.5rem;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -2px rgba(0,0,0,0.05);
+}
+
+#carreiras-page .unidade-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-color);
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    position: relative;
+    text-align: center;
+}
+
+#carreiras-page .unidade-title::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 3px;
+    background-color: var(--accent);
+    border-radius: 2px;
+}
+
+
+/* Card de Conteúdo Genérico (Base para todos os cards) */
+#carreiras-page .content-card {
+    background-color: var(--bg-light);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    box-shadow: none;
+    padding: 1.75rem;
+    transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
+}
+
+#carreiras-page .content-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.04);
+}
+
+/* Lista de Vagas */
+#carreiras-page .vagas-list {
+    display: grid;
+    gap: 1.5rem;
+}
+
+/* Card Específico para uma Vaga */
+#carreiras-page .vaga-card {
+    display: flex;
+    gap: 1.25rem;
+    align-items: flex-start;
+    flex-wrap: wrap;
+}
+
+#carreiras-page .vaga-card-icon {
+    flex-shrink: 0;
+    width: 52px;
+    height: 52px;
+    display: grid;
+    place-items: center;
+    background-color: color-mix(in srgb, var(--accent) 10%, transparent);
+    color: var(--accent);
+    border-radius: 10px;
+}
+
+#carreiras-page .vaga-card-icon svg {
+    width: 26px;
+    height: 26px;
+    stroke-width: 1.8;
+}
+
+#carreiras-page .vaga-card-content {
+    flex-grow: 1;
+    min-width: 0;
+}
+
+#carreiras-page .vaga-title {
+    margin: 0 0 0.6rem 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-color);
+    line-height: 1.3;
+}
+
+#carreiras-page .vaga-details {
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+}
+
+#carreiras-page .vaga-details p {
+    margin: 0 0 0.7rem 0;
+    line-height: 1.6;
+    color: var(--text-color-secondary);
+    font-size: 0.95rem;
+}
+
+#carreiras-page .vaga-details p:last-child {
+    margin-bottom: 0;
+}
+
+#carreiras-page .vaga-details strong {
+    color: var(--text-color);
+    font-weight: 600;
+}
+
+/* Mensagem de "Nenhuma Vaga" */
+#carreiras-page .no-vagas-message {
+    text-align: center;
+    font-style: italic;
+    color: var(--text-color-secondary);
+    padding: 1.5rem;
+    border-radius: 12px;
+    background-color: var(--bg-light);
+    border: 1px dashed var(--border-color);
+}
+
+
+/* --- Estilos para o Botão e o Formulário de Candidatura (Expandível) --- */
+#carreiras-page .btn-expand-form {
+    width: 100%; /* Ocupa a largura total */
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 8px;
+    background-color: var(--accent); /* Cor principal */
+    color: white;
+    border: none;
+    cursor: pointer;
+    display: flex; /* Para alinhar texto e ícone */
+    justify-content: center;
+    align-items: center;
+    gap: 0.75rem; /* Espaço entre texto e ícone */
+    margin-top: 1rem; /* Espaço entre detalhes e o botão */
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+#carreiras-page .btn-expand-form:hover {
+    background-color: var(--accent-hover);
+    transform: translateY(-1px); /* Leve elevação no hover */
+}
+
+#carreiras-page .btn-expand-form .icon-chevron-down {
+    transition: transform 0.3s ease; /* Animação para a seta */
+    color: white; /* Cor da seta */
+}
+
+#carreiras-page .btn-expand-form.active .icon-chevron-down {
+    transform: rotate(180deg); /* Gira a seta quando ativo */
+}
+
+#carreiras-page .candidatura-form-wrapper {
+    /* Estado inicial colapsado no CSS */
+    max-height: 0;
+    overflow: hidden;
+    padding-top: 0;
+    border-top-width: 0; /* Começa sem borda */
+    transition: max-height 0.4s ease-out, padding-top 0.4s ease-out, border-top-width 0.4s ease-out; /* Transição para múltiplos atributos */
+
+    /* Estilos para quando estiver expandido (aplicados pelo JS ao mudar max-height, padding-top, border-top-width) */
+    /* Estas propriedades são as que o JS definirá dinamicamente */
+    /* Se o JS aplicar uma max-height muito grande, a transição funcionará */
+}
+
+#carreiras-page .candidatura-form-container {
+    /* Este é o conteúdo real dentro do wrapper. Remove padding-top e border-top */
+    margin-top: 1.5rem; /* Espaço entre os detalhes da vaga e o formulário */
+    /* Removido padding-top e border-top daqui, pois serão controlados pelo wrapper */
+    width: 100%;
+}
+
+#carreiras-page .candidatura-form-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 1.5rem;
+}
+
+#carreiras-page .form-group {
+    margin-bottom: 1rem;
+}
+
+#carreiras-page .form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-color-secondary);
+}
+
+#carreiras-page .form-input,
+#carreiras-page .form-select,
+#carreiras-page .form-textarea {
+    width: 100%;
+    padding: 0.6rem 0.8rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background-color: var(--bg-card);
+    color: var(--text-color);
+    font-size: 0.95rem;
+    box-sizing: border-box;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+#carreiras-page .form-input:focus,
+#carreiras-page .form-select:focus,
+#carreiras-page .form-textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 15%, transparent);
+}
+
+#carreiras-page .form-textarea {
+    min-height: 80px;
+    resize: vertical;
+}
+
+#carreiras-page .form-select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%235A647F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>');
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 14px;
+    padding-right: 2.5rem;
+    cursor: pointer;
+}
+
+html.dark #carreiras-page .form-select {
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%2394A3B8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>');
+}
+
+/* Estilo para o input type="file" */
+#carreiras-page .form-input-file {
+    display: block;
+    width: 100%;
+    padding: 0.6rem 0.8rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background-color: var(--bg-card);
+    color: var(--text-color);
+    font-size: 0.95rem;
+    box-sizing: border-box;
+    cursor: pointer;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+#carreiras-page .form-input-file::-webkit-file-upload-button {
+    background-color: var(--accent-secondary);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-right: 1rem;
+    transition: background-color 0.2s ease;
+}
+
+#carreiras-page .form-input-file::-webkit-file-upload-button:hover {
+    background-color: color-mix(in srgb, var(--accent-secondary) 85%, black);
+}
+
+html.dark #carreiras-page .form-input-file::-webkit-file-upload-button {
+    background-color: var(--accent-secondary);
+}
+
+/* Estilo para o botão de envio do formulário de candidatura */
+#carreiras-page .btn-submit-candidatura {
+    width: 100%; /* Ocupa a largura total para destaque */
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 8px;
+    background-color: var(--accent);
+    color: white;
+    border: none;
+    cursor: pointer;
+    display: block;
+    margin-top: 1.5rem;
+    transition: background-color 0.2s ease;
+}
+
+#carreiras-page .btn-submit-candidatura:hover {
+    background-color: var(--accent-hover);
+}
+/* --- Fim dos Estilos para o Formulário de Candidatura --- */
+
+
+/* Responsividade Geral */
+@media (max-width: 768px) {
+    #carreiras-page .page-container {
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+
+    #carreiras-page .page-title {
+        font-size: 1.8rem;
+    }
+
+    #carreiras-page .page-subtitle {
+        font-size: 0.95rem;
+    }
+
+    #carreiras-page .flash-messages-container {
+        padding: 0 1rem;
+    }
+
+    #carreiras-page .filter-section {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+
+    #carreiras-page .filter-select {
+        width: 100%;
+        min-width: unset;
+    }
+
+    #carreiras-page .unidade-section {
+        padding: 2rem 1.5rem;
+    }
+
+    #carreiras-page .unidade-title {
+        font-size: 1.3rem;
+        margin-bottom: 1.5rem;
+    }
+
+    #carreiras-page .vaga-card {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 1rem;
+    }
+
+    #carreiras-page .vaga-card-content {
+        width: 100%;
+    }
+
+    #carreiras-page .vaga-title {
+        font-size: 1.1rem;
+        margin-bottom: 0.5rem;
+    }
+
+    #carreiras-page .vaga-details {
+        margin-bottom: 1rem;
+    }
+
+    #carreiras-page .vaga-details p {
+        margin-bottom: 0.6rem;
+    }
+
+    /* Formulário de Candidatura em Mobile */
+    #carreiras-page .btn-expand-form {
+        margin-top: 1rem; /* Ajuste o espaçamento do botão de expandir */
+    }
+
+    #carreiras-page .candidatura-form-container {
+        margin-top: 1rem;
+        padding-top: 1rem;
+    }
+
+    #carreiras-page .candidatura-form-title {
+        font-size: 1.1rem;
+        margin-bottom: 1rem;
+    }
+
+    #carreiras-page .btn-submit-candidatura {
+        width: 100%;
+        padding: 0.6rem 1rem;
+    }
+}

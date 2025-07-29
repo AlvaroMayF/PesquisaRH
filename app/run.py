@@ -1,6 +1,6 @@
 import os
 from flask import Flask, send_from_directory, Blueprint, session, redirect, url_for, request
-from markupsafe import escape, Markup
+from markupsafe import escape, Markup  # Mantenha ambas as importações
 from datetime import timedelta
 
 # ----------------------------------------------------------------------
@@ -21,7 +21,6 @@ from src.routers.adminLogin import adminLogin
 from src.routers.homeView import home as home_bp
 from src.routers.logout import logout_bp
 from src.routers.analitico import analitico_bp
-# CORRIGIDO: O nome da variável importada agora é 'pesquisa_bp'
 from src.routers.pesquisa import pesquisa_bp
 from src.routers.comunicados import comunicados_bp
 from src.routers.novo_colaborador import novo_colaborador_bp
@@ -31,6 +30,10 @@ from src.routers.beneficios import beneficios_bp
 from src.routers.auth import auth_bp
 from src.routers.pesquisas_lista import pesquisas_lista_bp
 from src.routers.admin_surveys import admin_surveys_bp
+from src.routers.carreiras import carreiras_bp
+from src.routers.admin_vagas import admin_vagas_bp
+from src.routers.admin_candidaturas import admin_candidaturas_bp
+
 
 # ----------------------------------------------------------------------
 # Factory para criar e configurar a aplicação
@@ -41,8 +44,10 @@ def create_app():
     # Diretórios de templates e estáticos
     template_dir = os.path.join(base, 'src', 'views')
     static_dir = os.path.join(base, 'assets')
-    upload_dir = os.path.join(base, 'src', 'uploads')
-    os.makedirs(upload_dir, exist_ok=True)
+
+    # Ajuste para a pasta de uploads de curriculos que está dentro de src/app/uploads/curriculos
+    upload_root_dir = os.path.join(base, 'uploads')
+    os.makedirs(os.path.join(upload_root_dir, 'curriculos'), exist_ok=True)
 
     app = Flask(
         __name__,
@@ -51,7 +56,7 @@ def create_app():
         static_url_path='/static'
     )
 
-    app.config['UPLOAD_FOLDER'] = upload_dir
+    app.config['UPLOAD_FOLDER'] = upload_root_dir
 
     app.permanent_session_lifetime = timedelta(minutes=15)
 
@@ -59,16 +64,37 @@ def create_app():
     def require_login():
         session.permanent = True
 
-        allowed_endpoints = ['auth.login', 'static', 'views.static']
+        allowed_endpoints = ['auth.login', 'static', 'views.static', 'carreiras.index', 'adminLogin.admin_login']
 
-        if 'colaborador_id' not in session and request.endpoint not in allowed_endpoints:
+        is_admin_route = request.path.startswith('/admin/')
+
+        if 'colaborador_id' not in session and not is_admin_route and request.endpoint not in allowed_endpoints:
             return redirect(url_for('auth.login'))
 
+        if is_admin_route and not session.get('admin_logged_in') and request.endpoint not in allowed_endpoints:
+            return redirect(url_for('adminLogin.admin_login'))
+
+    # --- FUNÇÃO NL2BR COM DEBUG E LÓGICA REFINADA PARA O TESTE ---
     def nl2br(value):
-        """Converte quebras de linha em texto para tags <br> em HTML."""
-        return Markup(escape(value).replace('\n', '<br>\n'))
+        """Converte quebras de linha em texto para tags <br> em HTML.
+           Adicionado debug para investigar o problema de <br> literal."""
+
+        # Converte para string e padroniza quebras de linha para '\n'
+        cleaned_value = str(value).replace('\r\n', '\n').replace('\r', '\n')
+        print(f"DEBUG NL2BR: Valor de entrada (repr): {repr(cleaned_value)}")
+
+        # Primeiro, escape todo o HTML para evitar XSS
+        # Se 'value' já contiver '&lt;br&gt;' ou '<br>', 'escape' vai re-escapar ou deixar como está.
+        escaped_value = escape(cleaned_value)
+
+        # Agora, substitua as quebras de linha (que são '\n' após a limpeza) por tags <br>
+        # O Markup('<br>\n') garante que '<br>' seja injetado como HTML e não escapado novamente.
+        final_html = escaped_value.replace('\n', Markup('<br>\n'))
+
+        return final_html  # Retorna um objeto Markup, que é 'safe' por padrão
 
     app.jinja_env.filters['nl2br'] = nl2br
+    # --- FIM DA FUNÇÃO NL2BR ---
 
     app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 31536000
 
@@ -95,6 +121,9 @@ def create_app():
     app.register_blueprint(auth_bp)
     app.register_blueprint(pesquisas_lista_bp)
     app.register_blueprint(admin_surveys_bp)
+    app.register_blueprint(carreiras_bp)
+    app.register_blueprint(admin_vagas_bp)
+    app.register_blueprint(admin_candidaturas_bp)
 
     @app.route('/uploads/<path:filename>')
     def uploaded_file(filename):

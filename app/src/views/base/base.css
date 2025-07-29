@@ -273,6 +273,8 @@ header {
 
   border-radius: 28px;
   transition: background-color 0.4s;
+  /* ADICIONE ESTA LINHA PARA A BORDA */
+  border: 1px solid var(--border-color); /* Adiciona a borda */
 }
 .slider::before {
   content: "";
@@ -307,6 +309,8 @@ header {
 }
 .theme-checkbox:checked + .slider {
   background-color: var(--accent);
+  /* Opcional: Remover borda no checked se preferir, ou manter a mesma borda */
+  /* border-color: var(--accent); */ /* Poderia mudar a cor da borda também */
 }
 .theme-checkbox:checked + .slider::before {
   transform: translateX(24px);
