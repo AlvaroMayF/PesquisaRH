@@ -111,3 +111,100 @@ html.dark input[type="date"]::-webkit-calendar-picker-indicator {
 
 .separator::before { left: 0; }
 .separator::after { right: 0; }
+
+
+/* --- NOVOS ESTILOS PARA A SEÇÃO DE FOTO --- */
+
+/* Separador interno mais sutil dentro do formulário */
+.separator-internal {
+  height: 1px;
+  background-color: var(--border-color);
+  margin: 2rem 0;
+}
+
+.section-title-small {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-color);
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.foto-preview-container {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+#foto-preview {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%; /* Deixa a imagem redonda */
+  border: 4px solid var(--border-color);
+  object-fit: cover; /* Garante que a imagem preencha o espaço sem distorcer */
+  background-color: var(--bg-light);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+/* Estilizando o input de arquivo para parecer um botão */
+.input-file {
+  width: 100%;
+  color: var(--text-color-secondary);
+}
+
+.input-file::file-selector-button {
+  font-weight: 500;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-light);
+  color: var(--text-color);
+  cursor: pointer;
+  transition: background-color 0.2s;
+  margin-right: 1rem;
+}
+
+.input-file::file-selector-button:hover {
+  background-color: var(--border-color);
+}
+
+/* Botões secundários (como Ligar Webcam) */
+.btn-secondary {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-color);
+  background-color: var(--bg-light);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.btn-secondary:hover {
+  background-color: var(--border-color);
+  border-color: color-mix(in srgb, var(--border-color) 80%, black);
+}
+
+#webcam-container video {
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  width: 100%;
+}
+
+.webcam-controls {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.webcam-controls .btn {
+  flex-grow: 1;
+}
+
+/* Botão principal de submit */
+.btn-submit-main {
+  margin-top: 2rem;
+  width: 100%;
+}

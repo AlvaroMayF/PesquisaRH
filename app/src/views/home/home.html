@@ -154,9 +154,6 @@
           </div>
         </div>
 
-        <!-- ======================================================= -->
-        <!--      *** CARD DE RECONHECIMENTO SUBSTITUÍDO *** -->
-        <!-- ======================================================= -->
         <div class="notice-card">
           <div class="notice-card-icon">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
@@ -172,13 +169,12 @@
             {% endif %}
           </div>
         </div>
-        <!-- ======================================================= -->
 
       </div>
     </section>
 
     <section class="birthday-section">
-      <h2 class="section-title">Aniversariantes de Hoje</h2>
+      <h2 class="section-title">Aniversariantes do Dia</h2> {# Título ajustado #}
       {% if aniversariantes %}
         <div class="birthday-grid">
           {% for c in aniversariantes %}
@@ -213,15 +209,32 @@
   <script src="{{ url_for('views.static', filename='home/animations.js') }}" defer></script>
 
   <script>
-      const navToggle = document.querySelector('.nav-toggle');
-      const navMenu = document.querySelector('.nav-menu');
+    document.addEventListener('DOMContentLoaded', () => {
+        // Lógica para o menu hamburguer
+        const navToggle = document.querySelector('.nav-toggle');
+        const navMenu = document.querySelector('.nav-menu');
+        if (navToggle && navMenu) {
+            navToggle.addEventListener('click', () => {
+                navMenu.classList.toggle('nav-menu--visible');
+                navToggle.classList.toggle('is-active');
+            });
+        }
 
-      if (navToggle && navMenu) {
-        navToggle.addEventListener('click', () => {
-            navMenu.classList.toggle('nav-menu--visible');
-            navToggle.classList.toggle('is-active');
+        // Lógica para o dropdown no menu mobile
+        const dropdownToggles = document.querySelectorAll('.nav-menu .dropdown-toggle');
+        dropdownToggles.forEach(toggle => {
+            toggle.addEventListener('click', function(event) {
+                // Roda apenas se o menu hamburguer estiver visível
+                if (window.getComputedStyle(navToggle).display === 'block') {
+                    event.preventDefault(); // Impede a navegação do link '#'
+                    const parentDropdown = this.closest('.nav-item.dropdown');
+                    if (parentDropdown) {
+                        parentDropdown.classList.toggle('is-open');
+                    }
+                }
+            });
         });
-      }
+    });
   </script>
 </body>
 </html>

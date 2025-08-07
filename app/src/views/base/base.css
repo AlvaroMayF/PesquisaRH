@@ -5,42 +5,27 @@
   --container-max-width: 1200px;
   --section-gap: 2rem;
   --card-padding: 1.5rem;
-
-  /* COR DE ACENTO PRINCIPAL (ROSA) */
   --accent: #FD4289;
   --accent-hover: #A81A50;
-
-  /* COR DE ACENTO SECUNDÁRIO (CIANO) */
   --accent-secondary: #009BC4;
-
-  /* TEMA CLARO */
-  --bg-light: #F8F9FA; /* Fundo principal da página (cinza muito claro) */
+  --bg-light: #F8F9FA;
   --bg-card: #FFFFFF;
   --text-color: #001549;
-  --text-color-secondary: #5A647F; /* Tom de cinza azulado para textos secundários */
+  --text-color-secondary: #5A647F;
   --border-color: #DEE2E6;
-
-  /* CORES DE AVISO (Mantidas para funcionalidade) */
   --danger: #dc3545;
   --danger-hover: #c82333;
 }
 
 html.dark {
-  /* COR DE ACENTO PRINCIPAL (ROSAS CLAROS) */
   --accent: #FF72A7;
   --accent-hover: #FFA7C8;
-
-  /* COR DE ACENTO SECUNDÁRIO (CIANOS CLAROS) */
   --accent-secondary: #15D4F0;
-
-  /* TEMA ESCURO */
   --bg-light: #001549;
-  --bg-card: #001B53; /* Tom de azul um pouco mais claro para os cards */
-  --text-color: #E2E8F0; /* Texto principal (branco suave) */
-  --text-color-secondary: #94A3B8; /* Texto secundário (cinza claro) */
+  --bg-card: #001B53;
+  --text-color: #E2E8F0;
+  --text-color-secondary: #94A3B8;
   --border-color: #002A7A;
-
-  /* CORES DE AVISO (Mantidas para funcionalidade) */
   --danger: #e5484d;
   --danger-hover: #f16267;
 }
@@ -52,7 +37,6 @@ html.dark {
   padding: 0;
 }
 
-/* ATUALIZADO: Regra aplicada a ambos para máxima eficácia */
 html,
 body {
   overflow-x: hidden;
@@ -87,7 +71,6 @@ header {
   gap: 1.5rem;
 }
 
-/* Estrutura de 3 colunas */
 .navbar-left, .navbar-right {
   flex: 1;
   display: flex;
@@ -98,9 +81,6 @@ header {
   justify-content: flex-start;
   gap: 1.5rem;
   user-select: none;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
 }
 
 .navbar-right {
@@ -120,7 +100,6 @@ header {
   color: var(--accent);
 }
 
-/* Links de navegação */
 .nav-menu {
   display: flex;
   gap: 0.5rem;
@@ -140,7 +119,6 @@ header {
   border: 2px solid transparent;
 }
 
-/* Efeito hover sutil, sem fundo */
 .nav-menu a:hover,
 .nav-menu a:focus {
   color: var(--text-color);
@@ -148,7 +126,6 @@ header {
   outline: none;
 }
 
-/* Link Ativo com indicador inferior */
 .nav-menu a.active {
   color: var(--accent);
   font-weight: 600;
@@ -166,7 +143,6 @@ header {
   border-radius: 2px;
 }
 
-/* Saudação ao usuário mais discreta */
 .header-user-greeting {
   font-size: 0.9rem;
   font-weight: 500;
@@ -178,7 +154,6 @@ header {
   transition: background-color 0.2s;
 }
 
-/* Estilo específico para o botão de SAIR dentro da navbar */
 .nav-menu .btn-logout {
   color: var(--text-color-secondary);
   background-color: transparent;
@@ -192,24 +167,17 @@ header {
   border-color: var(--text-color-secondary);
 }
 
-/* Em telas pequenas, esconde a saudação */
-@media (max-width: 992px) {
-  .header-user-greeting {
-    display: none;
-  }
-}
-
 /* ========== DROPDOWN (Estilo Padrão) ========= */
 .nav-item.dropdown {
   position: relative;
 }
 
-/* Seta do dropdown, SEM ANIMAÇÃO */
 .nav-link.dropdown-toggle::after {
   content: ' ▾';
   font-size: 0.8em;
   display: inline-block;
   margin-left: 0.25rem;
+  transition: transform 0.2s ease;
 }
 
 .dropdown-menu {
@@ -251,77 +219,84 @@ header {
   outline: none;
 }
 
-/* ========== BOTÃO DE TEMA ========== */
+/* ======================================================= */
+/* BOTÃO DE TEMA (LÓGICA SIMPLIFICADA)                   */
+/* ======================================================= */
 .theme-switch {
   display: inline-block;
   position: relative;
   width: 52px;
   height: 28px;
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
 }
+
 .theme-switch .theme-checkbox {
   opacity: 0;
   width: 0;
   height: 0;
 }
+
 .slider {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-
+  background-color: #ccc;
   border-radius: 28px;
   transition: background-color 0.4s;
-  /* ADICIONE ESTA LINHA PARA A BORDA */
-  border: 1px solid var(--border-color); /* Adiciona a borda */
+  border: 1px solid var(--border-color);
 }
+
 .slider::before {
   content: "";
   position: absolute;
   height: 20px;
   width: 20px;
-  left: 4px;
-  bottom: 4px;
+  left: 3px;
+  bottom: 3px;
   background-color: white;
   border-radius: 50%;
-  transition: transform 0.4s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  transition: transform 0.4s ease;
 }
+
 .slider svg {
     position: absolute;
     top: 50%;
-    left: 50%;
-    transition: opacity 0.4s, transform 0.4s;
+    margin-top: -8px;
     pointer-events: none;
+    transition: opacity 0.2s ease, left 0.4s ease;
 }
+
 .icon-sun {
+    left: 5px;
     stroke: #f39c12;
-    transform: translate(-50%, -50%) rotate(0deg);
     opacity: 1;
 }
+
 .icon-moon {
+    left: 5px;
     stroke: #f1c40f;
-    transform: translate(-50%, -50%) rotate(-90deg);
     opacity: 0;
 }
+
 .theme-checkbox:checked + .slider {
   background-color: var(--accent);
-  /* Opcional: Remover borda no checked se preferir, ou manter a mesma borda */
-  /* border-color: var(--accent); */ /* Poderia mudar a cor da borda também */
+  border-color: transparent;
 }
+
 .theme-checkbox:checked + .slider::before {
   transform: translateX(24px);
 }
+
 .theme-checkbox:checked + .slider .icon-sun {
-    transform: translate(-50%, -50%) rotate(90deg);
     opacity: 0;
 }
+
 .theme-checkbox:checked + .slider .icon-moon {
-    transform: translate(-50%, -50%) rotate(0deg);
     opacity: 1;
+    left: 29px;
 }
 
 /* ========== MAIN CONTENT ========= */
@@ -329,13 +304,11 @@ main {
   max-width: var(--container-max-width);
   margin: var(--section-gap) auto;
   padding: 0 1rem;
-  flex-direction: column;
-  gap: var(--section-gap);
   position: relative;
   z-index: 1;
 }
 
-/* ========== TÍTULOS DE SEÇÃO (Estilo moderno) ========= */
+/* ========== TÍTULOS DE SEÇÃO ========= */
 .section-title {
   text-align: center;
   font-size: 1.8rem;
@@ -349,7 +322,7 @@ main {
   content: none;
 }
 
-/* ========== CARDS (Sombras refinadas) ========= */
+/* ========== CARDS ========= */
 .content-card {
   background: var(--bg-card);
   border-radius: 16px;
@@ -363,7 +336,7 @@ a:focus, button:focus {
   outline-offset: 2px;
 }
 
-/* ========== ANIMAÇÃO DE FADE-IN AO ROLAR ========= */
+/* ========== ANIMAÇÃO DE FADE-IN ========= */
 .fade-in-section {
   opacity: 0;
   transform: translateY(20px);
@@ -451,102 +424,6 @@ a:focus, button:focus {
   margin: 0;
 }
 
-/* ========== RESPONSIVIDADE (MOBILE) ========== */
-.nav-toggle {
-    display: none;
-    width: 30px;
-    height: 30px;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    position: relative;
-    z-index: 1001;
-}
-.hamburger {
-    display: block;
-    width: 25px;
-    height: 3px;
-    background: var(--text-color);
-    border-radius: 3px;
-    position: relative;
-    transition: all 0.3s ease-in-out;
-}
-.hamburger::before,
-.hamburger::after {
-    content: '';
-    position: absolute;
-    width: 25px;
-    height: 3px;
-    background: var(--text-color);
-    border-radius: 3px;
-    left: 0;
-    transition: all 0.3s ease-in-out;
-}
-.hamburger::before {
-    top: -8px;
-}
-.hamburger::after {
-    bottom: -8px;
-}
-.nav-toggle.is-active .hamburger {
-    background: transparent;
-}
-.nav-toggle.is-active .hamburger::before {
-    transform: rotate(45deg) translate(5px, 6px);
-}
-.nav-toggle.is-active .hamburger::after {
-    transform: rotate(-45deg) translate(5px, -6px);
-}
-@media (max-width: 850px) {
-    .nav-toggle {
-        display: block;
-    }
-    .nav-menu {
-        position: fixed;
-        top: 0;
-        right: -100%;
-        width: 100%;
-        height: 100vh;
-        background: var(--bg-card);
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        gap: 2rem;
-        transition: right 0.3s ease-in-out;
-        padding-top: 5rem;
-    }
-    .nav-menu.nav-menu--visible {
-        right: 0;
-    }
-    .nav-item.dropdown {
-        text-align: center;
-    }
-    .nav-item.dropdown .dropdown-menu {
-        position: static;
-        transform: none;
-        box-shadow: none;
-        border: none;
-        background: transparent;
-        display: none;
-        flex-direction: column;
-        gap: 1rem;
-        padding-top: 1rem;
-    }
-    .nav-item.dropdown:hover .dropdown-menu {
-        display: flex;
-    }
-    .nav-link.dropdown-toggle::after {
-        display: none;
-    }
-    main {
-        padding: 0 1rem;
-    }
-    .footer-bottom {
-        flex-direction: column-reverse;
-        text-align: center;
-    }
-}
-
 /* ========== ESTRUTURA DA PÁGINA DE LOGIN ========== */
 .login-page-body {
   display: flex;
@@ -629,4 +506,183 @@ html.dark .alert-danger {
 }
 html.dark .alert-info {
   color: #9eeaf9; background-color: #055160; border-color: #066477;
+}
+
+
+/* ======================================================= */
+/* PADRÕES DE RESPONSIVIDADE GLOBAIS (ATUALIZADO)        */
+/* ======================================================= */
+
+/* --- HAMBURGER MENU E NAVBAR --- */
+.nav-toggle {
+    display: none;
+    width: 30px;
+    height: 30px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    position: relative;
+    z-index: 1001;
+}
+.hamburger {
+    display: block;
+    width: 25px;
+    height: 3px;
+    background: var(--text-color);
+    border-radius: 3px;
+    position: relative;
+    transition: all 0.3s ease-in-out;
+}
+.hamburger::before,
+.hamburger::after {
+    content: '';
+    position: absolute;
+    width: 25px;
+    height: 3px;
+    background: var(--text-color);
+    border-radius: 3px;
+    left: 0;
+    transition: all 0.3s ease-in-out;
+}
+.hamburger::before { top: -8px; }
+.hamburger::after { bottom: -8px; }
+
+.nav-toggle.is-active .hamburger { background: transparent; }
+.nav-toggle.is-active .hamburger::before { transform: rotate(45deg) translate(5px, 6px); }
+.nav-toggle.is-active .hamburger::after { transform: rotate(-45deg) translate(5px, -6px); }
+
+/* Breakpoint para tablets e mobile (992px) */
+@media (max-width: 992px) {
+    .navbar-center {
+        display: none;
+    }
+
+    .nav-toggle {
+        display: block;
+    }
+
+    .nav-menu {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 80%;
+        max-width: 320px;
+        height: 100vh;
+        background: var(--bg-card);
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: flex-start;
+        gap: 0;
+        transition: right 0.4s ease-in-out;
+        padding: 6rem 1rem 2rem;
+        box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+        overflow-y: auto;
+    }
+
+    .nav-menu.nav-menu--visible {
+        right: 0;
+    }
+
+    .header-user-greeting {
+      display: block;
+      width: 100%;
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .nav-menu li {
+      width: 100%;
+    }
+
+    .nav-menu a {
+      display: block;
+      width: 100%;
+      padding: 0.8rem 1rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .nav-menu li:last-child a {
+      border-bottom: none;
+    }
+
+    .nav-menu a.active::after {
+      display: none;
+    }
+
+    /* ============================================= */
+    /* DROPDOWN MOBILE (LÓGICA FINAL E SIMPLES)    */
+    /* ============================================= */
+    .nav-link.dropdown-toggle::after {
+      transition: transform 0.3s ease;
+    }
+
+    /* Gira a seta quando o dropdown está aberto */
+    .nav-item.dropdown.is-open > .nav-link.dropdown-toggle::after {
+      transform: rotate(180deg);
+    }
+
+    /* Esconde o sub-menu por padrão */
+    .nav-item.dropdown .dropdown-menu {
+        display: none;
+        list-style: none; /* Garante que não haja bullets */
+        padding-left: 0;  /* Remove padding padrão da lista */
+        margin-left: 0;
+    }
+
+    /* Mostra o sub-menu quando a classe .is-open é adicionada */
+    .nav-item.dropdown.is-open .dropdown-menu {
+        display: block !important; /* Força a exibição */
+    }
+
+    /* Remove a borda do link pai para não duplicar */
+    .nav-menu .nav-item.dropdown > a {
+      border-bottom: none;
+    }
+
+    /* Adiciona a borda no <li> pai para um visual consistente */
+    .nav-menu .nav-item.dropdown {
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    /* Remove todos os estilos de desktop dos sub-itens */
+    .dropdown-item {
+      all: unset; /* Reseta completamente o estilo do <a> */
+      display: block; /* Garante que ocupe a linha inteira */
+      padding: 0.8rem 1rem 0.8rem 2rem; /* Adiciona indentação */
+      font-size: 0.9rem;
+      color: var(--text-color-secondary);
+      font-family: 'Source Sans 3', sans-serif;
+    }
+
+    .dropdown-item:hover {
+        color: var(--text-color); /* Adiciona um hover simples */
+    }
+}
+
+
+/* --- AJUSTES GERAIS PARA MOBILE (768px) --- */
+@media (max-width: 768px) {
+    :root {
+      --section-gap: 1.5rem;
+    }
+
+    .nav-container, main {
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
+
+    .section-title {
+        font-size: 1.5rem;
+    }
+
+    .page-title {
+        font-size: 2rem;
+    }
+
+    .footer-bottom {
+        flex-direction: column-reverse;
+        text-align: center;
+        gap: 1.5rem;
+    }
 }

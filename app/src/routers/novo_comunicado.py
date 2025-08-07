@@ -11,12 +11,24 @@ novo_comunicado_bp = Blueprint(
     template_folder='../views'
 )
 
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
+# ==================================================
+# ATUALIZAÇÃO: DEFINIÇÃO DE ARQUIVOS PERMITIDOS
+# ==================================================
+ALLOWED_IMAGE_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
+ALLOWED_VIDEO_EXTENSIONS = {'mp4', 'webm', 'ogg'}
 
 
-def allowed_file(filename):
-    return '.' in filename and \
-        filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+def get_file_type(filename):
+    """Verifica a extensão do arquivo e retorna seu tipo ('image', 'video', ou None)."""
+    if '.' not in filename:
+        return None
+
+    ext = filename.rsplit('.', 1)[1].lower()
+    if ext in ALLOWED_IMAGE_EXTENSIONS:
+        return 'image'
+    if ext in ALLOWED_VIDEO_EXTENSIONS:
+        return 'video'
+    return None
 
 
 @novo_comunicado_bp.route('/admin/novo-comunicado', methods=['GET', 'POST'])
@@ -30,37 +42,57 @@ def novo_comunicado_view():
         categoria = request.form.get('categoria')
         admin_id = session.get('admin_id', 1)
 
-        conteudo = conteudo.replace('\r\n', '\n')  # Padroniza para \n
-        conteudo = conteudo.replace('<br>', '\n')   # Remove qualquer <br> literal
-        conteudo = conteudo.replace('&lt;br&gt;', '\n') # Remove qualquer &lt;br&gt; literal
-        # ------------------------------------
-
-        # === LINHAS DE DEBUG PÓS-LIMPEZA ===
-        print(f"\nDEBUG NOVO COMUNICADO: Após a limpeza")
-        print(f"  Conteúdo após limpeza (repr): {repr(conteudo)}")
-        print(f"  Contém '\\n'? {'\\n' in conteudo}")
-        print(f"  Contém '<br>'? {'<br>' in conteudo}")
-        # === FIM DAS LINHAS DE DEBUG ===
-
-        imagem_url = None
-
         if not titulo or not conteudo or not categoria:
             flash('Todos os campos de texto são obrigatórios.', 'danger')
             return redirect(url_for('novo_comunicado.novo_comunicado_view'))
 
-        if 'imagem' in request.files:
-            file = request.files['imagem']
-            if file and file.filename != '' and allowed_file(file.filename):
-                filename = secure_filename(file.filename)
-                file.save(os.path.join(current_app.config['UPLOAD_FOLDER'], filename))
+        # Padroniza quebras de linha
+        conteudo = conteudo.replace('\r\n', '\n').replace('<br>', '\n').replace('&lt;br&gt;', '\n')
+
+        imagem_url = None
+        video_url = None
+        file = request.files.get('arquivo')  # Campo de upload genérico para imagem ou vídeo
+
+        if file and file.filename != '':
+            filename = secure_filename(file.filename)
+            file_type = get_file_type(filename)
+
+            if file_type == 'image':
+                # Salva na pasta de imagens
+                upload_folder = current_app.config['UPLOAD_FOLDER_IMAGES']
+                if not os.path.exists(upload_folder):
+                    os.makedirs(upload_folder)
+                file.save(os.path.join(upload_folder, filename))
                 imagem_url = filename
+
+            elif file_type == 'video':
+                # Salva na pasta de vídeos
+                upload_folder = current_app.config['UPLOAD_FOLDER_VIDEOS']
+                if not os.path.exists(upload_folder):
+                    os.makedirs(upload_folder)
+                file.save(os.path.join(upload_folder, filename))
+                video_url = filename
+
+            else:
+                # Se o tipo de arquivo não for permitido
+                flash(
+                    'Tipo de arquivo não permitido. Use apenas imagens (png, jpg, gif, webp) ou vídeos (mp4, webm, ogg).',
+                    'danger')
+                return redirect(url_for('novo_comunicado.novo_comunicado_view'))
 
         try:
             conn = get_db_connection()
             cur = conn.cursor()
+            # ==================================================
+            # ATUALIZAÇÃO: QUERY SQL COM O NOVO CAMPO video_url
+            # ==================================================
             cur.execute(
-                "INSERT INTO comunicados (titulo, conteudo, admin_id, categoria, imagem_url) VALUES (%s, %s, %s, %s, %s)",
-                (titulo, conteudo, admin_id, categoria, imagem_url)
+                """
+                INSERT INTO comunicados 
+                (titulo, conteudo, admin_id, categoria, imagem_url, video_url) 
+                VALUES (%s, %s, %s, %s, %s, %s)
+                """,
+                (titulo, conteudo, admin_id, categoria, imagem_url, video_url)
             )
             conn.commit()
             cur.close()

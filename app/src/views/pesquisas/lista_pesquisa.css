@@ -128,3 +128,66 @@ html.dark .btn-disabled {
     background-color: #30363d;
     color: #8b949e;
 }
+
+
+/* ============================================= */
+/* REGRAS DE RESPONSIVIDADE (NOVO)           */
+/* ============================================= */
+@media (max-width: 768px) {
+    /* Ajusta o contêiner principal para telas menores */
+    .survey-list-container {
+        margin-top: 1rem;
+        padding: 0; /* Remove o padding lateral para o card ocupar tudo */
+    }
+
+    /* Remove a borda e o raio do card para um visual "full-width" */
+    .survey-card-detailed {
+        border-radius: 0;
+        border-left: none;
+        border-right: none;
+        box-shadow: none; /* Remove a sombra em telas pequenas */
+        border-bottom: 1px solid var(--border-color); /* Garante separação */
+    }
+    .survey-card-detailed:first-child {
+        border-top: 1px solid var(--border-color);
+    }
+    .survey-card-detailed:hover {
+        transform: none;
+    }
+
+    /* Empilha o ícone e o conteúdo em telas pequenas */
+    .survey-card-body {
+        flex-direction: column;
+        align-items: center; /* Centraliza o ícone */
+        text-align: center; /* Centraliza o texto */
+        gap: 1rem;
+    }
+
+    .survey-icon {
+        margin-top: 0; /* Remove a margem superior do ícone */
+    }
+
+    /* Centraliza o conteúdo e o botão */
+    .survey-content {
+        align-items: center;
+    }
+
+    /* Empilha o título e o status em telas muito pequenas se necessário */
+    .survey-card-header {
+        flex-direction: column;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    /* Reduz o tamanho do título */
+    .survey-card-header h3 {
+        font-size: 1.25rem;
+    }
+
+    /* Garante que o botão ocupe uma largura razoável */
+    .btn-responder {
+        width: 100%;
+        max-width: 300px; /* Limita a largura máxima do botão */
+        align-self: center; /* Centraliza o botão */
+    }
+}

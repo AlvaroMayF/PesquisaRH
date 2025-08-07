@@ -76,7 +76,6 @@
             {% endif %}
           </ul>
         </div>
-
       </div>
     </nav>
   </header>
@@ -116,35 +115,48 @@
             <section class="comunicados-list">
                 {% for comunicado in comunicados %}
                     <article class="comunicado-card">
-                        {% if comunicado.imagem_url %}
-                            <div class="comunicado-image-wrapper">
-                                <img src="{{ url_for('uploaded_file', filename=comunicado.imagem_url) }}" alt="Imagem do Comunicado">
+                        {# Bloco de Mídia (se houver) #}
+                        {% if comunicado.imagem_url or comunicado.video_url %}
+                            <div class="comunicado-media-wrapper">
+                                {% if comunicado.imagem_url %}
+                                    <img src="{{ url_for('static', filename='uploads/images/' + comunicado.imagem_url) }}" alt="Imagem do Comunicado" class="imagem-ampliavel">
+                                {% elif comunicado.video_url %}
+                                    <video controls>
+                                        <source src="{{ url_for('static', filename='uploads/videos/' + comunicado.video_url) }}" type="video/mp4">
+                                        Seu navegador não suporta a tag de vídeo.
+                                    </video>
+                                {% endif %}
                             </div>
                         {% endif %}
-                        <div class="comunicado-content">
-                            <header class="comunicado-header">
-                                <div class="comunicado-meta">
-                                    <span class="comunicado-author">Postado por: {{ comunicado.autor }} - RH</span>
-                                    <span class="meta-dot">•</span>
-                                    <time class="comunicado-date" datetime="{{ comunicado.data_publicacao.isoformat() }}">{{ comunicado.data_publicacao.strftime('%d de %B de %Y') }}</time>
+
+                        {# Novo Wrapper para todo o conteúdo de texto e ações #}
+                        <div class="comunicado-main-content">
+                            <div class="comunicado-content">
+                                <header class="comunicado-header">
+                                    <div class="comunicado-meta">
+                                        <span class="comunicado-author">Postado por: {{ comunicado.autor }} - RH</span>
+                                        <span class="meta-dot">•</span>
+                                        <time class="comunicado-date" datetime="{{ comunicado.data_publicacao.isoformat() }}">{{ comunicado.data_publicacao.strftime('%d de %B de %Y') }}</time>
+                                    </div>
+                                    <div class="comunicado-tag tag-aviso">{{ comunicado.categoria }}</div>
+                                </header>
+                                <div class="comunicado-body">
+                                    <h2 class="comunicado-title"><a href="#">{{ comunicado.titulo }}</a></h2>
+                                    <p>{{ comunicado.conteudo | nl2br | safe }}</p>
                                 </div>
-                                <div class="comunicado-tag tag-aviso">{{ comunicado.categoria }}</div>
-                            </header>
-                            <div class="comunicado-body">
-                                <h2 class="comunicado-title"><a href="#">{{ comunicado.titulo }}</a></h2>
-                                <p>{{ comunicado.conteudo | nl2br | safe }}</p>
                             </div>
+
+                            {% if session.get('admin_logged_in') %}
+                            <footer class="comunicado-actions">
+                                <a href="{{ url_for('comunicados.editar_comunicado', comunicado_id=comunicado.id) }}" class="action-btn btn-edit">Editar</a>
+                                <form action="{{ url_for('comunicados.excluir_comunicado', comunicado_id=comunicado.id) }}" method="POST" onsubmit="return confirm('Tem certeza que deseja excluir este comunicado? Esta ação é permanente.');">
+                                    <button type="submit" class="action-btn btn-delete">Excluir</button>
+                                </form>
+                            </footer>
+                            {% endif %}
                         </div>
 
-                        {% if session.get('admin_logged_in') %}
-                        <footer class="comunicado-actions">
-                            <a href="{{ url_for('comunicados.editar_comunicado', comunicado_id=comunicado.id) }}" class="action-btn btn-edit">Editar</a>
-                            <form action="{{ url_for('comunicados.excluir_comunicado', comunicado_id=comunicado.id) }}" method="POST" onsubmit="return confirm('Tem certeza que deseja excluir este comunicado? Esta ação é permanente.');">
-                                <button type="submit" class="action-btn btn-delete">Excluir</button>
-                            </form>
-                        </footer>
-                        {% endif %}
-                    </article>
+                        </article>
                 {% else %}
                     <p class="no-comunicados">Nenhum comunicado encontrado no momento.</p>
                 {% endfor %}
@@ -184,6 +196,7 @@
     <script src="{{ url_for('views.static', filename='home/theme-toggle.js') }}" defer></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Script existente para MODAL DE FERIADOS
             const feriadoCards = document.querySelectorAll('.feriado-card');
             const modals = document.querySelectorAll('.modal-overlay');
             const closeButtons = document.querySelectorAll('.modal-close-btn');
@@ -231,6 +244,7 @@
         });
     </script>
     <script>
+        // Script existente para NAVBAR
         const navToggle = document.querySelector('.nav-toggle');
         const navMenu = document.querySelector('.nav-menu');
         if (navToggle && navMenu) {
@@ -240,5 +254,47 @@
           });
         }
     </script>
+
+    <div class="lightbox-overlay" id="lightbox">
+        <span class="lightbox-close-btn">&times;</span>
+        <img src="" alt="Imagem ampliada" class="lightbox-image" id="lightbox-img">
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const lightbox = document.getElementById('lightbox');
+        if (lightbox) {
+            const lightboxImg = document.getElementById('lightbox-img');
+            const closeBtn = lightbox.querySelector('.lightbox-close-btn');
+            const images = document.querySelectorAll('.imagem-ampliavel');
+
+            images.forEach(image => {
+                image.addEventListener('click', () => {
+                    lightboxImg.src = image.src;
+                    lightbox.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                });
+            });
+
+            const closeLightbox = () => {
+                lightbox.classList.remove('active');
+                document.body.style.overflow = '';
+            };
+
+            closeBtn.addEventListener('click', closeLightbox);
+            lightbox.addEventListener('click', (event) => {
+                if (event.target === lightbox) {
+                    closeLightbox();
+                }
+            });
+            document.addEventListener('keydown', (event) => {
+                if (event.key === 'Escape' && lightbox.classList.contains('active')) {
+                    closeLightbox();
+                }
+            });
+        }
+    });
+    </script>
+
 </body>
 </html>

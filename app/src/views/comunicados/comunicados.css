@@ -1,4 +1,6 @@
-/* Estilos específicos para a página comunicados.html */
+/* ================================================== */
+/* comunicados.css (Completo)                */
+/* ================================================== */
 
 main {
   padding: 0 2rem;
@@ -30,46 +32,74 @@ main {
   margin: 0 auto;
 }
 
-/* Os estilos de .alert e .flash-messages-container foram removidos daqui */
-/* Eles agora são herdados do base.css */
-
 /* Lista de Comunicados */
 .comunicados-list {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 2.5rem;
 }
 
+/* Layout do Card */
 .comunicado-card {
   background-color: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: 16px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03), 0 2px 4px -2px rgba(0, 0, 0, 0.03);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   overflow: hidden;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+@media (min-width: 768px) {
+  .comunicado-card {
+    display: grid;
+    grid-template-columns: 4fr 6fr;
+  }
+  .comunicado-card:not(:has(.comunicado-media-wrapper)) {
+    display: block;
+  }
 }
 
 .comunicado-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.07), 0 4px 6px -4px rgba(0, 0, 0, 0.07);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
 }
 
-.comunicado-image-wrapper {
-  width: 100%;
-  max-height: 400px;
-  overflow: hidden;
-  background-color: var(--bg-light);
-}
-
-.comunicado-image-wrapper img {
-  width: 100%;
-  height: auto;
-  display: block;
+/* Estilos de Mídia */
+.comunicado-media-wrapper {
+  background-color: #000;
   border-bottom: 1px solid var(--border-color);
 }
 
+@media (min-width: 768px) {
+  .comunicado-media-wrapper {
+    border-bottom: none;
+    border-right: 1px solid var(--border-color);
+    height: 100%;
+  }
+}
+
+.comunicado-media-wrapper img,
+.comunicado-media-wrapper video {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: contain;
+}
+
+/* Wrapper para o conteúdo principal do texto */
+.comunicado-main-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex-grow: 1;
+  /* Garante que o conteúdo não vaze em layouts de grid */
+  min-width: 0;
+}
+
 .comunicado-content {
-  padding: 1.5rem 2rem 2rem;
+  padding: 1.5rem 2rem;
 }
 
 .comunicado-header {
@@ -108,6 +138,16 @@ main {
   color: var(--text-color-secondary);
   line-height: 1.7;
 }
+
+/* ============================================= */
+/* A CORREÇÃO                  */
+/* ============================================= */
+.comunicado-body p {
+  /* Força a quebra de palavras longas para evitar quebra de layout */
+  overflow-wrap: break-word;
+  word-wrap: break-word; /* Fallback para navegadores antigos */
+}
+/* ============================================= */
 
 .comunicado-title {
   font-size: 1.75rem;
@@ -169,37 +209,34 @@ html.dark .btn-edit {
   display: flex;
   justify-content: flex-end;
   gap: 1rem;
-  padding: 0.75rem 1.5rem;
+  padding: 1rem 1.5rem;
   background-color: var(--bg-light);
   border-top: 1px solid var(--border-color);
 }
 
-/* ESTILOS PARA CARDS E MODAL DE FERIADOS */
+/* O restante (FERIADOS, MODAL E LIGHTBOX) continua igual... */
+
 #feriados-section {
   padding: 1.5rem 0rem;
   margin-bottom: 2rem;
   background-color: transparent;
   border: none;
 }
-
 #feriados-section .section-title {
   text-align: center;
   font-size: 1.75rem;
   margin-bottom: 1.5rem;
 }
-
 .feriados-grid {
   display: grid;
   grid-template-columns: 1fr;
   gap: 1.5rem;
 }
-
 @media (min-width: 768px) {
   .feriados-grid {
     grid-template-columns: repeat(3, 1fr);
   }
 }
-
 .feriado-card {
   background-color: var(--bg-card);
   padding: 1.5rem;
@@ -209,13 +246,11 @@ html.dark .btn-edit {
   cursor: pointer;
   transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
 }
-
 .feriado-card:hover {
   transform: translateY(-5px);
   border-color: var(--accent);
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.07), 0 4px 6px -4px rgba(0, 0, 0, 0.07);
 }
-
 .feriado-card-icon {
   width: 48px;
   height: 48px;
@@ -227,20 +262,17 @@ html.dark .btn-edit {
   color: var(--accent);
   border-radius: 50%;
 }
-
 .feriado-card-title {
   font-size: 1.25rem;
   font-weight: 600;
   color: var(--text-color);
   margin-bottom: 0.25rem;
 }
-
 .feriado-card-link {
   font-size: 0.9rem;
   font-weight: 500;
   color: var(--accent);
 }
-
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -257,13 +289,11 @@ html.dark .btn-edit {
   visibility: hidden;
   transition: opacity 0.3s ease, visibility 0s 0.3s;
 }
-
 .modal-overlay.active {
   opacity: 1;
   visibility: visible;
   transition-delay: 0s;
 }
-
 .modal-content {
   background: var(--bg-card);
   padding: 2rem;
@@ -274,11 +304,9 @@ html.dark .btn-edit {
   transform: scale(0.95) translateY(10px);
   transition: transform 0.3s ease;
 }
-
 .modal-overlay.active .modal-content {
   transform: scale(1) translateY(0);
 }
-
 .modal-close-btn {
   position: absolute;
   top: 0.75rem;
@@ -292,11 +320,9 @@ html.dark .btn-edit {
   cursor: pointer;
   transition: color 0.2s;
 }
-
 .modal-close-btn:hover {
   color: var(--text-color);
 }
-
 .modal-title {
   font-size: 1.75rem;
   font-weight: 600;
@@ -304,30 +330,73 @@ html.dark .btn-edit {
   color: var(--text-color);
   padding-right: 2rem;
 }
-
 .feriados-table {
   width: 100%;
   border-collapse: collapse;
 }
-
 .feriados-table th,
 .feriados-table td {
   padding: 0.75rem 1rem;
   text-align: left;
   border-bottom: 1px solid var(--border-color);
 }
-
 .feriados-table thead {
   background-color: var(--bg-light);
 }
-
 .feriados-table tbody tr:last-child td {
   border-bottom: none;
 }
-
 .no-feriados {
   text-align: center;
   color: var(--text-color-secondary);
   padding: 2rem 0;
   font-style: italic;
+}
+
+.imagem-ampliavel {
+  cursor: zoom-in;
+}
+.lightbox-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(5px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 3000;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.lightbox-overlay.active {
+  display: flex;
+  opacity: 1;
+}
+.lightbox-image {
+  max-width: 90%;
+  max-height: 85%;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+  transform: scale(0.9);
+  transition: transform 0.3s ease;
+}
+.lightbox-overlay.active .lightbox-image {
+  transform: scale(1);
+}
+.lightbox-close-btn {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  font-size: 3rem;
+  font-weight: bold;
+  color: white;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+.lightbox-close-btn:hover {
+  transform: scale(1.1);
 }

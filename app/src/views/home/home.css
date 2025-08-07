@@ -1,10 +1,10 @@
-/* Estilos específicos para a página home.html */
+/* app/src/views/home/home.css */
 
 /* ========== CAROUSEL ========= */
 .carousel-card {
   overflow: hidden;
   height: auto;
-  margin-bottom: var(--section-gap); /* Já usa --section-gap */
+  margin-bottom: var(--section-gap);
   border-radius: 16px;
   border: 1px solid var(--border-color);
 }
@@ -27,6 +27,9 @@
 .carousel-slide img {
   width: 100%;
   height: 100%;
+  /* ============================================= */
+  /* CORREÇÃO: Revertido para 'contain' como era antes */
+  /* ============================================= */
   object-fit: contain;
 }
 .carousel-caption {
@@ -74,40 +77,25 @@
   outline: 2px solid var(--accent);
 }
 
-/* --- Ajuste Geral: Títulos de Seção e Espaçamento de Seções --- */
-
-/* Estilo para os títulos das seções */
+/* --- Títulos de Seção --- */
 main .section-title {
-    margin-top: 3.5rem; /* Mais espaçamento acima do título */
-    margin-bottom: 2rem; /* Mais espaçamento abaixo do título para o conteúdo */
-    font-size: 1.8rem; /* Consistente com outros títulos de seção */
+    margin-top: 3.5rem;
+    margin-bottom: 2rem;
+    font-size: 1.8rem;
     font-weight: 700;
     letter-spacing: -0.5px;
     color: var(--text-color);
     text-align: center;
-    position: relative;
 }
 
-/* Remove a linha de baixo padrão para permitir um design mais flexível */
-main .section-title::after {
-    content: none;
-}
-
-/* Espaçamento entre as seções (opcional, se não estiver usando --section-gap para isso) */
-/* Se cada seção já tiver margin-bottom: var(--section-gap), não é necessário adicionar mais aqui */
-/* Mas se o objetivo é *mais* espaço entre elas, podemos adicionar um valor explícito */
+/* --- Espaçamento entre Seções --- */
 .quick-access-section,
 .notice-board-section,
 .birthday-section {
-    margin-bottom: 3.5rem; /* Aumenta o espaçamento entre as seções */
-}
-/* A primeira seção (carousel) já tem margin-bottom, então não precisa aqui */
-.quick-access-section {
-    margin-top: var(--section-gap); /* Garante espaço após o carousel */
+    margin-bottom: 3.5rem;
 }
 
-
-/* ========== QUICK ACCESS (Com animações de hover) - ESTILOS ORIGINAIS MANTIDOS ========= */
+/* ========== QUICK ACCESS ========== */
 .quick-access-section .content-card {
   padding: 1rem var(--card-padding) var(--card-padding);
 }
@@ -177,6 +165,7 @@ main .section-title::after {
 }
 .notice-card-content {
   flex-grow: 1;
+  min-width: 0;
 }
 .notice-card-title {
   font-size: 1.1rem;
@@ -188,6 +177,8 @@ main .section-title::after {
   font-size: 0.95rem;
   color: var(--text-color-secondary);
   line-height: 1.5;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
 }
 .notice-card-link {
   display: inline-block;
@@ -213,7 +204,7 @@ main .section-title::after {
 }
 .birthday-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 1rem;
 }
 .birthday-card {
@@ -249,25 +240,38 @@ html.dark .birthday-card:hover {
   font-size: 1.05rem;
   color: var(--text-color);
 }
-/* Estilos para saudação e botão de logout no menu */
 
-/* Estilo para a saudação "Olá, ..." */
-.nav-user-greeting {
-    display: flex;
-    align-items: center;
-    padding: 0 1rem;
-    font-size: 0.9rem;
-    color: var(--text-color-secondary);
-    white-space: nowrap; /* Impede que o nome quebre a linha */
-}
+/* ============================================= */
+/* REGRAS DE RESPONSIVIDADE                  */
+/* ============================================= */
+@media (max-width: 768px) {
+    /* Diminui os espaçamentos verticais entre seções */
+    main .section-title {
+        margin-top: 2rem;
+        margin-bottom: 1.5rem;
+    }
+    .quick-access-section,
+    .notice-board-section,
+    .birthday-section {
+        margin-bottom: 2.5rem;
+    }
 
-/* Estilo para o botão de Sair */
-.btn-logout {
-    background-color: color-mix(in srgb, var(--accent) 15%, transparent);
-    color: var(--accent) !important;
-    padding: 0.5rem 1rem;
-    border-radius: 8px;
-    font-weight: 600;
-    transition: background-color 0.2s, color 0.2s;
-    margin-left: 0.5rem;
+    /* Remove a borda do card do carousel */
+    .carousel-card {
+        border-radius: 0;
+        border-left: none;
+        border-right: none;
+    }
+
+    /* Reduz o tamanho dos botões do carousel */
+    .carousel-button {
+        width: 2.2rem;
+        height: 2.2rem;
+        font-size: 1.2rem;
+    }
+
+    /* Reduz o gap da grid de acesso rápido */
+    .quick-grid {
+        gap: 1rem;
+    }
 }

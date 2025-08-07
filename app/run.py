@@ -1,6 +1,6 @@
 import os
 from flask import Flask, send_from_directory, Blueprint, session, redirect, url_for, request
-from markupsafe import escape, Markup  # Mantenha ambas as importações
+from markupsafe import escape, Markup
 from datetime import timedelta
 
 # ----------------------------------------------------------------------
@@ -43,11 +43,7 @@ def create_app():
 
     # Diretórios de templates e estáticos
     template_dir = os.path.join(base, 'src', 'views')
-    static_dir = os.path.join(base, 'assets')
-
-    # Ajuste para a pasta de uploads de curriculos que está dentro de src/app/uploads/curriculos
-    upload_root_dir = os.path.join(base, 'uploads')
-    os.makedirs(os.path.join(upload_root_dir, 'curriculos'), exist_ok=True)
+    static_dir = os.path.join(base, 'assets')  # A pasta 'assets' é servida como '/static'
 
     app = Flask(
         __name__,
@@ -56,7 +52,45 @@ def create_app():
         static_url_path='/static'
     )
 
+    # ======================================================================
+    #                 CONFIGURAÇÃO DE PASTAS DE UPLOAD
+    # ======================================================================
+
+    # --- Configuração do diretório de upload para currículos ---
+    upload_root_dir = os.path.join(base, 'uploads')
+    os.makedirs(os.path.join(upload_root_dir, 'curriculos'), exist_ok=True)
     app.config['UPLOAD_FOLDER'] = upload_root_dir
+
+    # --- Configuração dos diretórios de upload para comunicados ---
+    upload_images_dir = os.path.join(static_dir, 'uploads', 'images')
+    upload_videos_dir = os.path.join(static_dir, 'uploads', 'videos')
+    os.makedirs(upload_images_dir, exist_ok=True)
+    os.makedirs(upload_videos_dir, exist_ok=True)
+    app.config['UPLOAD_FOLDER_IMAGES'] = upload_images_dir
+    app.config['UPLOAD_FOLDER_VIDEOS'] = upload_videos_dir
+
+    # --- Configuração do diretório para FOTOS DE COLABORADORES ---
+    fotos_dir = os.path.join(static_dir, 'uploads', 'fotos_colaboradores')
+    os.makedirs(fotos_dir, exist_ok=True)
+    app.config['FOTOS_FOLDER'] = fotos_dir
+
+    # ======================================================================
+    #           CONFIGURAÇÃO DA INTEGRAÇÃO CONTROL ID
+    # ======================================================================
+
+    # --- Credenciais para a API de Sincronização ---
+    app.config['IDSECURE_IP'] = '10.0.1.0:30443'
+    app.config['IDSECURE_USER'] = 'admin'
+    app.config['IDSECURE_PASSWORD'] = 'admin123'
+
+    # --- Credenciais para o BANCO DE DADOS do iDSecure ---
+    app.config['IDSECURE_DB_HOST'] = '10.0.1.0'
+    app.config['IDSECURE_DB_USER'] = 'integracao'
+    app.config['IDSECURE_DB_PASSWORD'] = '[]-@samar@hsp'
+    app.config['IDSECURE_DB_NAME'] = 'acesso'
+    app.config['IDSECURE_DB_PORT'] = 3306
+
+    # ======================================================================
 
     app.permanent_session_lifetime = timedelta(minutes=15)
 
@@ -74,27 +108,13 @@ def create_app():
         if is_admin_route and not session.get('admin_logged_in') and request.endpoint not in allowed_endpoints:
             return redirect(url_for('adminLogin.admin_login'))
 
-    # --- FUNÇÃO NL2BR COM DEBUG E LÓGICA REFINADA PARA O TESTE ---
     def nl2br(value):
-        """Converte quebras de linha em texto para tags <br> em HTML.
-           Adicionado debug para investigar o problema de <br> literal."""
-
-        # Converte para string e padroniza quebras de linha para '\n'
         cleaned_value = str(value).replace('\r\n', '\n').replace('\r', '\n')
-        print(f"DEBUG NL2BR: Valor de entrada (repr): {repr(cleaned_value)}")
-
-        # Primeiro, escape todo o HTML para evitar XSS
-        # Se 'value' já contiver '&lt;br&gt;' ou '<br>', 'escape' vai re-escapar ou deixar como está.
         escaped_value = escape(cleaned_value)
-
-        # Agora, substitua as quebras de linha (que são '\n' após a limpeza) por tags <br>
-        # O Markup('<br>\n') garante que '<br>' seja injetado como HTML e não escapado novamente.
         final_html = escaped_value.replace('\n', Markup('<br>\n'))
-
-        return final_html  # Retorna um objeto Markup, que é 'safe' por padrão
+        return final_html
 
     app.jinja_env.filters['nl2br'] = nl2br
-    # --- FIM DA FUNÇÃO NL2BR ---
 
     app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 31536000
 

@@ -53,7 +53,7 @@
           </button>
 
           <ul class="nav-menu">
-            <li><a href="{{ url_for('home.home_view') }}" class="active">Início</a></li>
+            <li><a href="{{ url_for('home.home_view') }}">Início</a></li>
             <li><a href="{{ url_for('pesquisas_lista.lista_pesquisas_view') }}">Pesquisa</a></li>
 
             <li class="nav-item dropdown">
@@ -66,7 +66,7 @@
 
             {% if session.get('admin_logged_in') %}
               <li class="nav-item dropdown">
-                <a href="{{ url_for('admin.admin_panel') }}" class="nav-link dropdown-toggle">Administrador</a>
+                <a href="{{ url_for('admin.admin_panel') }}" class="nav-link dropdown-toggle active">Administrador</a>
                 <ul class="dropdown-menu">
                   <li><a class="dropdown-item" href="{{ url_for('analitico.analitico_view') }}">Analítico</a></li>
                   <li><a class="dropdown-item" href="{{ url_for('novo_colaborador.novo_colaborador_view') }}">Novo Colaborador</a></li>
@@ -107,7 +107,7 @@
       <div class="form-card">
         <div class="form-section">
             <h2 class="form-title">Cadastrar Novo Colaborador</h2>
-            <form method="POST" action="{{ url_for('novo_colaborador.novo_colaborador_view') }}">
+            <form method="POST" action="{{ url_for('novo_colaborador.novo_colaborador_view') }}" enctype="multipart/form-data">
               <div class="form-group">
                 <label for="nome">Nome Completo:</label>
                 <input type="text" id="nome" name="nome" required placeholder="Digite o nome completo" />
@@ -120,14 +120,43 @@
                 <label for="data_nascimento">Data de Nascimento:</label>
                 <input type="date" id="data_nascimento" name="data_nascimento" required />
               </div>
-              <button type="submit" class="btn btn-primary">Cadastrar</button>
+
+              <div class="separator-internal"></div>
+
+              <div class="foto-section">
+                <h3 class="section-title-small">Foto do Colaborador (Opcional)</h3>
+
+                <div class="foto-preview-container">
+                  <img id="foto-preview" src="{{ url_for('static', filename='images/placeholder-avatar.png') }}" alt="Pré-visualização da foto">
+                </div>
+
+                <input type="hidden" name="foto_base64" id="foto_base64">
+
+                <div class="form-group">
+                  <label for="foto-upload">Fazer Upload de uma Foto</label>
+                  <input type="file" class="input-file" id="foto-upload" name="foto" accept="image/png, image/jpeg">
+                </div>
+
+                <div class="form-group">
+                  <button type="button" id="btn-ligar-webcam" class="btn btn-secondary">Ligar Webcam</button>
+                </div>
+
+                <div id="webcam-container" style="display: none;">
+                  <video id="webcam-video" width="100%" height="auto" autoplay playsinline></video>
+                  <div class="webcam-controls">
+                    <button type="button" id="btn-capturar-foto" class="btn btn-primary">Capturar Foto</button>
+                    <button type="button" id="btn-desligar-webcam" class="btn btn-danger">Desligar</button>
+                  </div>
+                </div>
+              </div>
+              <button type="submit" class="btn btn-primary btn-submit-main">Cadastrar Colaborador</button>
             </form>
         </div>
 
         <div class="separator">ou</div>
 
         <div class="form-section">
-            <h2 class="form-title">Inativar Colaborador Existente</h2>
+            <h2 class="form-title">Inativar Colaborador</h2>
             <form method="POST" action="{{ url_for('novo_colaborador.inativar_colaborador') }}" onsubmit="return confirm('Tem certeza que deseja inativar este colaborador?');">
               <div class="form-group">
                 <label for="cpf_inativar">CPF do Colaborador:</label>
@@ -143,6 +172,7 @@
   <script src="{{ url_for('views.static', filename='home/theme-toggle.js') }}" defer></script>
 
   <script>
+    // Script para controle do menu de navegação responsivo
     const navToggle = document.querySelector('.nav-toggle');
     const navMenu = document.querySelector('.nav-menu');
     if (navToggle && navMenu) {
@@ -151,6 +181,94 @@
           navToggle.classList.toggle('is-active');
       });
     }
+
+    // Script para aplicar máscara de CPF nos campos
+    function aplicarMascaraCPF(event) {
+        let value = event.target.value.replace(/\D/g, '');
+        value = value.replace(/(\d{3})(\d)/, '$1.$2');
+        value = value.replace(/(\d{3})(\d)/, '$1.$2');
+        value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+        event.target.value = value;
+    }
+    document.getElementById('cpf').addEventListener('input', aplicarMascaraCPF);
+    document.getElementById('cpf_inativar').addEventListener('input', aplicarMascaraCPF);
   </script>
+
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+      // Elementos do DOM
+      const fotoPreview = document.getElementById('foto-preview');
+      const fotoUploadInput = document.getElementById('foto-upload');
+      const fotoBase64Input = document.getElementById('foto_base64');
+
+      const btnLigarWebcam = document.getElementById('btn-ligar-webcam');
+      const btnDesligarWebcam = document.getElementById('btn-desligar-webcam');
+      const btnCapturarFoto = document.getElementById('btn-capturar-foto');
+
+      const webcamContainer = document.getElementById('webcam-container');
+      const videoElement = document.getElementById('webcam-video');
+      let stream; // Para guardar o stream da webcam
+
+      // 1. Lógica para Upload de Arquivo
+      fotoUploadInput.addEventListener('change', function(event) {
+          const file = event.target.files[0];
+          if (file) {
+              const reader = new FileReader();
+              reader.onload = function(e) {
+                  fotoPreview.src = e.target.result;
+                  fotoBase64Input.value = ''; // Limpa o campo da webcam se um arquivo for escolhido
+              }
+              reader.readAsDataURL(file);
+          }
+      });
+
+      // 2. Lógica para Ligar a Webcam
+      btnLigarWebcam.addEventListener('click', async function() {
+          if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+              try {
+                  stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                  videoElement.srcObject = stream;
+                  webcamContainer.style.display = 'block';
+                  btnLigarWebcam.style.display = 'none';
+              } catch (error) {
+                  console.error("Erro ao acessar a webcam: ", error);
+                  alert("Não foi possível acessar a webcam. Verifique as permissões do navegador.");
+              }
+          } else {
+              alert("Seu navegador não suporta acesso à webcam.");
+          }
+      });
+
+      // 3. Lógica para Capturar a Foto da Webcam
+      btnCapturarFoto.addEventListener('click', function() {
+          const canvas = document.createElement('canvas');
+          canvas.width = videoElement.videoWidth;
+          canvas.height = videoElement.videoHeight;
+          const context = canvas.getContext('2d');
+          context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+
+          const dataUrl = canvas.toDataURL('image/jpeg');
+
+          fotoPreview.src = dataUrl;
+          fotoBase64Input.value = dataUrl;
+
+          fotoUploadInput.value = ''; // Limpa o input de arquivo para garantir o envio da foto da webcam
+
+          desligarWebcam();
+      });
+
+      // 4. Lógica para Desligar a Webcam
+      function desligarWebcam() {
+          if (stream) {
+              stream.getTracks().forEach(track => track.stop());
+          }
+          webcamContainer.style.display = 'none';
+          btnLigarWebcam.style.display = 'block';
+      }
+
+      btnDesligarWebcam.addEventListener('click', desligarWebcam);
+  });
+  </script>
+
 </body>
 </html>
