@@ -1,10 +1,18 @@
+# app/run.py
+
 import os
 from flask import Flask, send_from_directory, Blueprint, session, redirect, url_for, request
 from markupsafe import escape, Markup
 from datetime import timedelta
+from dotenv import load_dotenv
+
+# --- CARREGAMENTO DAS VARIÁVEIS DE AMBIENTE ---
+base_dir = os.path.abspath(os.path.dirname(__file__))
+dotenv_path = os.path.join(base_dir, '.env')
+load_dotenv(dotenv_path=dotenv_path)
 
 # ----------------------------------------------------------------------
-# Blueprint “views” para servir templates estáticos (CSS, HTML, etc)
+# Blueprint “views” para servir templates estáticos
 # ----------------------------------------------------------------------
 views_bp = Blueprint(
     'views',
@@ -34,16 +42,12 @@ from src.routers.carreiras import carreiras_bp
 from src.routers.admin_vagas import admin_vagas_bp
 from src.routers.admin_candidaturas import admin_candidaturas_bp
 
-
 # ----------------------------------------------------------------------
 # Factory para criar e configurar a aplicação
 # ----------------------------------------------------------------------
 def create_app():
-    base = os.path.abspath(os.path.dirname(__file__))
-
-    # Diretórios de templates e estáticos
-    template_dir = os.path.join(base, 'src', 'views')
-    static_dir = os.path.join(base, 'assets')  # A pasta 'assets' é servida como '/static'
+    template_dir = os.path.join(base_dir, 'src', 'views')
+    static_dir = os.path.join(base_dir, 'assets')
 
     app = Flask(
         __name__,
@@ -53,43 +57,35 @@ def create_app():
     )
 
     # ======================================================================
-    #                 CONFIGURAÇÃO DE PASTAS DE UPLOAD
+    #                 CONFIGURAÇÃO CENTRALIZADA (Lida do .env)
     # ======================================================================
 
-    # --- Configuração do diretório de upload para currículos ---
-    upload_root_dir = os.path.join(base, 'uploads')
-    os.makedirs(os.path.join(upload_root_dir, 'curriculos'), exist_ok=True)
-    app.config['UPLOAD_FOLDER'] = upload_root_dir
+    app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'uma-chave-secreta-padrao-muito-segura')
 
-    # --- Configuração dos diretórios de upload para comunicados ---
-    upload_images_dir = os.path.join(static_dir, 'uploads', 'images')
-    upload_videos_dir = os.path.join(static_dir, 'uploads', 'videos')
-    os.makedirs(upload_images_dir, exist_ok=True)
-    os.makedirs(upload_videos_dir, exist_ok=True)
-    app.config['UPLOAD_FOLDER_IMAGES'] = upload_images_dir
-    app.config['UPLOAD_FOLDER_VIDEOS'] = upload_videos_dir
+    # --- Configurações da Integração Control iD ---
+    app.config['IDSECURE_DB_HOST'] = os.getenv('IDSECURE_DB_HOST')
+    app.config['IDSECURE_DB_USER'] = os.getenv('IDSECURE_DB_USER')
+    app.config['IDSECURE_DB_PASSWORD'] = os.getenv('IDSECURE_DB_PASSWORD')
+    app.config['IDSECURE_DB_NAME'] = os.getenv('IDSECURE_DB_NAME')
+    app.config['IDSECURE_DB_PORT'] = os.getenv('IDSECURE_DB_PORT')
 
-    # --- Configuração do diretório para FOTOS DE COLABORADORES ---
-    fotos_dir = os.path.join(static_dir, 'uploads', 'fotos_colaboradores')
-    os.makedirs(fotos_dir, exist_ok=True)
-    app.config['FOTOS_FOLDER'] = fotos_dir
+    app.config['IDSECURE_IMAGES_SHARE_PATH'] = os.getenv('IDSECURE_IMAGES_SHARE_PATH')
+
+    app.config['IDSECURE_SHARE_USER'] = os.getenv('IDSECURE_SHARE_USER')
+    app.config['IDSECURE_SHARE_PASSWORD'] = os.getenv('IDSECURE_SHARE_PASSWORD')
+
+    # --- CORREÇÃO: Carrega as credenciais da API iDSecure ---
+    app.config['IDSECURE_BASE_URL'] = os.getenv('IDSECURE_BASE_URL')
+    app.config['IDSECURE_API_USER'] = os.getenv('IDSECURE_API_USER')
+    app.config['IDSECURE_API_PASSWORD'] = os.getenv('IDSECURE_API_PASSWORD')
+
+    # --- Configuração de Pastas de Upload ---
+    default_fotos_dir = os.path.join(base_dir, 'uploads', 'fotos_colaboradores')
+    app.config['FOTOS_FOLDER'] = os.getenv('FOTOS_FOLDER', default_fotos_dir)
+    os.makedirs(app.config['FOTOS_FOLDER'], exist_ok=True)
 
     # ======================================================================
-    #           CONFIGURAÇÃO DA INTEGRAÇÃO CONTROL ID
-    # ======================================================================
-
-    # --- Credenciais para a API de Sincronização ---
-    app.config['IDSECURE_IP'] = '10.0.1.0:30443'
-    app.config['IDSECURE_USER'] = 'admin'
-    app.config['IDSECURE_PASSWORD'] = 'admin123'
-
-    # --- Credenciais para o BANCO DE DADOS do iDSecure ---
-    app.config['IDSECURE_DB_HOST'] = '10.0.1.0'
-    app.config['IDSECURE_DB_USER'] = 'integracao'
-    app.config['IDSECURE_DB_PASSWORD'] = '[]-@samar@hsp'
-    app.config['IDSECURE_DB_NAME'] = 'acesso'
-    app.config['IDSECURE_DB_PORT'] = 3306
-
+    #           O RESTANTE DA CONFIGURAÇÃO DA APLICAÇÃO
     # ======================================================================
 
     app.permanent_session_lifetime = timedelta(minutes=15)
@@ -97,14 +93,10 @@ def create_app():
     @app.before_request
     def require_login():
         session.permanent = True
-
         allowed_endpoints = ['auth.login', 'static', 'views.static', 'carreiras.index', 'adminLogin.admin_login']
-
         is_admin_route = request.path.startswith('/admin/')
-
         if 'colaborador_id' not in session and not is_admin_route and request.endpoint not in allowed_endpoints:
             return redirect(url_for('auth.login'))
-
         if is_admin_route and not session.get('admin_logged_in') and request.endpoint not in allowed_endpoints:
             return redirect(url_for('adminLogin.admin_login'))
 
@@ -115,7 +107,6 @@ def create_app():
         return final_html
 
     app.jinja_env.filters['nl2br'] = nl2br
-
     app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 31536000
 
     try:
@@ -124,9 +115,8 @@ def create_app():
     except ImportError:
         pass
 
+    # Registra todos os seus blueprints
     app.register_blueprint(views_bp)
-
-    # Registra todos os blueprints de rota
     app.register_blueprint(admin, url_prefix='/admin')
     app.register_blueprint(adminLogin)
     app.register_blueprint(home_bp)
@@ -145,25 +135,13 @@ def create_app():
     app.register_blueprint(admin_vagas_bp)
     app.register_blueprint(admin_candidaturas_bp)
 
-    @app.route('/uploads/<path:filename>')
-    def uploaded_file(filename):
-        return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
-
-    @app.route('/admin/admin.css')
-    def admin_css():
-        return send_from_directory(
-            os.path.join(template_dir, 'admin'),
-            'admin.css'
-        )
-
-    app.secret_key = os.getenv('FLASK_SECRET_KEY', 'troque_em_producao')
-
+    print("✅ Aplicação Flask criada e configurada com sucesso!")
     return app
 
 
-# Instância para execução direta
+# Instância para execução
 app = create_app()
 
 if __name__ == '__main__':
     port = int(os.getenv('PORT', 10000))
-    app.run(debug=True, port=port)
+    app.run(debug=True, host='0.0.0.0', port=port)
