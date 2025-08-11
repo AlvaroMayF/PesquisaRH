@@ -7,6 +7,7 @@ import time
 import shutil
 import subprocess
 import requests
+from PIL import Image
 import warnings
 from urllib3.exceptions import InsecureRequestWarning
 
@@ -50,9 +51,13 @@ def close_idsecure_db_connection(conn, cursor):
 
 # --- LÓGICA DE INTEGRAÇÃO ---
 
-def create_idsecure_user(nome, cpf, pis, senha, matricula):
+# ======================= FUNÇÃO ATUALIZADA =======================
+def create_idsecure_user(nome, cpf, pis, senha, matricula, setor=None):
     """
-    Insere o usuário diretamente na tabela 'users' para obter o ID imediatamente.
+    (VERSÃO FINAL) Cria o usuário e, opcionalmente, o vincula a um grupo.
+    - Mantém a lógica original de criação de usuário.
+    - ACRESCENTA a lógica para buscar e vincular o setor (grupo).
+    - Toda a operação é feita em uma transação para garantir integridade.
     """
     conn, cursor = None, None
     try:
@@ -60,6 +65,7 @@ def create_idsecure_user(nome, cpf, pis, senha, matricula):
         if not conn:
             return None, "Falha ao conectar no banco iDSecure."
 
+        # ===== PASSO 1: LÓGICA EXISTENTE DE CRIAÇÃO DE USUÁRIO =====
         try:
             parts = senha.split('-')
             senha_formatada = f"{parts[2]}{parts[1]}{parts[0]}"
@@ -68,34 +74,64 @@ def create_idsecure_user(nome, cpf, pis, senha, matricula):
 
         sql_user = """
             INSERT INTO users (
-                name, registration, pis, cpf, senha, admin, inativo,
+                id, name, registration, idDevice, pis, cpf, senha, admin, inativo,
                 contingency, deleted, canUseFacial, idType, expireOnDateLimit,
                 blackList, idArea
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """
         params_user = (
-            nome, matricula, pis, cpf, senha_formatada,
+            matricula, nome, matricula, matricula, pis, cpf, senha_formatada,
             0, 0, 0, 0, 0, 0, 0, 0, 1
         )
         cursor.execute(sql_user, params_user)
+        new_user_id = matricula
+        print(f"INFO: [DB-iDSecure] Passo 1/3 - Usuário '{nome}' (ID: {new_user_id}) inserido na tabela 'users'.")
 
-        new_user_id = cursor.lastrowid
+        # ===== PASSO 2: NOVA LÓGICA PARA VINCULAR GRUPO (SE HOUVER) =====
+        if setor:
+            sql_find_group = "SELECT id FROM groups WHERE name = %s"
+            cursor.execute(sql_find_group, (setor,))
+            group_record = cursor.fetchone()
+
+            if not group_record:
+                conn.rollback()
+                msg = f"Erro: O departamento '{setor}' não foi encontrado no iDSecure."
+                print(f"ERRO: [DB-iDSecure] {msg} Transação cancelada.")
+                return None, msg
+
+            group_id = group_record['id']
+            print(f"INFO: [DB-iDSecure] Passo 2/3 - Grupo '{setor}' encontrado com ID: {group_id}.")
+
+            sql_link_user_group = "INSERT INTO usergroups (idUser, idGroup, isVisitor) VALUES (%s, %s, %s)"
+            params_link = (new_user_id, group_id, 0)
+            cursor.execute(sql_link_user_group, params_link)
+            print(f"INFO: [DB-iDSecure] Passo 3/3 - Usuário {new_user_id} vinculado ao Grupo {group_id}.")
+        else:
+            print("INFO: [DB-iDSecure] Nenhum setor fornecido, pulando a vinculação de grupo.")
+
+        # ===== PASSO FINAL: CONFIRMAÇÃO DA TRANSAÇÃO =====
         conn.commit()
-
-        print(
-            f"INFO: Usuário '{nome}' criado na tabela 'users' do iDSecure. ID gerado: {new_user_id}, Matrícula: {matricula}")
+        print(f"SUCESSO: [DB-iDSecure] Transação concluída com sucesso para o usuário '{nome}'.")
         return new_user_id, None
 
     except mysql.connector.Error as err:
-        if conn: conn.rollback()
-        return None, f"Erro ao criar usuário na tabela 'users' do iDSecure: {err}"
+        if conn:
+            conn.rollback()
+        if err.errno == 1062:
+            msg = f"Erro Crítico: O ID/Matrícula '{matricula}' já existe no iDSecure ou já está vinculado a um grupo."
+            print(f"ERRO: [DB-iDSecure] {msg} ({err})")
+            return None, msg
+
+        msg = f"Erro de banco de dados: {err}. Transação cancelada."
+        print(f"ERRO: [DB-iDSecure] {msg}")
+        return None, f"Erro ao criar/vincular usuário no iDSecure: {err}"
     finally:
         close_idsecure_db_connection(conn, cursor)
 
 
 def add_photo_to_idsecure(idsecure_user_id, local_photo_filename):
     """
-    (LÓGICA RESTAURADA) Envia a foto .jpg para a pasta do iDSecure.
+    Envia a foto .jpg para a pasta do iDSecure.
     """
     if not local_photo_filename or not idsecure_user_id or idsecure_user_id == 0:
         return False, "Dados insuficientes ou ID de usuário inválido para associar a foto."
@@ -112,7 +148,6 @@ def add_photo_to_idsecure(idsecure_user_id, local_photo_filename):
     if not os.path.exists(local_photo_path):
         return False, f"Arquivo de foto local não encontrado: {local_photo_path}"
 
-    # Voltando a salvar como .jpg e usando o nome 'usuario-ID'
     remote_filename = f"usuario-{idsecure_user_id}.jpg"
     remote_full_path = os.path.join(remote_share_path, remote_filename)
 
@@ -124,7 +159,6 @@ def add_photo_to_idsecure(idsecure_user_id, local_photo_filename):
         return False, f"Falha ao autenticar na rede: {e.stderr}"
 
     try:
-        # Apenas copia o arquivo, sem converter
         shutil.copy(local_photo_path, remote_full_path)
         print(f"INFO: Foto copiada para '{remote_full_path}'")
     except Exception as e:

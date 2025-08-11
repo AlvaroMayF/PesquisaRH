@@ -124,7 +124,7 @@ def create_app():
     app.register_blueprint(analitico_bp)
     app.register_blueprint(pesquisa_bp)
     app.register_blueprint(comunicados_bp)
-    app.register_blueprint(novo_colaborador_bp)
+    app.register_blueprint( novo_colaborador_bp)
     app.register_blueprint(novo_comunicado_bp)
     app.register_blueprint(admin_feriados_bp)
     app.register_blueprint(beneficios_bp)

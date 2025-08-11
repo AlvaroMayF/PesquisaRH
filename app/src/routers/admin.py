@@ -13,7 +13,7 @@ import time
 import base64
 from werkzeug.utils import secure_filename
 from src.utils.validators import is_cpf_valid
-# ATUALIZAÇÃO: Importa as funções corretas para o fluxo final
+# ATUALIZAÇÃO: Importa as funções sem a lógica de grupos
 from src.services.idsecure_db_service import create_idsecure_user, add_photo_to_idsecure, trigger_idsecure_sync
 
 admin = Blueprint('admin', __name__, url_prefix='/admin')
@@ -187,7 +187,7 @@ def add_new_colaborator():
         pis_str = request.form.get('pis')
         data_nascimento = request.form.get('data_nascimento')
         cargo = request.form.get('cargo').strip().upper()
-        setor = request.form.get('setor').strip().upper()
+        setor = request.form.get('setor').strip().upper()  # Nome do setor/departamento/grupo
         unidade = request.form.get('unidade')
         data_admissao = request.form.get('data_admissao')
 
@@ -213,11 +213,18 @@ def add_new_colaborator():
         conn_rh.commit()
         print(f"INFO: Colaborador '{nome}' criado no banco do RH com ID: {new_rh_id}")
 
-        # Passo 2: Criar o usuário diretamente na tabela 'users' do iDSecure
+        # Passo 2: Criar o usuário e vinculá-lo ao seu grupo/departamento no iDSecure
+        # ======================= MUDANÇA APLICADA AQUI =======================
         idsecure_user_id, creation_error = create_idsecure_user(
-            nome=nome, cpf=cpf, pis=pis_str,
-            senha=data_nascimento, matricula=new_rh_id
+            nome=nome,
+            cpf=cpf,
+            pis=pis_str,
+            senha=data_nascimento,
+            matricula=new_rh_id,
+            setor=setor  # Passando o nome do setor para a função
         )
+        # =====================================================================
+
         if not idsecure_user_id:
             cur_rh.execute("UPDATE colaboradores SET last_sync_status = 'falhou_criacao' WHERE id = %s", (new_rh_id,))
             conn_rh.commit()
