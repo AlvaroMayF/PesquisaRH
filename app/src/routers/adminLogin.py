@@ -2,6 +2,7 @@
 
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
 from ..config.db import get_db_connection
+from werkzeug.security import check_password_hash
 
 # Para segurança máxima em produção, considere usar hash de senhas.
 # from werkzeug.security import check_password_hash
@@ -42,7 +43,7 @@ def admin_login():
         # Validação da Senha
         # A sua lógica atual de comparação de texto simples é mantida, conforme solicitado.
         # O ideal seria: if user and check_password_hash(user['password'], password):
-        if user and user['password'] == password:
+        if user and check_password_hash(user['password'], password):
             # Se o usuário e a senha corresponderem, armazena os dados na sessão.
             session['admin_logged_in'] = True
             session['admin_id'] = user['id']
