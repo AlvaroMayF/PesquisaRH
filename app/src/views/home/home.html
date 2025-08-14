@@ -62,22 +62,30 @@
               </ul>
             </li>
 
+            <!-- ===================== ALTERAÇÃO APLICADA AQUI ===================== -->
             {% if session.get('admin_logged_in') %}
-              <li class="nav-item dropdown">
-                <a href="{{ url_for('admin.admin_panel') }}" class="nav-link dropdown-toggle">Administrador</a>
-                <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="{{ url_for('analitico.analitico_view') }}">Analítico</a></li>
-                  <li><a class="dropdown-item" href="{{ url_for('novo_colaborador.novo_colaborador_view') }}">Novo Colaborador</a></li>
-                  <li><a class="dropdown-item" href="{{ url_for('novo_comunicado.novo_comunicado_view') }}">Novo Comunicado</a></li>
-                  <li><a class="dropdown-item" href="{{ url_for('admin_feriados.gerenciar_feriados') }}">Gerenciar Feriados</a></li>
-                  <li><a class="dropdown-item" href="{{ url_for('admin_surveys.gerenciar_pesquisas_view') }}">Gerenciar Pesquisas</a></li>
-                  <li><a class="dropdown-item" href="{{ url_for('admin_vagas.gerenciar_vagas') }}">Gerenciar Vagas</a></li>
-                  <li><a class="dropdown-item" href="{{ url_for('admin_candidaturas.gerenciar_candidaturas') }}">Gerenciar Candidaturas</a></li>
-                </ul>
-              </li>
+                {% if admin_role == 'admin' %}
+                    <!-- Menu Completo para o perfil 'admin' -->
+                    <li class="nav-item dropdown">
+                        <a href="{{ url_for('admin.admin_panel') }}" class="nav-link dropdown-toggle">Administrador</a>
+                        <ul class="dropdown-menu">
+                          <li><a class="dropdown-item" href="{{ url_for('analitico.analitico_view') }}">Analítico</a></li>
+                          <li><a class="dropdown-item" href="{{ url_for('novo_colaborador.novo_colaborador_view') }}">Novo Colaborador</a></li>
+                          <li><a class="dropdown-item" href="{{ url_for('novo_comunicado.novo_comunicado_view') }}">Novo Comunicado</a></li>
+                          <li><a class="dropdown-item" href="{{ url_for('admin_feriados.gerenciar_feriados') }}">Gerenciar Feriados</a></li>
+                          <li><a class="dropdown-item" href="{{ url_for('admin_surveys.gerenciar_pesquisas_view') }}">Gerenciar Pesquisas</a></li>
+                          <li><a class="dropdown-item" href="{{ url_for('admin_vagas.gerenciar_vagas') }}">Gerenciar Vagas</a></li>
+                          <li><a class="dropdown-item" href="{{ url_for('admin_candidaturas.gerenciar_candidaturas') }}">Gerenciar Candidaturas</a></li>
+                        </ul>
+                    </li>
+                {% else %}
+                    <!-- Menu Simplificado para o perfil 'recepcao' -->
+                    <li><a href="{{ url_for('admin.admin_panel') }}">Gestão de Cadastros</a></li>
+                {% endif %}
             {% else %}
               <li><a href="{{ url_for('adminLogin.admin_login') }}">Administrador</a></li>
             {% endif %}
+            <!-- ================================================================= -->
 
             {% if session.get('colaborador_id') or session.get('admin_logged_in') %}
               <li><a href="{{ url_for('logout.logout_view') }}" class="btn-logout">Sair</a></li>

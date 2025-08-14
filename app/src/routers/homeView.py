@@ -15,14 +15,14 @@ except locale.Error:
     except locale.Error:
         print("Aviso: Locale 'pt_BR' não pôde ser configurado.")
 
-
 home = Blueprint('home', __name__, url_prefix='')
 
 
 @home.route('/', methods=['GET'])
 def home_view():
     """
-    Renderiza o painel RH com métricas dinâmicas, sparklines, o último comunicado, o próximo feriado e a contagem de vagas.
+    Renderiza o painel RH com métricas dinâmicas, o último comunicado,
+    o próximo feriado, a contagem de vagas e o perfil do admin logado.
     """
     # Inicializa as variáveis para evitar erros caso a consulta falhe
     total_colaboradores = 0
@@ -33,8 +33,13 @@ def home_view():
     proximo_feriado = None
     labels = []
     data = []
-    # >>> ADICIONADO: Variável para o total de vagas
     total_vagas = 0
+
+    # ======================= ALTERAÇÃO APLICADA AQUI =======================
+    # Busca o perfil do administrador logado na sessão.
+    # Se não houver, assume None (usuário não é admin).
+    admin_role = session.get('admin_role')
+    # =====================================================================
 
     try:
         # Conecta ao banco
@@ -93,14 +98,10 @@ def home_view():
         """)
         proximo_feriado = cur.fetchone()
 
-        # =======================================================
-        #      *** ADICIONADO: LÓGICA PARA CONTAR VAGAS ***
-        #      Consulta o total de vagas com status 'Aberta'
-        # =======================================================
+        # LÓGICA PARA CONTAR VAGAS
         cur.execute("SELECT COUNT(id) AS total FROM vagas WHERE status = 'Aberta'")
         resultado_vagas = cur.fetchone()
         total_vagas = resultado_vagas['total'] if resultado_vagas else 0
-        # =======================================================
 
         cur.close()
         conn.close()
@@ -115,7 +116,8 @@ def home_view():
     except Exception as e:
         print(f"Erro ao buscar dados para a home page: {e}")
 
-    # Renderiza template com todas as variáveis, incluindo a nova contagem de vagas
+    # ======================= ALTERAÇÃO APLICADA AQUI =======================
+    # Passa a variável 'admin_role' para o template.
     return render_template(
         'home/home.html',
         active_endpoint=request.endpoint,
@@ -127,6 +129,7 @@ def home_view():
         sparkline_data=data,
         ultimo_comunicado=ultimo_comunicado,
         proximo_feriado=proximo_feriado,
-        # >>> ADICIONADO: Passa a variável para o template
-        total_vagas=total_vagas
+        total_vagas=total_vagas,
+        admin_role=admin_role  # <<< Variável adicionada
     )
+    # =====================================================================

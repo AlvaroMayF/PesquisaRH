@@ -1,0 +1,283 @@
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+	<title>Hexa Advanced</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<meta http-equiv="X-UA-Compatible" content="IE=8">
+	<link rel="stylesheet" href="style.min.css.jgz" type="text/css">
+	<script type="text/javascript" src="full.min.js.jgz"></script>
+	<script>
+var RSAajax;
+
+function sendAESKeyCallback(response, arg) {
+	if (response.indexOf("</tr>") == -1) {
+		document.location.reload();
+	} else {
+		var div=document.getElementById('mainPage');
+		div.innerHTML=response;
+
+		//exibe as opções do menu conforme permissao do usuario.
+		verifyTopMenuPermission();
+		//executa scripts carregados
+		var arr=div.getElementsByTagName('script');
+		for (var n=0; n < arr.length; n++) {
+			eval(arr[n].innerHTML);//run script inside div
+		}
+	}
+}
+
+
+function sendAESKey() {
+	document.aes.key.value=Generate_key();
+
+	var rsa = new RSAKey();
+	rsa.setPublic(document.rsa.n.value, document.rsa.e.value);
+	var res = rsa.encrypt(document.aes.key.value + '\n' + getRequestStr('','frmREP',false,false) + '\n');
+	if(res) {
+		AESajax=new ObjAjax();
+		AESajax.onreadystatechange=function() {
+			if (AESajax.readyState == 4) {
+				if(AESajax.status == 200) {
+
+					if(AESajax.overrideMimeType){
+						var responseText = AESajax.responseText;
+					} else {
+						var responseText = convertResponseBodyToText(AESajax.responseBody);
+					}
+					if (navigator.appName == 'Microsoft Internet Explorer') {
+						Decrypt_Text(responseText, document.aes.key.value, sendAESKeyCallback, null);
+					} else {
+						sendAESKeyCallback(Decrypt_Text(responseText, document.aes.key.value, null, null), null);
+					}
+				}
+			}
+		}
+		AESajax.open("GET", "/atenas.cgi?opType=7&" + res,true);
+		if (AESajax.overrideMimeType) {
+			AESajax.overrideMimeType('text\/plain; charset=x-user-defined');
+		}else{
+			AESajax.setRequestHeader("Accept-Charset", "x-user-defined");   
+		}
+		AESajax.send(null);
+	}
+}
+
+function verifyRSA(){
+//RSAajax.abort();
+if(document.rsa.n.value.length == 0){
+	setTimeout("getRSAKey()", 50);
+}
+}
+function getRSAKey(){
+	RSAajax=new ObjAjax();
+	RSAajax.onreadystatechange=function() {
+		if (RSAajax.readyState == 4) {
+			if(RSAajax.status == 200) {
+				var response = RSAajax.responseText;
+				var endPos = response.indexOf("\n", 0);
+				if(endPos != -1){
+					document.rsa.e.value=response.substr(0,endPos);
+					endPos=endPos + 1;
+					document.rsa.n.value=response.substr(endPos);
+				}
+			}
+		}
+	}
+	RSAajax.open("GET", "/atenas.cgi?opType=6",true);
+	RSAajax.send(null);
+	setTimeout("verifyRSA()", 4000);
+}
+
+function initializeAES(){
+ce();	    	    	    	// Add time we got here to entropy
+mouseMotionEntropy(60);   	// Initialise collection of mouse motion entropy
+}
+
+var tries=0;
+function verifyLogin(){
+	var tableMain = document.getElementById('tableMain');
+	var dvMsg = document.getElementById('dvMsg');
+	tableMain.style.display="none";
+	dvMsg.style.display="block";
+	var str="<table id='tableMain' style='height:100%; width:100%;margin-top:15px' cellspacing='0' cellpadding='0' border='0'>" +
+			"<tr style='height:1px; width:100%; ' align='center' valign='top'><td valign='top'><table align='center' width='100%' "+
+			"cellspacing='0' border='0' cellpadding='0'><tr><td align='left'><div><a href='http://www.henry.com.br' style='margin-left:65px;'" +
+			"class='sprt img-logoHenry1'></a></div><div id='welcome'>Bem-vindo <font color='#215c86'>?loggedUser?</font> <a href='#'" +
+			"id='exitBtn'><span style='color:#215c86;padding-left:4px;padding-bottom:4px;font-size:20px;' onclick='submitMainForm(0, 61, 0);'" +
+			"class='mif-switch' title='Sair'></span></a></div></td></tr></table></td></tr><tr style='height:1px; width:100%; ' align='center' " +
+			"valign='top'><td valign='top'><div class='bottomLine'></div></td></tr></table>" +
+	        "<div class='statusMessageNew'>Aguarde, comunicando com equipamento...</div>";
+	dvMsg.innerHTML=str;
+	if(document.rsa.n.value.length == 0 && (tries < 6)){
+		tries++;
+		str="<table id='tableMain' style='height:100%; width:100%;margin-top:15px' cellspacing='0' cellpadding='0' border='0'>" +
+			"<tr style='height:1px; width:100%; ' align='center' valign='top'><td valign='top'><table align='center' width='100%' "+
+			"cellspacing='0' border='0' cellpadding='0'><tr><td align='left'><div><a href='http://www.henry.com.br' style='margin-left:65px;'" +
+			"class='sprt img-logoHenry1'></a></div><div id='welcome'>Bem-vindo <font color='#215c86'>?loggedUser?</font> <a href='#'" +
+			"id='exitBtn'><span style='color:#215c86;padding-left:4px;padding-bottom:4px;font-size:20px;' onclick='submitMainForm(0, 61, 0);'" +
+			"class='mif-switch' title='Sair'></span></a></div></td></tr></table></td></tr><tr style='height:1px; width:100%; ' align='center' " +
+			"valign='top'><td valign='top'><div class='bottomLine'></div></td></tr></table>" +
+			"<div class='statusMessageNew'>Aguarde, comunicando com equipamento";
+		var cnt = tries%3;
+		while(cnt >= 0){
+			str+=".";
+			cnt--;
+		}
+		str+="</div>";
+		dvMsg.innerHTML=str;
+		setTimeout("verifyLogin()", 1000);
+	} else {
+		changeValue('opType',0);
+		changeValue('pgCode',60);
+		changeValue('lblId',0);
+		sendAESKey();
+	}
+}
+
+function login(){
+	tries=0;
+	verifyLogin();
+}	
+
+//-->
+</script>
+
+<!--[if gte IE 9]>
+<style type="text/css">
+.gradient {
+filter: none;
+}
+</style>
+<![endif]-->
+<!-- IEBinaryToArray_ByteStr -->
+<script type="text/vbscript">
+	Function IEBinaryToArray_ByteStr(Binary)
+	IEBinaryToArray_ByteStr = CStr(Binary)
+	End Function
+	Function IEBinaryToArray_ByteStr_Last(Binary)
+	Dim lastIndex
+	lastIndex = LenB(Binary)
+	if lastIndex mod 2 Then
+	IEBinaryToArray_ByteStr_Last = Chr( AscB( MidB( Binary, lastIndex, 1 ) ) )
+	Else
+	IEBinaryToArray_ByteStr_Last =""
+	End If
+	End Function
+</script>
+
+<!--
+The MIT License (MIT)
+Copyright (c) 2012-2016 Sergey Pimenov
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+-->
+
+</head>
+<body onload="initializeAES();getRSAKey();" onkeypress="rng_seed_time();" onclick="rng_seed_time();">
+	<form name="rsa">
+		<input type="hidden" name="e" value="010001"> 
+		<input type="hidden" name="n" value="9372246BA6F32BD1857186F219B6526C7282805C45103C07E8787330DDBEF281
+4F49AA3E5B05ACA865FAF054B0F70005895C52A37994DE78E99A5E1021131768
+EEE4637F8FC33433DF1D292E36D8EC791EF8096BCF9EA97EC6FA544CC12B832E
+32D75893A956408A54E2A36E5CBFE8226E2FE9A4FABC0DA674799C09E2932501">
+	</form>
+	<form name="aes">
+		<input type="hidden" name="key" value="">
+	</form>
+	<table width="100%" class="bg-blue" border="0" cellpadding="0" cellspacing="0">
+		<tbody><tr>
+			<td align="center" valign="middle">
+				<div>
+					<table style="height:564px; width:781px;" align="center">
+						<tbody><tr>
+							<td>
+								<div id="mainPage" class="default" align="center" style="height:564px; width:781px;">
+									<input id="showMenu" type="hidden" value="?showMenu?">
+									<input id="redirectPage" type="hidden" value="">
+									<input id="hdTopMenu" type="hidden" value="?hdTopMenu?">
+									<input id="hdMenuEmployer" type="hidden" value="?hdMenuEmployer?">
+									<input id="hdMenuEmployee" type="hidden" value="?hdMenuEmployee?">
+									<input id="hdMenuCfg" type="hidden" value="?hdMenuCfg?">
+									<input id="hdMenuAdminCfg" type="hidden" value="?hdMenuAdminCfg?">
+									<input id="hdMenuDateTime" type="hidden" value="?hdMenuDateTime?">
+									<input id="hdManageData" type="hidden" value="?hdManageData?">
+									<input id="hdEvents" type="hidden" value="?hdEvents?">
+									<input id="hdMenuUsers" type="hidden" value="?hdMenuUsers?">
+									<input id="hdMenuExit" type="hidden" value="?hdMenuExit?">
+									<input id="hdMenuHome" type="hidden" value="?hdMenuHome?">
+									<input id="hdMenuMain" type="hidden" value="?hdMenuMain?">
+									<table id="tableMain" style="height:564px; width:781px;" cellspacing="0" cellpadding="0" border="0">	
+										<tbody><tr>
+											<td align="center">
+												<form id="frmREP" name="frmREP" action="/atenas.cgi" method="get">
+													<input type="hidden" id="opType" name="opType" value="?opType?"> 
+													<input type="hidden" id="pgCode" name="pgCode" value="?pgCode?"> 
+													<input type="hidden" id="lblId" name="lblId" value="?lblId?">
+													<div id="dvREP" style="display:block;width:45%">
+													  <div><a href="http://www.henry.com.br" class="sprt img-logoHenry1"></a></div><table class="displayTableNew" style="width:100%;" align="center">
+													    <tbody><tr align="center" height="100px">
+																		
+														</tr>
+														<tr>
+															<td style="padding-left:20px;padding-top:10px;padding-right:20px;padding-bottom:10px;">
+															    <div class="displayTableBackground">
+																	<table cellspacing="0" cellpadding="0" align="center" width="100%">
+																		<tbody><tr>
+																			<td align="left">
+																			  <h4>
+																				<span class="sprt img-login" style="padding-left:29px;padding-top:4px;">LOGIN</span>
+																			  </h4>
+																			</td>
+																		</tr>
+																		<tr align="left">
+																			<td class="tableConfig" colspan="3">                            
+																				<div class="input-control text full-size" data-role="input">
+																					<div>
+																						<label for="lblNsrI">Usuário:</label>
+																					</div>
+																					<input id="lblLogin" name="lblLogin" tabindex="1" maxlength="16" onkeypress="if(isEnter(event)){login();return false;}else{return true;}" style="padding-right: 36px;">
+																					<button class="button helper-button clear" onclick="document.getElementById('lblLogin').value = '';" tabindex="-1" type="button"><span class="mif-cross"></span></button>
+																				</div>                            
+																			</td> 
+																		</tr>
+																		<tr><td><br><br></td></tr>
+																		<tr align="left"> 
+																			<td class="tableConfig" colspan="3">
+																				<div class="input-control text full-size" data-role="input">
+																					<div>
+																						<label for="lblLocal">Senha:</label>
+																					</div>
+																					<input type="password" id="lblPass" name="lblPass" tabindex="2" maxlength="6" onkeypress="if(isEnter(event)){login();return false;}else{return true;}" style="padding-right: 36px;">
+																					<button class="button helper-button reveal" tabindex="-1" onclick="document.getElementById('lblPass').type = 'text';" onblur="document.getElementById('lblPass').type = 'password';" type="button"><span class="mif-looks"></span></button>
+																				</div>
+																			</td>
+																		</tr>  																			
+																		<tr><td><br><br></td></tr>
+																	</tbody></table>
+																	<div class="form-actions">
+																		<a href="#" class="button primary" onclick="login();" tabindex="3">Entrar</a>
+																	</div>
+																</div>
+															</td>	
+														</tr>
+													  </tbody></table>	
+													</div>													
+												</form>
+											</td>
+										</tr>
+									</tbody></table>
+									<div id="dvMsg" style="display:none">
+								    </div> 
+								</div>	
+							</td>
+						</tr>
+					</tbody></table>
+				</div>
+			</td>
+		</tr>
+	</tbody></table>
+
+
+</body></html>
