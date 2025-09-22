@@ -26,8 +26,12 @@ def allowed_file(filename):
 
 
 def process_photo(request_obj):
-    base_path = current_app.config.get('FOTOS_FOLDER')
-    if not base_path: return None, "ERRO DE CONFIGURAÇÃO: 'FOTOS_FOLDER' não foi definida."
+    base_path_from_config = current_app.config.get('FOTOS_FOLDER')
+    if not base_path_from_config: return None, "ERRO DE CONFIGURAÇÃO: 'FOTOS_FOLDER' não foi definida."
+
+    project_root = os.path.abspath(os.path.join(current_app.root_path, '..'))
+    base_path = os.path.join(project_root, base_path_from_config)
+
     try:
         os.makedirs(base_path, exist_ok=True)
     except Exception as e:
@@ -78,36 +82,29 @@ def close_safe(conn, cur):
 def admin_panel():
     if 'admin_logged_in' not in session:
         return redirect(url_for('adminLogin.admin_login'))
-
     user_role = session.get('admin_role', 'recepcao')
-
     return render_template('admin/admin.html', admin_role=user_role)
 
 
 @admin.route('/api/rh-data')
 def get_rh_data():
     if 'admin_logged_in' not in session: return jsonify(error="Não autorizado"), 401
-
     conn_rh, cur_rh = None, None
-    conn_idsecure, cur_idsecure = None, None
-
     try:
         conn_rh = get_db_connection()
         if not conn_rh or not conn_rh.is_connected():
             return jsonify(error="Falha na conexão com o banco de dados do RH."), 500
         cur_rh = conn_rh.cursor(dictionary=True)
-
         unidade_filtro = request.args.get('unidade')
         setor_filtro = request.args.get('setor')
-
         base_where_clauses, base_params = [], []
         if unidade_filtro: base_where_clauses.append("unidade = %s"); base_params.append(unidade_filtro)
         if setor_filtro: base_where_clauses.append("setor = %s"); base_params.append(setor_filtro)
         kpi_where_parts = ["ativo = 1"] + base_where_clauses
         kpi_where_sql = " AND ".join(kpi_where_parts) if kpi_where_parts else "1"
+
         cur_rh.execute(f"SELECT COUNT(*) as total FROM colaboradores WHERE {kpi_where_sql}", base_params)
         total_ativos = (cur_rh.fetchone() or {}).get('total', 0)
-
         cur_rh.execute(
             f"SELECT COUNT(*) as total FROM colaboradores WHERE {kpi_where_sql} AND data_admissao >= CURDATE() - INTERVAL 30 DAY",
             base_params)
@@ -119,24 +116,8 @@ def get_rh_data():
         tempo_medio_anos = f"{media_anos_result['media_anos']} anos" if media_anos_result and media_anos_result.get(
             'media_anos') is not None else "N/D"
 
-        total_idsecure = 'N/A'
-        try:
-            idsecure_config = {
-                'user': current_app.config['IDSECURE_DB_USER'],
-                'password': current_app.config['IDSECURE_DB_PASSWORD'],
-                'host': current_app.config['IDSECURE_DB_HOST'],
-                'database': current_app.config['IDSECURE_DB_NAME'],
-                'port': current_app.config['IDSECURE_DB_PORT'],
-            }
-            conn_idsecure = mysql.connector.connect(**idsecure_config)
-            cur_idsecure = conn_idsecure.cursor(dictionary=True)
-            cur_idsecure.execute("SELECT COUNT(*) as total FROM users WHERE inativo = 0 AND deleted = 0")
-            total_idsecure = (cur_idsecure.fetchone() or {}).get('total', 0)
-        except mysql.connector.Error as idsecure_err:
-            print(f"AVISO: Não foi possível conectar ao banco de dados iDSecure para buscar KPIs: {idsecure_err}")
-            total_idsecure = 'Erro'
-
-        faixa_etaria_sql = f"SELECT CASE WHEN (YEAR(CURDATE()) - YEAR(data_nascimento)) BETWEEN 18 AND 25 THEN '18-25 anos' WHEN (YEAR(CURDATE()) - YEAR(data_nascimento)) BETWEEN 26 AND 35 THEN '26-35 anos' WHEN (YEAR(CURDATE()) - YEAR(data_nascimento)) BETWEEN 36 AND 45 THEN '36-45 anos' ELSE 'Idade não informada' END as faixa_etaria, COUNT(*) as total FROM colaboradores WHERE {kpi_where_sql} GROUP BY faixa_etaria ORDER BY faixa_etaria"
+        current_year = time.localtime().tm_year
+        faixa_etaria_sql = f"""SELECT CASE WHEN YEAR(data_nascimento) BETWEEN {current_year - 25} AND {current_year - 18} THEN '18-25 anos' WHEN YEAR(data_nascimento) BETWEEN {current_year - 35} AND {current_year - 26} THEN '26-35 anos' WHEN YEAR(data_nascimento) BETWEEN {current_year - 45} AND {current_year - 36} THEN '36-45 anos' ELSE 'Idade não informada' END as faixa_etaria, COUNT(*) as total FROM colaboradores WHERE {kpi_where_sql} AND data_nascimento IS NOT NULL GROUP BY faixa_etaria ORDER BY faixa_etaria"""
         cur_rh.execute(faixa_etaria_sql, base_params)
         por_faixa_etaria = cur_rh.fetchall()
 
@@ -151,9 +132,11 @@ def get_rh_data():
         cur_rh.execute(setor_chart_sql, setor_chart_params)
         por_setor = cur_rh.fetchall()
 
-        tendencia_sql = "SELECT DATE_FORMAT(data_admissao, '%Y-%m') as mes, COUNT(id) as total FROM colaboradores WHERE data_admissao >= DATE_SUB(CURDATE(), INTERVAL 12 MONTH) GROUP BY mes ORDER BY mes ASC;"
+        tendencia_sql = "SELECT YEAR(data_admissao) as ano, MONTH(data_admissao) as mes_num, COUNT(id) as total FROM colaboradores WHERE data_admissao >= DATE_SUB(CURDATE(), INTERVAL 12 MONTH) GROUP BY ano, mes_num ORDER BY ano ASC, mes_num ASC;"
         cur_rh.execute(tendencia_sql)
-        tendencia_contratacoes = cur_rh.fetchall()
+        tendencia_raw = cur_rh.fetchall()
+        tendencia_contratacoes = [{'mes': f"{item['ano']}-{str(item['mes_num']).zfill(2)}", 'total': item['total']} for
+                                  item in tendencia_raw]
 
         search_query = request.args.get('search')
         show_inactive = request.args.get('inactive', 'false').lower() == 'true'
@@ -176,7 +159,6 @@ def get_rh_data():
 
         cur_rh.execute("SELECT DISTINCT unidade FROM colaboradores WHERE unidade IS NOT NULL ORDER BY unidade")
         unidades_disponiveis = [row['unidade'] for row in cur_rh.fetchall()]
-
         setores_disponiveis = []
         if unidade_filtro:
             cur_rh.execute(
@@ -184,29 +166,46 @@ def get_rh_data():
                 (unidade_filtro,))
             setores_disponiveis = [row['setor'] for row in cur_rh.fetchall()]
 
-        return jsonify(
-            {'kpi': {'totalAtivos': total_ativos,
-                     'turnover': novas_contratacoes_30d,
-                     'tempoMedio': tempo_medio_anos,
-                     'totalIdsecure': total_idsecure},
-             'chartData': {'porUnidade': {'labels': [item['unidade'] for item in por_unidade],
-                                          'data': [item['total'] for item in por_unidade]},
-                           'porSetor': {'labels': [item['setor'] for item in por_setor],
-                                        'data': [item['total'] for item in por_setor]},
-                           'porFaixaEtaria': {'labels': [item['faixa_etaria'] for item in por_faixa_etaria],
-                                              'data': [item['total'] for item in por_faixa_etaria]},
-                           'tendenciaContratacoes': {'labels': [item['mes'] for item in tendencia_contratacoes],
-                                                     'data': [item['total'] for item in tendencia_contratacoes]}},
-             'tableData': colaboradores_filtrados,
-             'filters': {'unidades': unidades_disponiveis, 'setores': setores_disponiveis},
-             'pagination': {'page': page, 'totalPages': total_pages, 'totalItems': total_items}})
-
-    except mysql_errors.Error as db_err:
-        return jsonify(error=f"Erro de comunicação com o banco de dados: {db_err}"), 500
+        return jsonify({
+            'kpi': {'totalAtivos': total_ativos, 'turnover': novas_contratacoes_30d, 'tempoMedio': tempo_medio_anos},
+            'chartData': {'porUnidade': {'labels': [item['unidade'] for item in por_unidade],
+                                         'data': [item['total'] for item in por_unidade]},
+                          'porSetor': {'labels': [item['setor'] for item in por_setor],
+                                       'data': [item['total'] for item in por_setor]},
+                          'porFaixaEtaria': {'labels': [item['faixa_etaria'] for item in por_faixa_etaria],
+                                             'data': [item['total'] for item in por_faixa_etaria]},
+                          'tendenciaContratacoes': {'labels': [item['mes'] for item in tendencia_contratacoes],
+                                                    'data': [item['total'] for item in tendencia_contratacoes]}},
+            'tableData': colaboradores_filtrados,
+            'filters': {'unidades': unidades_disponiveis, 'setores': setores_disponiveis},
+            'pagination': {'page': page, 'totalPages': total_pages, 'totalItems': total_items}
+        })
     except Exception as e:
-        return jsonify(error=f"Ocorreu um erro inesperado ao processar a solicitação."), 500
+        print(f"ERRO CRÍTICO EM GET_RH_DATA: {e}")
+        return jsonify(error=f"Ocorreu um erro inesperado: {e}"), 500
     finally:
         close_safe(conn_rh, cur_rh)
+
+
+@admin.route('/api/idsecure-kpi')
+def get_idsecure_kpi():
+    if 'admin_logged_in' not in session: return jsonify(error="Não autorizado"), 401
+    conn_idsecure, cur_idsecure = None, None
+    try:
+        idsecure_config = {
+            'user': current_app.config['IDSECURE_DB_USER'], 'password': current_app.config['IDSECURE_DB_PASSWORD'],
+            'host': current_app.config['IDSECURE_DB_HOST'], 'database': current_app.config['IDSECURE_DB_NAME'],
+            'port': current_app.config['IDSECURE_DB_PORT'], 'connection_timeout': 3
+        }
+        conn_idsecure = mysql.connector.connect(**idsecure_config)
+        cur_idsecure = conn_idsecure.cursor(dictionary=True)
+        cur_idsecure.execute("SELECT COUNT(*) as total FROM users WHERE inativo = 0 AND deleted = 0")
+        total_idsecure = (cur_idsecure.fetchone() or {}).get('total', 'N/A')
+        return jsonify(success=True, total=total_idsecure)
+    except Exception as idsecure_err:
+        print(f"AVISO: Falha controlada ao buscar KPI do iDSecure: {idsecure_err}")
+        return jsonify(success=False, total='Erro')
+    finally:
         close_safe(conn_idsecure, cur_idsecure)
 
 
@@ -218,54 +217,100 @@ def add_new_colaborator():
     try:
         foto_filename, error_msg = process_photo(request)
         if error_msg: return jsonify(success=False, message=error_msg), 500
-        nome = request.form.get('nome').strip().upper()
+        tipo_cadastro = request.form.get('tipo_cadastro', '').strip().upper()
+        nome = request.form.get('nome', '').strip().upper()
         cpf = request.form.get('cpf')
-        pis_str = request.form.get('pis')
         data_nascimento = request.form.get('data_nascimento')
-        cargo = request.form.get('cargo').strip().upper()
-        setor = request.form.get('setor').strip().upper()
-        unidade = request.form.get('unidade')
         data_admissao = request.form.get('data_admissao')
-        if not all([nome, cpf, data_nascimento, cargo, setor, unidade, data_admissao]):
-            return jsonify(success=False, message="Todos os campos (exceto PIS) são obrigatórios."), 400
+        unidade = request.form.get('unidade')
+        if not all([tipo_cadastro, nome, cpf, data_nascimento, data_admissao, unidade]):
+            return jsonify(success=False,
+                           message="Os campos Nome, CPF, Data de Nascimento, Unidade e Data de Admissão/Início são obrigatórios."), 400
         if not is_cpf_valid(cpf):
             return jsonify(success=False, message="O CPF informado é inválido."), 400
         conn_rh = get_db_connection()
         cur_rh = conn_rh.cursor()
         cur_rh.execute("SELECT id FROM colaboradores WHERE cpf = %s", (cpf,))
         if cur_rh.fetchone():
-            return jsonify(success=False, message=f"CPF '{cpf}' já está cadastrado no RH."), 409
-        sql_rh = "INSERT INTO colaboradores (nome, cpf, pis, setor, data_nascimento, cargo, unidade, data_admissao, foto_filename, ativo, last_sync_status) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, 1, 'pendente')"
-        params_rh = (nome, cpf, pis_str, setor, data_nascimento, cargo, unidade, data_admissao, foto_filename)
+            close_safe(conn_rh, cur_rh)
+            return jsonify(success=False, message=f"CPF '{cpf}' já está cadastrado no sistema."), 409
+        pis, cargo, setor, crm, coren, especialidade = None, None, None, None, None, None
+        setor_idsecure = 'EXTERNO'
+        if tipo_cadastro == 'COLABORADOR':
+            pis = request.form.get('pis')
+            cargo = request.form.get('cargo', '').strip().upper()
+            setor = request.form.get('setor', '').strip().upper()
+            setor_idsecure = setor
+            if not all([cargo, setor]):
+                return jsonify(success=False,
+                               message="Para Colaborador, os campos Cargo e Setor são obrigatórios."), 400
+
+        # --- INÍCIO DA CORREÇÃO ---
+        elif tipo_cadastro == 'MEDICO':
+            crm = request.form.get('crm')
+            especialidade = request.form.get('especialidade', '').strip().upper()
+            # Busca o cargo e setor do formulário, em vez de usar valores fixos.
+            cargo = request.form.get('cargo', '').strip().upper()
+            setor = request.form.get('setor', '').strip().upper()
+            setor_idsecure = setor
+            # A validação agora inclui cargo e setor
+            if not all([crm, especialidade, cargo, setor]):
+                return jsonify(success=False,
+                               message="Para Médico, todos os campos são obrigatórios (CRM, Especialidade, Cargo e Setor)."), 400
+        # --- FIM DA CORREÇÃO ---
+
+        elif tipo_cadastro == 'ENFERMAGEM':
+            coren = request.form.get('coren')
+            cargo = request.form.get('cargo', '').strip().upper()
+            setor = request.form.get('setor', '').strip().upper()
+            setor_idsecure = setor
+            if not all([coren, cargo, setor]):
+                return jsonify(success=False,
+                               message="Para Enfermagem, os campos COREN, Cargo e Setor são obrigatórios."), 400
+        else:
+            return jsonify(success=False, message=f"Tipo de cadastro '{tipo_cadastro}' inválido."), 400
+
+        sql_rh = """INSERT INTO colaboradores (nome, tipo_cadastro, cpf, pis, crm, coren, especialidade, data_nascimento, cargo, setor, unidade, data_admissao, foto_filename, ativo, last_sync_status) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 1, 'pendente')"""
+        params_rh = (nome, tipo_cadastro, cpf, pis, crm, coren, especialidade, data_nascimento, cargo, setor, unidade,
+                     data_admissao, foto_filename)
         cur_rh.execute(sql_rh, params_rh)
         new_rh_id = cur_rh.lastrowid
         conn_rh.commit()
-        print(f"INFO: Colaborador '{nome}' criado no banco do RH com ID: {new_rh_id}")
-        idsecure_user_id, creation_error = create_idsecure_user(
-            nome=nome, cpf=cpf, pis=pis_str, senha=data_nascimento, matricula=new_rh_id, setor=setor
-        )
+        print(f"INFO: Profissional '{nome}' (Tipo: {tipo_cadastro}) criado no RH com ID: {new_rh_id}")
+        idsecure_user_id, creation_error = create_idsecure_user(nome=nome, cpf=cpf, pis=pis, senha=data_nascimento,
+                                                                matricula=new_rh_id, setor=setor_idsecure)
         if not idsecure_user_id:
             cur_rh.execute("UPDATE colaboradores SET last_sync_status = 'falhou_criacao' WHERE id = %s", (new_rh_id,))
             conn_rh.commit()
             return jsonify(success=False, message=f"RH: OK, mas FALHA ao criar no iDSecure: {creation_error}")
+        cur_rh.execute("UPDATE colaboradores SET idsecure_user_id = %s WHERE id = %s", (idsecure_user_id, new_rh_id))
         if foto_filename:
             photo_success, photo_error = add_photo_to_idsecure(idsecure_user_id, foto_filename)
             if not photo_success:
-                cur_rh.execute(
-                    "UPDATE colaboradores SET idsecure_user_id = %s, last_sync_status = 'falhou_foto' WHERE id = %s",
-                    (idsecure_user_id, new_rh_id))
+                cur_rh.execute("UPDATE colaboradores SET last_sync_status = 'falhou_foto' WHERE id = %s", (new_rh_id,))
                 conn_rh.commit()
-                return jsonify(success=False, message=f"Usuário criado no iDSecure, mas FALHA na foto: {photo_error}")
-        sync_success, sync_error = trigger_idsecure_sync(idsecure_user_id)
-        if not sync_success:
-            print(f"AVISO: Falha ao acionar sincronização para o usuário {idsecure_user_id}: {sync_error}")
+                return jsonify(success=False, message=f"Usuário criado, mas FALHA na foto: {photo_error}")
+        trigger_idsecure_sync(idsecure_user_id)
         final_status = 'sincronizado' if foto_filename else 'sincronizado_sem_foto'
-        cur_rh.execute("UPDATE colaboradores SET idsecure_user_id = %s, last_sync_status = %s WHERE id = %s",
-                       (idsecure_user_id, final_status, new_rh_id))
+        cur_rh.execute("UPDATE colaboradores SET last_sync_status = %s WHERE id = %s", (final_status, new_rh_id))
         conn_rh.commit()
-        return jsonify(success=True, message="Colaborador sincronizado com iDSecure com sucesso!")
+
+        new_colaborador_data = {
+            "id": new_rh_id,
+            "nome": nome,
+            "cpf": cpf,
+            "setor": setor,
+            "cargo": cargo,
+            "unidade": unidade,
+            "ativo": 1,
+            "foto_filename": foto_filename
+        }
+        return jsonify(success=True,
+                       message=f"Profissional ({tipo_cadastro.capitalize()}) cadastrado e sincronizado com sucesso!",
+                       new_data=new_colaborador_data)
     except Exception as e:
         if conn_rh: conn_rh.rollback()
+        print(f"ERRO CRÍTICO NO CADASTRO: {e}")
         return jsonify(success=False, message=f"Ocorreu um erro inesperado no servidor: {e}"), 500
     finally:
         close_safe(conn_rh, cur_rh)
@@ -289,39 +334,51 @@ def edit_colaborador_data(colaborador_id):
         unidade = request.form.get('unidade')
         data_admissao = request.form.get('data_admissao')
         conn_rh = get_db_connection()
-        cur_rh = conn_rh.cursor()
-        sql_rh_update = "UPDATE colaboradores SET nome = %s, pis = %s, data_nascimento = %s, setor = %s, cargo = %s, unidade = %s, data_admissao = %s"
-        params_rh_update = [nome, pis_str, data_nascimento, setor, cargo, unidade, data_admissao]
-        if foto_filename:
-            sql_rh_update += ", foto_filename = %s"
-            params_rh_update.append(foto_filename)
-        sql_rh_update += " WHERE id = %s"
-        params_rh_update.append(colaborador_id)
-        cur_rh.execute(sql_rh_update, tuple(params_rh_update))
+        cur_rh = conn_rh.cursor(dictionary=True)
+
+        if not foto_filename:
+            cur_rh.execute("SELECT foto_filename FROM colaboradores WHERE id = %s", (colaborador_id,))
+            result = cur_rh.fetchone()
+            if result:
+                foto_filename = result['foto_filename']
+
+        sql_rh_update = "UPDATE colaboradores SET nome = %s, pis = %s, data_nascimento = %s, setor = %s, cargo = %s, unidade = %s, data_admissao = %s, foto_filename = %s WHERE id = %s"
+        params_rh_update = (nome, pis_str, data_nascimento, setor, cargo, unidade, data_admissao, foto_filename,
+                            colaborador_id)
+        cur_rh.execute(sql_rh_update, params_rh_update)
         conn_rh.commit()
-        print(f"INFO: [RH-DB] Dados do colaborador ID {colaborador_id} atualizados (CPF imutável).")
-        close_safe(conn_rh, cur_rh)
+
         user_exists_in_idsecure = check_user_exists(colaborador_id)
         if user_exists_in_idsecure:
-            print(f"INFO: Usuário {colaborador_id} já existe no iDSecure. Iniciando atualização...")
             success, error = update_idsecure_user(
                 matricula=colaborador_id, nome=nome, pis=pis_str, setor=setor
             )
         else:
-            print(f"INFO: Usuário {colaborador_id} não encontrado no iDSecure. Iniciando criação...")
             success, error = create_idsecure_user(
                 nome=nome, cpf=cpf, pis=pis_str, senha=data_nascimento,
                 matricula=colaborador_id, setor=setor
             )
         if not success:
             return jsonify(success=False, message=f"RH: OK, mas FALHA ao sincronizar com iDSecure: {error}")
-        if foto_filename:
+        if foto_filename and (request.files.get('foto') or request.form.get('foto_base64')):
             photo_success, photo_error = add_photo_to_idsecure(colaborador_id, foto_filename)
             if not photo_success:
                 return jsonify(success=False,
                                message=f"Dados sincronizados, mas FALHA ao atualizar a foto: {photo_error}")
         trigger_idsecure_sync(colaborador_id)
-        return jsonify(success=True, message="Colaborador salvo e sincronizado com iDSecure com sucesso!")
+
+        updated_colaborador_data = {
+            "id": colaborador_id,
+            "nome": nome,
+            "cpf": cpf,
+            "setor": setor,
+            "cargo": cargo,
+            "unidade": unidade,
+            "ativo": 1,
+            "foto_filename": foto_filename
+        }
+        return jsonify(success=True, message="Colaborador salvo e sincronizado com iDSecure com sucesso!",
+                       updated_data=updated_colaborador_data)
     except Exception as e:
         if conn_rh and conn_rh.is_connected(): conn_rh.rollback()
         return jsonify(success=False, message=f"Ocorreu um erro inesperado ao sincronizar: {e}"), 500
@@ -343,16 +400,13 @@ def toggle_colaborator_status(colaborador_id):
         status_texto = "inativado" if new_status == 0 else "reativado"
         cur.execute("UPDATE colaboradores SET ativo = %s WHERE id = %s", (new_status, colaborador_id))
         conn.commit()
-
         idsecure_success, idsecure_error = set_idsecure_user_status(colaborador_id, new_status)
         if not idsecure_success:
             return jsonify(success=False,
                            message=f"Status alterado no RH, mas FALHA ao sincronizar com iDSecure: {idsecure_error}")
-
         sync_success, sync_error = trigger_idsecure_sync(colaborador_id)
         if not sync_success:
             print(f"AVISO: Falha ao acionar sincronização de status para o usuário {colaborador_id}: {sync_error}")
-
         return jsonify(success=True,
                        message=f"Status do colaborador '{colaborador['nome']}' alterado e sincronizado com sucesso.",
                        data={'nome': colaborador['nome'], 'status_texto': status_texto})
@@ -371,7 +425,7 @@ def get_colaborador_data(colaborador_id):
         conn = get_db_connection()
         cur = conn.cursor(dictionary=True)
         cur.execute(
-            "SELECT id, nome, cpf, data_nascimento, setor, cargo, unidade, data_admissao, pis FROM colaboradores WHERE id = %s",
+            "SELECT id, nome, cpf, data_nascimento, setor, cargo, unidade, data_admissao, pis, foto_filename FROM colaboradores WHERE id = %s",
             (colaborador_id,))
         colaborador = cur.fetchone()
         if colaborador:
@@ -391,11 +445,9 @@ def get_colaborador_data(colaborador_id):
 @admin.route('/api/export-data')
 def export_data():
     if 'admin_logged_in' not in session: return "Não autorizado", 401
-
     user_role = session.get('admin_role', 'recepcao')
     if user_role != 'admin':
         return jsonify(error="Acesso negado para esta funcionalidade."), 403
-
     conn, cur = None, None
     try:
         unidade_filtro, setor_filtro, search_query = request.args.get('unidade'), request.args.get(
@@ -464,4 +516,8 @@ def get_all_cargos():
 def serve_foto_colaborador(filename):
     folder = current_app.config.get('FOTOS_FOLDER')
     if not folder: return "Pasta de fotos não configurada", 404
-    return send_from_directory(folder, filename, as_attachment=False)
+
+    project_root = os.path.abspath(os.path.join(current_app.root_path, '..'))
+    absolute_directory = os.path.join(project_root, folder)
+
+    return send_from_directory(absolute_directory, filename, as_attachment=False)

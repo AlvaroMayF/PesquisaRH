@@ -41,6 +41,9 @@ from src.routers.admin_surveys import admin_surveys_bp
 from src.routers.carreiras import carreiras_bp
 from src.routers.admin_vagas import admin_vagas_bp
 from src.routers.admin_candidaturas import admin_candidaturas_bp
+# --- ADIÇÃO: Import do novo blueprint para profissionais (médicos/enfermagem) ---
+from src.routers.profissionais import profissionais_bp
+
 
 # ----------------------------------------------------------------------
 # Factory para criar e configurar a aplicação
@@ -62,7 +65,15 @@ def create_app():
 
     app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'uma-chave-secreta-padrao-muito-segura')
 
-    # --- Configurações da Integração Control iD ---
+    # --- Configurações do Banco de Dados do RH (pesquisa_rh) ---
+    # --- Configurações do Banco de Dados do RH (pesquisa_rh) ---
+    app.config['DB_HOST'] = os.getenv('DB_HOST')
+    app.config['DB_USER'] = os.getenv('DB_USER')
+    app.config['DB_PASSWORD'] = os.getenv('DB_PASSWORD')
+    app.config['DB_NAME'] = os.getenv('DB_NAME')
+    app.config['DB_PORT'] = os.getenv('DB_PORT')
+
+    # --- Configurações da Integração Control iD (iDSecure) ---
     app.config['IDSECURE_DB_HOST'] = os.getenv('IDSECURE_DB_HOST')
     app.config['IDSECURE_DB_USER'] = os.getenv('IDSECURE_DB_USER')
     app.config['IDSECURE_DB_PASSWORD'] = os.getenv('IDSECURE_DB_PASSWORD')
@@ -70,11 +81,9 @@ def create_app():
     app.config['IDSECURE_DB_PORT'] = os.getenv('IDSECURE_DB_PORT')
 
     app.config['IDSECURE_IMAGES_SHARE_PATH'] = os.getenv('IDSECURE_IMAGES_SHARE_PATH')
-
     app.config['IDSECURE_SHARE_USER'] = os.getenv('IDSECURE_SHARE_USER')
     app.config['IDSECURE_SHARE_PASSWORD'] = os.getenv('IDSECURE_SHARE_PASSWORD')
 
-    # --- CORREÇÃO: Carrega as credenciais da API iDSecure ---
     app.config['IDSECURE_BASE_URL'] = os.getenv('IDSECURE_BASE_URL')
     app.config['IDSECURE_API_USER'] = os.getenv('IDSECURE_API_USER')
     app.config['IDSECURE_API_PASSWORD'] = os.getenv('IDSECURE_API_PASSWORD')
@@ -124,7 +133,7 @@ def create_app():
     app.register_blueprint(analitico_bp)
     app.register_blueprint(pesquisa_bp)
     app.register_blueprint(comunicados_bp)
-    app.register_blueprint( novo_colaborador_bp)
+    app.register_blueprint(novo_colaborador_bp)
     app.register_blueprint(novo_comunicado_bp)
     app.register_blueprint(admin_feriados_bp)
     app.register_blueprint(beneficios_bp)
@@ -134,6 +143,7 @@ def create_app():
     app.register_blueprint(carreiras_bp)
     app.register_blueprint(admin_vagas_bp)
     app.register_blueprint(admin_candidaturas_bp)
+    app.register_blueprint(profissionais_bp)
 
     print("✅ Aplicação Flask criada e configurada com sucesso!")
     return app

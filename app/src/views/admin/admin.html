@@ -38,10 +38,8 @@
 
                         {% if session.get('admin_logged_in') %}
                             {% if admin_role == 'admin' %}
-                                <!-- Menu Completo para Admin -->
                                 <li class="nav-item dropdown"><a href="{{ url_for('admin.admin_panel') }}" class="nav-link dropdown-toggle">Administrador</a><ul class="dropdown-menu"><li><a class="dropdown-item" href="{{ url_for('analitico.analitico_view') }}">Analítico</a></li><li><a class="dropdown-item" href="{{ url_for('novo_colaborador.novo_colaborador_view') }}">Novo Colaborador</a></li><li><a class="dropdown-item" href="{{ url_for('novo_comunicado.novo_comunicado_view') }}">Novo Comunicado</a></li><li><a class="dropdown-item" href="{{ url_for('admin_feriados.gerenciar_feriados') }}">Gerenciar Feriados</a></li><li><a class="dropdown-item" href="{{ url_for('admin_surveys.gerenciar_pesquisas_view') }}">Gerenciar Pesquisas</a></li></ul></li>
                             {% else %}
-                                <!-- Menu Simplificado para Recepção -->
                                 <li><a href="{{ url_for('admin.admin_panel') }}">Gestão de Cadastros</a></li>
                             {% endif %}
                         {% else %}
@@ -59,7 +57,6 @@
     <main>
         <div class="page-container">
             {% if admin_role == 'admin' %}
-                <!-- CONTEÚDO EXCLUSIVO PARA ADMIN -->
                 <section class="page-header"><h1 class="page-title">Dashboard de Colaboradores</h1><p class="page-subtitle">Análise interativa da sua força de trabalho.</p></section>
                 <section class="dashboard-filters content-card"><div class="filter-group"><label for="unidade-filtro">Filtrar por Unidade</label><select id="unidade-filtro"><option value="">Todas as Unidades</option></select></div><div class="filter-group"><label for="setor-filtro">Filtrar por Setor</label><select id="setor-filtro" disabled><option value="">Todos os Setores</option></select></div><button id="reset-filters-btn" class="btn btn-secondary">Limpar Filtros</button></section>
                 <section class="kpi-grid">
@@ -70,11 +67,9 @@
                 </section>
                 <section class="dashboard-grid"><div class="dashboard-card"><h3 class="card-title">Colaboradores por Unidade</h3><div class="chart-container"><canvas id="unidadeChart"></canvas></div></div><div class="dashboard-card"><h3 class="card-title">Distribuição por Faixa Etária</h3><div class="chart-container chart-container-pie"><canvas id="faixaEtariaChart"></canvas></div></div><div class="dashboard-card full-width"><h3 class="card-title">Top 10 Setores (Colaboradores Ativos)</h3><div class="chart-container"><canvas id="setorChart"></canvas></div></div><div class="dashboard-card full-width"><h3 class="card-title">Tendência de Contratações (Últimos 12 Meses)</h3><div class="chart-container"><canvas id="tendenciaChart"></canvas></div></div></section>
             {% else %}
-                <!-- CONTEÚDO PARA RECEPÇÃO -->
-                 <section class="page-header"><h1 class="page-title">Gestão de Cadastros</h1><p class="page-subtitle">Crie e atualize os cadastros para controle de acesso.</p></section>
+                <section class="page-header"><h1 class="page-title">Gestão de Cadastros</h1><p class="page-subtitle">Crie e atualize os cadastros para controle de acesso.</p></section>
             {% endif %}
 
-            <!-- SEÇÃO DE GERENCIAMENTO DE COLABORADORES (VISÍVEL PARA TODOS) -->
             <section class="content-card">
                 <div class="table-header"><h2 class="table-title">Gerenciar Cadastros</h2><div class="table-actions"><input type="text" id="search-input" class="search-input" placeholder="Buscar por nome ou CPF...">
                     {% if admin_role == 'admin' %}
@@ -89,53 +84,103 @@
         </div>
     </main>
 
-    <!-- Modal Adicionar Colaborador -->
     <div id="add-colaborador-modal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 class="modal-title">Adicionar Novo Colaborador</h2>
+                <h2 class="modal-title">Adicionar Novo Profissional</h2>
                 <button id="close-modal-btn" class="modal-close-btn" aria-label="Fechar modal">×</button>
             </div>
-            <form id="add-colaborador-form" action="{{ url_for('admin.add_new_colaborator') }}" method="POST" enctype="multipart/form-data">
-                <div class="modal-body-scrollable">
-                    <div class="form-grid">
-                        <div class="form-group full-width"><label for="nome-modal">Nome Completo</label><input type="text" id="nome-modal" name="nome" required></div>
-                        <div class="form-group"><label for="cpf-modal">CPF</label><input type="text" id="cpf-modal" name="cpf" required></div>
-                        <div class="form-group"><label for="nascimento-modal">Data de Nascimento</label><input type="date" id="nascimento-modal" name="data_nascimento" required></div>
-                        <div class="form-group"><label for="pis-modal">PIS</label><input type="text" id="pis-modal" name="pis" required></div>
-                        <div class="form-group"><label for="cargo-modal">Cargo</label><input type="text" id="cargo-modal" name="cargo" required list="cargos-list"></div>
-                        <div class="form-group"><label for="setor-modal">Setor</label><input type="text" id="setor-modal" name="setor" required list="setores-list"></div>
-                        <div class="form-group"><label for="unidade-modal">Unidade</label><select id="unidade-modal" name="unidade" required><option value="" disabled selected>Selecione uma Unidade</option></select></div>
-                        <div class="form-group"><label for="admissao-modal">Data de Admissão</label><input type="date" id="admissao-modal" name="data_admissao" required></div>
-                        <div class="foto-section">
-                            <img id="foto-preview-add" class="foto-preview" src="{{ url_for('static', filename='images/placeholder-avatar.png') }}" alt="Pré-visualização">
-                            <input type="hidden" name="foto_base64" id="foto-base64-add">
-                            <input type="file" id="foto-upload-add" name="foto" accept="image/png, image/jpeg" style="display: none;">
-                            <div class="foto-actions-initial">
-                                <label for="foto-upload-add" class="file-label btn-secondary">Escolher arquivo...</label>
-                                <button type="button" id="btn-ligar-webcam-add" class="btn btn-secondary">Usar Webcam</button>
-                            </div>
-                            <button type="button" id="btn-remover-foto-add" class="btn btn-danger" style="display: none;">Remover Foto</button>
-                            <span id="file-name-add" class="file-upload-info">Nenhum arquivo selecionado</span>
-                            <div id="webcam-container-add">
-                                <video id="webcam-video-add" autoplay playsinline></video>
-                                <div class="webcam-controls">
-                                    <button type="button" id="btn-capturar-foto-add" class="btn btn-primary">Capturar</button>
-                                    <button type="button" id="btn-desligar-webcam-add" class="btn btn-danger">Desligar</button>
-                                </div>
-                            </div>
-                        </div>
+            <div class="modal-body-scrollable">
+                <div id="tipo-cadastro-selecao-add">
+                    <p>Para começar, selecione o tipo de cadastro que deseja realizar.</p>
+                    <div class="form-group">
+                        <label for="select-tipo-cadastro-add">Tipo de Profissional</label>
+                        <select id="select-tipo-cadastro-add" class="form-control">
+                            <option value="" selected disabled>-- Escolha uma opção --</option>
+                            <option value="colaborador">Colaborador (Administrativo/Apoio)</option>
+                            <option value="medico">Médico</option>
+                            <option value="enfermagem">Enfermagem</option>
+                        </select>
                     </div>
                 </div>
-                <div class="form-actions">
-                    <button type="button" id="cancel-add-btn" class="btn btn-secondary">Cancelar</button>
-                    <button type="submit" class="btn btn-primary">Salvar Colaborador</button>
-                </div>
-            </form>
+
+                <form id="form-colaborador-add" class="cadastro-form" action="{{ url_for('admin.add_new_colaborator') }}" method="POST" enctype="multipart/form-data" style="display:none;">
+                    <input type="hidden" name="tipo_cadastro" value="COLABORADOR">
+                    <h5>Cadastro de Colaborador</h5>
+                    <div class="form-grid">
+                        <div class="form-group full-width"><label>Nome Completo</label><input type="text" name="nome" required></div>
+                        <div class="form-group"><label>CPF</label><input type="text" name="cpf" required></div>
+                        <div class="form-group"><label>Data de Nascimento</label><input type="date" name="data_nascimento" required></div>
+                        <div class="form-group"><label>PIS</label><input type="text" name="pis"></div>
+                        <div class="form-group"><label>Cargo</label><input type="text" name="cargo" required autocomplete="off"></div>
+                        <div class="form-group"><label>Setor</label><input type="text" name="setor" required autocomplete="off"></div>
+                        <div class="form-group"><label>Unidade</label><select name="unidade" required class="unidade-select-add"><option value="" disabled selected>Selecione</option></select></div>
+                        <div class="form-group"><label>Data de Admissão</label><input type="date" name="data_admissao" required></div>
+                    </div>
+                    <div class="foto-section" id="foto-section-colaborador-add">
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-danger btn-remover-anexo-x" style="display: none;" title="Remover anexo">&times;</button>
+                        <button type="button" class="btn btn-secondary btn-voltar-selecao">Voltar</button>
+                        <button type="submit" class="btn btn-primary">Salvar Colaborador</button>
+                    </div>
+                </form>
+
+                <form id="form-enfermagem-add" class="cadastro-form" action="{{ url_for('admin.add_new_colaborator') }}" method="POST" enctype="multipart/form-data" style="display:none;">
+                    <input type="hidden" name="tipo_cadastro" value="ENFERMAGEM">
+                    <h5>Cadastro de Profissional de Enfermagem</h5>
+                    <div class="form-grid">
+                        <div class="form-group full-width"><label>Nome Completo</label><input type="text" name="nome" required></div>
+                        <div class="form-group"><label>CPF</label><input type="text" name="cpf" required></div>
+                        <div class="form-group"><label>Data de Nascimento</label><input type="date" name="data_nascimento" required></div>
+                        <div class="form-group"><label>Registro Profissional (COREN)</label><input type="text" name="coren" required></div>
+                        <div class="form-group"><label>Cargo</label><input type="text" name="cargo" placeholder="Ex: Enfermeiro(a)" required autocomplete="off"></div>
+                        <div class="form-group"><label>Setor</label><input type="text" name="setor" required autocomplete="off"></div>
+                        <div class="form-group"><label>Unidade</label><select name="unidade" required class="unidade-select-add"><option value="" disabled selected>Selecione</option></select></div>
+                        <div class="form-group"><label>Data de Admissão</label><input type="date" name="data_admissao" required></div>
+                    </div>
+                    <div class="foto-section" id="foto-section-enfermagem-add">
+                    </div>
+                     <div class="form-actions">
+                        <button type="button" class="btn btn-danger btn-remover-anexo-x" style="display: none;" title="Remover anexo">&times;</button>
+                        <button type="button" class="btn btn-secondary btn-voltar-selecao">Voltar</button>
+                        <button type="submit" class="btn btn-primary">Salvar Profissional</button>
+                    </div>
+                </form>
+
+                <form id="form-medico-add" class="cadastro-form" action="{{ url_for('admin.add_new_colaborator') }}" method="POST" enctype="multipart/form-data" style="display:none;">
+                    <input type="hidden" name="tipo_cadastro" value="MEDICO">
+                    <h5>Cadastro de Médico</h5>
+                    <div class="form-grid">
+                        <div class="form-group full-width"><label>Nome Completo</label><input type="text" name="nome" required></div>
+                        <div class="form-group"><label>CPF</label><input type="text" name="cpf" required></div>
+                        <div class="form-group"><label>Data de Nascimento</label><input type="date" name="data_nascimento" required></div>
+                        <div class="form-group"><label>Registro Profissional (CRM)</label><input type="text" name="crm" required></div>
+                        <div class="form-group"><label>Especialidade</label><input type="text" name="especialidade" required></div>
+
+                        <!-- INÍCIO DA CORREÇÃO -->
+                        <div class="form-group"><label>Cargo</label><input type="text" name="cargo" placeholder="Digite ou selecione um cargo" required autocomplete="off"></div>
+                        <div class="form-group"><label>Setor</label><input type="text" name="setor" placeholder="Digite ou selecione um setor" required autocomplete="off"></div>
+                        <!-- FIM DA CORREÇÃO -->
+
+                        <div class="form-group"><label>Unidade</label><select name="unidade" required class="unidade-select-add"><option value="" disabled selected>Selecione</option></select></div>
+                        <div class="form-group"><label>Data de Início (Contrato)</label><input type="date" name="data_admissao" required></div>
+                    </div>
+                    <div class="foto-section" id="foto-section-medico-add">
+                    </div>
+                     <div class="form-actions">
+                        <button type="button" class="btn btn-danger btn-remover-anexo-x" style="display: none;" title="Remover anexo">&times;</button>
+                        <button type="button" class="btn btn-secondary btn-voltar-selecao">Voltar</button>
+                        <button type="submit" class="btn btn-primary">Salvar Médico</button>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer-geral">
+                 <button type="button" id="cancel-add-btn" class="btn btn-secondary">Cancelar</button>
+            </div>
         </div>
     </div>
 
-    <!-- Modal Editar Colaborador -->
     <div id="edit-colaborador-modal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
@@ -154,29 +199,13 @@
                             <small class="form-text text-muted" style="font-size: 0.8em; color: #888; display: block; margin-top: 4px;">O CPF não pode ser alterado após o cadastro.</small>
                         </div>
                         <div class="form-group"><label for="edit-nascimento-modal">Data de Nascimento</label><input type="date" id="edit-nascimento-modal" name="data_nascimento" required></div>
-                        <div class="form-group"><label for="edit-pis-modal">PIS</label><input type="text" id="edit-pis-modal" name="pis" required></div>
+                        <div class="form-group"><label for="edit-pis-modal">PIS</label><input type="text" id="edit-pis-modal" name="pis"></div>
                         <div class="form-group"><label for="edit-cargo-modal">Cargo</label><input type="text" id="edit-cargo-modal" name="cargo" required list="cargos-list"></div>
                         <div class="form-group"><label for="edit-setor-modal">Setor</label><input type="text" id="edit-setor-modal" name="setor" required list="setores-list"></div>
                         <div class="form-group"><label for="edit-unidade-modal">Unidade</label><select id="edit-unidade-modal" name="unidade" required></select></div>
                         <div class="form-group"><label for="edit-admissao-modal">Data de Admissão</label><input type="date" id="edit-admissao-modal" name="data_admissao" required></div>
-                        <div class="foto-section">
-                            <img id="foto-preview-edit" class="foto-preview" src="{{ url_for('static', filename='images/placeholder-avatar.png') }}" alt="Pré-visualização">
-                            <input type="hidden" name="foto_base64" id="foto-base64-edit">
-                            <input type="file" id="foto-upload-edit" name="foto" accept="image/png, image/jpeg" style="display: none;">
-                            <div id="foto-actions-initial-edit" class="foto-actions-initial">
-                                <label for="foto-upload-edit" class="file-label btn-secondary">Alterar arquivo...</label>
-                                <button type="button" id="btn-ligar-webcam-edit" class="btn btn-secondary">Usar Webcam</button>
-                            </div>
-                            <button type="button" id="btn-remover-foto-edit" class="btn btn-danger" style="display: none;">Remover Foto</button>
-                            <span id="file-name-edit" class="file-upload-info">Nenhum arquivo selecionado</span>
-                            <div id="webcam-container-edit">
-                                <video id="webcam-video-edit" autoplay playsinline></video>
-                                <div class="webcam-controls">
-                                    <button type="button" id="btn-capturar-foto-edit" class="btn btn-primary">Capturar</button>
-                                    <button type="button" id="btn-desligar-webcam-edit" class="btn btn-danger">Desligar</button>
-                                </div>
-                            </div>
-                        </div>
+                    </div>
+                    <div class="foto-section" id="foto-section-edit">
                     </div>
                 </div>
                 <div class="form-actions">
@@ -191,471 +220,648 @@
     <datalist id="cargos-list"></datalist>
     <div id="toast-container"></div>
     <script src="{{ url_for('views.static', filename='home/theme-toggle.js') }}" defer></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const apiUrlBase = document.body.dataset.apiUrl;
-            const ui = {
-                // Seletores do Admin (podem ser nulos para 'recepcao')
-                unidadeFiltro: document.getElementById('unidade-filtro'),
-                setorFiltro: document.getElementById('setor-filtro'),
-                resetBtn: document.getElementById('reset-filters-btn'),
-                kpiTotalAtivos: document.getElementById('kpi-total-ativos'),
-                kpiTurnover: document.getElementById('kpi-turnover'),
-                kpiTempoMedio: document.getElementById('kpi-tempo-medio'),
-                kpiTotalIdsecure: document.getElementById('kpi-total-idsecure'),
-                chartCanvases: {
-                    unidade: document.getElementById('unidadeChart'),
-                    setor: document.getElementById('setorChart'),
-                    faixaEtaria: document.getElementById('faixaEtariaChart'),
-                    tendencia: document.getElementById('tendenciaChart')
-                },
-                exportBtn: document.getElementById('export-btn'),
 
-                // Seletores Comuns (existem para todos)
-                tableBody: document.getElementById('colaboradores-table-body'),
-                addModal: document.getElementById('add-colaborador-modal'),
-                addBtn: document.getElementById('add-colaborador-btn'),
-                searchInput: document.getElementById('search-input'),
-                inactiveToggle: document.getElementById('inactive-toggle'),
-                paginationInfo: document.getElementById('pagination-info'),
-                paginationControls: document.getElementById('pagination-controls'),
-                addColaboradorForm: document.getElementById('add-colaborador-form'),
-                unidadeModalSelect: document.getElementById('unidade-modal'),
-                editModal: document.getElementById('edit-colaborador-modal'),
-                editForm: document.getElementById('edit-colaborador-form'),
+<script>
+    const photoComponentTemplate = (prefix) => `
+        <div class="photo-uploader">
+            <div class="preview-container" id="preview-container-${prefix}">
+                <img id="foto-preview-${prefix}" class="foto-preview" src="{{ url_for('static', filename='images/placeholder-avatar.png') }}" alt="Pré-visualização da foto">
+                <div class="preview-overlay">
+                    <svg class="overlay-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                    <span class="overlay-text">Trocar Foto</span>
+                </div>
+            </div>
+            <input type="hidden" name="foto_base64" id="foto-base64-${prefix}">
+            <input type="file" id="foto-upload-${prefix}" name="foto" accept="image/png, image/jpeg" style="display: none;">
+            <div class="photo-actions" id="photo-actions-${prefix}">
+                <label for="foto-upload-${prefix}" class="btn btn-secondary">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                    <span>Escolher Arquivo</span>
+                </label>
+                <button type="button" id="btn-ligar-webcam-${prefix}" class="btn btn-secondary">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                    <span>Usar Webcam</span>
+                </button>
+            </div>
+            <span id="file-name-${prefix}" class="file-upload-info">Nenhum arquivo selecionado</span>
+        </div>
+        <div class="webcam-overlay" id="webcam-overlay-${prefix}">
+            <div class="webcam-view">
+                <div class="webcam-video-wrapper">
+                    <video id="webcam-video-${prefix}" autoplay playsinline style="display:none;"></video>
+                    <canvas id="webcam-preview-canvas-${prefix}" style="display:none;"></canvas>
+                    <div class="viewfinder-overlay"></div>
+                    <div class="flash-effect" id="flash-effect-${prefix}"></div>
+                </div>
+                <div class="webcam-controls-bar">
+                    <div id="capture-controls-${prefix}">
+                        <button type="button" id="btn-capturar-foto-${prefix}" class="webcam-control-btn" aria-label="Capturar Foto"></button>
+                    </div>
+                    <div id="preview-controls-${prefix}" class="webcam-preview-controls" style="display:none;">
+                        <button type="button" id="btn-tentar-novamente-${prefix}" class="webcam-control-btn" aria-label="Tentar Novamente">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+                        </button>
+                        <button type="button" id="btn-confirmar-foto-${prefix}" class="webcam-control-btn" aria-label="Confirmar Foto">
+                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        </button>
+                    </div>
+                    <button type="button" id="btn-desligar-webcam-${prefix}" class="webcam-control-btn" aria-label="Fechar Webcam">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+
+    document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('foto-section-colaborador-add').innerHTML = photoComponentTemplate('colaborador-add');
+        document.getElementById('foto-section-medico-add').innerHTML = photoComponentTemplate('medico-add');
+        document.getElementById('foto-section-enfermagem-add').innerHTML = photoComponentTemplate('enfermagem-add');
+        document.getElementById('foto-section-edit').innerHTML = photoComponentTemplate('edit');
+
+        const apiUrlBase = document.body.dataset.apiUrl;
+        const ui = {
+            unidadeFiltro: document.getElementById('unidade-filtro'),
+            setorFiltro: document.getElementById('setor-filtro'),
+            resetBtn: document.getElementById('reset-filters-btn'),
+            kpiTotalAtivos: document.getElementById('kpi-total-ativos'),
+            kpiTurnover: document.getElementById('kpi-turnover'),
+            kpiTempoMedio: document.getElementById('kpi-tempo-medio'),
+            kpiTotalIdsecure: document.getElementById('kpi-total-idsecure'),
+            chartCanvases: { unidade: document.getElementById('unidadeChart'), setor: document.getElementById('setorChart'), faixaEtaria: document.getElementById('faixaEtariaChart'), tendencia: document.getElementById('tendenciaChart') },
+            exportBtn: document.getElementById('export-btn'),
+            tableBody: document.getElementById('colaboradores-table-body'),
+            addModal: document.getElementById('add-colaborador-modal'),
+            addBtn: document.getElementById('add-colaborador-btn'),
+            searchInput: document.getElementById('search-input'),
+            inactiveToggle: document.getElementById('inactive-toggle'),
+            paginationInfo: document.getElementById('pagination-info'),
+            paginationControls: document.getElementById('pagination-controls'),
+            editModal: document.getElementById('edit-colaborador-modal'),
+            editForm: document.getElementById('edit-colaborador-form'),
+            addModalSelectionDiv: document.getElementById('tipo-cadastro-selecao-add'),
+            addModalSelectType: document.getElementById('select-tipo-cadastro-add'),
+            addModalForms: document.querySelectorAll('#add-colaborador-modal .cadastro-form'),
+            addModalCancelBtn: document.getElementById('cancel-add-btn'),
+            addModalBackBtns: document.querySelectorAll('.btn-voltar-selecao')
+        };
+
+        let charts = {};
+        let currentFilters = { page: 1, search: '', inactive: false, unidade: '', setor: '' };
+        let searchDebounceTimer;
+
+        async function fetchMainData() {
+            const params = new URLSearchParams(currentFilters);
+            const apiUrl = `${apiUrlBase}?${params.toString()}`;
+            try {
+                const response = await fetch(apiUrl);
+                if (!response.ok) throw new Error(`Erro na rede! Status: ${response.status}`);
+                const data = await response.json();
+                if (data.error) throw new Error(data.error);
+                updateUI(data);
+            } catch (error) {
+                console.error('Erro CRÍTICO no fetch principal:', error);
+                ui.tableBody.innerHTML = `<tr><td colspan="6" class="text-center" style="color: #dc3545; font-weight: bold;">Falha ao carregar os dados.</td></tr>`;
+            }
+        }
+
+        async function fetchIdSecureKPI() {
+            if (!ui.kpiTotalIdsecure) return;
+            try {
+                const response = await fetch("{{ url_for('admin.get_idsecure_kpi') }}");
+                const data = await response.json();
+                ui.kpiTotalIdsecure.textContent = data.total;
+                ui.kpiTotalIdsecure.style.color = data.success ? '' : '#dc3545';
+            } catch (error) {
+                console.error('Erro ao buscar KPI do iDSecure:', error);
+                ui.kpiTotalIdsecure.textContent = 'Erro';
+                ui.kpiTotalIdsecure.style.color = '#dc3545';
+            }
+        }
+
+        function updateUI(data) {
+            updateDropdowns(data.filters);
+            if (ui.kpiTotalAtivos) updateKPIs(data.kpi);
+            if (ui.chartCanvases.unidade) renderCharts(data.chartData);
+            renderTable(data.tableData);
+            renderPagination(data.pagination);
+        }
+
+        function updateDropdowns(filters) {
+            const addUnidadeSelects = document.querySelectorAll('.unidade-select-add');
+            if (addUnidadeSelects.length > 0 && addUnidadeSelects[0].options.length <= 1 && filters.unidades) {
+                addUnidadeSelects.forEach(select => {
+                    select.innerHTML = '<option value="" disabled selected>Selecione</option>';
+                    filters.unidades.forEach(u => select.add(new Option(u, u)));
+                });
+            }
+            if(ui.unidadeFiltro) {
+                const currentUnidade = ui.unidadeFiltro.value;
+                if (ui.unidadeFiltro.options.length <= 1 && filters.unidades) {
+                    filters.unidades.forEach(u => ui.unidadeFiltro.add(new Option(u, u)));
+                }
+                ui.unidadeFiltro.value = currentUnidade;
+                const currentSetor = ui.setorFiltro.value;
+                ui.setorFiltro.innerHTML = '<option value="">Todos os Setores</option>';
+                if (filters.setores && filters.setores.length > 0) {
+                    filters.setores.forEach(s => ui.setorFiltro.add(new Option(s, s)));
+                    ui.setorFiltro.disabled = false;
+                    ui.setorFiltro.value = currentSetor;
+                } else {
+                    ui.setorFiltro.disabled = true;
+                }
+            }
+        }
+
+        function updateKPIs(kpi) {
+            if (!ui.kpiTotalAtivos) return;
+            ui.kpiTotalAtivos.textContent = kpi.totalAtivos;
+            ui.kpiTurnover.textContent = kpi.turnover;
+            ui.kpiTempoMedio.textContent = kpi.tempoMedio;
+        }
+
+        function handleChartClick(event, elements, filterType) {
+            if (elements.length === 0) return;
+            const label = event.chart.data.labels[elements[0].index];
+            if (filterType === 'unidade') {
+                currentFilters.unidade = label;
+                if(ui.unidadeFiltro) ui.unidadeFiltro.value = label;
+                currentFilters.setor = '';
+                currentFilters.page = 1;
+                fetchMainData();
+            }
+        }
+
+        function renderCharts(chartData) {
+            if (!ui.chartCanvases.unidade) return;
+            const textColor = getComputedStyle(document.documentElement).getPropertyValue('--text-color').trim() || '#000';
+            Chart.defaults.color = textColor;
+            Chart.defaults.borderColor = 'rgba(128, 128, 128, 0.1)';
+            const chartConfigs = {
+                unidade: { type: 'bar', data: chartData.porUnidade, options: { onClick: (e, els) => handleChartClick(e, els, 'unidade') }},
+                setor: { type: 'bar', data: chartData.porSetor, options: { indexAxis: 'y' }},
+                faixaEtaria: { type: 'doughnut', data: chartData.porFaixaEtaria, options: { plugins: { legend: { position: 'right' }}} },
+                tendencia: { type: 'line', data: chartData.tendenciaContratacoes, options: { scales: { y: { beginAtZero: true, ticks: { precision: 0 }}}, elements: { line: { tension: 0.3, fill: true }}}}
             };
-            let charts = {};
-            let currentFilters = { page: 1, search: '', inactive: false, unidade: '', setor: '' };
-            let searchDebounceTimer;
-            async function fetchAndRenderData() {
-                const params = new URLSearchParams(currentFilters);
-                const apiUrl = `${apiUrlBase}?${params.toString()}`;
-                try {
-                    const response = await fetch(apiUrl);
-                    if (!response.ok) throw new Error(`Erro na rede! Status: ${response.status}`);
-                    const data = await response.json();
-                    if (data.error) throw new Error(data.error);
-                    updateUI(data);
-                } catch (error) {
-                    console.error('Erro CRÍTICO no bloco fetch/render:', error);
-                    ui.tableBody.innerHTML = `<tr><td colspan="6" class="text-center" style="color: #dc3545; font-weight: bold;">Falha ao carregar os dados. Verifique o console.</td></tr>`;
+            for (const key in chartConfigs) {
+                if (charts[key]) charts[key].destroy();
+                const canvas = ui.chartCanvases[key];
+                if (!canvas) continue;
+                const config = chartConfigs[key];
+                charts[key] = new Chart(canvas, {
+                    type: config.type,
+                    data: {
+                        labels: config.data.labels,
+                        datasets: [{
+                            data: config.data.data,
+                            backgroundColor: config.type === 'line' ? 'rgba(0, 155, 196, 0.2)' : (config.type === 'doughnut' ? ['#FD4289', '#009BC4', '#FFC107', '#28A745', '#6F42C1'] : (key === 'unidade' ? '#FD4289' : '#009BC4')),
+                            borderColor: config.type === 'line' ? 'rgba(0, 155, 196, 1)' : undefined,
+                            borderWidth: config.type === 'line' ? 2 : 1,
+                            label: config.type === 'line' ? 'Contratações' : 'Colaboradores'
+                        }]
+                    },
+                    options: { ...config.options, responsive: true, maintainAspectRatio: false, plugins: { ...config.options.plugins, legend: { display: config.type !== 'line' && config.type !== 'bar' }}}
+                });
+            }
+        }
+
+        function generateRowHTML(c) {
+            const placeholderAvatar = `{{ url_for('static', filename='images/placeholder-avatar.png') }}`;
+            const uploadsUrl = `{{ url_for('admin.serve_foto_colaborador', filename='') }}`;
+            const statusBadge = c.ativo ? '<span class="status-badge active">Ativo</span>' : '<span class="status-badge inactive">Inativo</span>';
+            const actionButton = c.ativo ? `<button type="submit" class="btn-table-action danger" title="Desligar"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>` : `<button type="submit" class="btn-table-action success" title="Reativar"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg></button>`;
+            const fotoUrl = c.foto_filename ? `${uploadsUrl}${c.foto_filename}?v=${new Date().getTime()}` : placeholderAvatar;
+            return `<tr data-id="${c.id}"><td data-label="Nome"><div class="stacked-photo-name"><img src="${fotoUrl}" alt="Foto de ${c.nome}" class="table-photo" onerror="this.onerror=null;this.src='${placeholderAvatar}';"> ${c.nome}</div></td><td data-label="CPF">${c.cpf}</td><td data-label="Setor / Cargo"><div class="stacked-text"><span>${c.setor || 'N/A'}</span><small>${c.cargo || 'N/A'}</small></div></td><td data-label="Unidade">${c.unidade || 'N/A'}</td><td data-label="Status">${statusBadge}</td><td data-label="Ações"><div class="action-buttons-container"><button class="btn-table-action info edit-btn" title="Editar" data-id="${c.id}"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg></button><form class="toggle-status-form" action="/admin/colaborador/toggle-status/${c.id}" method="POST">${actionButton}</form></div></td></tr>`;
+        }
+
+        function renderTable(colaboradores) {
+            ui.tableBody.innerHTML = '';
+            if (!colaboradores || colaboradores.length === 0) { ui.tableBody.innerHTML = `<tr><td colspan="6" class="text-center">Nenhum colaborador encontrado.</td></tr>`; return; }
+            colaboradores.forEach(c => {
+                const rowHTML = generateRowHTML(c);
+                ui.tableBody.insertAdjacentHTML('beforeend', rowHTML);
+            });
+        }
+
+        function renderPagination(pagination) {
+            if (!pagination) { ui.paginationInfo.textContent = ''; ui.paginationControls.innerHTML = ''; return; }
+            const { page, totalPages, totalItems } = pagination;
+            ui.paginationInfo.textContent = `Página ${page} de ${totalPages} (${totalItems} resultados)`;
+            ui.paginationControls.innerHTML = '';
+            if (totalPages <= 1) return;
+            const prevBtn = document.createElement('button');
+            prevBtn.innerHTML = '«'; prevBtn.disabled = page === 1;
+            prevBtn.addEventListener('click', () => { currentFilters.page--; fetchMainData(); });
+            ui.paginationControls.appendChild(prevBtn);
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === 1 || i === totalPages || (i >= page - 1 && i <= page + 1)) {
+                    const pageBtn = document.createElement('button');
+                    pageBtn.textContent = i;
+                    if (i === page) pageBtn.classList.add('active');
+                    pageBtn.addEventListener('click', () => { currentFilters.page = i; fetchMainData(); });
+                    ui.paginationControls.appendChild(pageBtn);
+                } else if (i === page - 2 || i === page + 2) {
+                    const dots = document.createElement('span');
+                    dots.textContent = '...';
+                    ui.paginationControls.appendChild(dots);
                 }
             }
+            const nextBtn = document.createElement('button');
+            nextBtn.innerHTML = '»'; nextBtn.disabled = page === totalPages;
+            nextBtn.addEventListener('click', () => { currentFilters.page++; fetchMainData(); });
+            ui.paginationControls.appendChild(nextBtn);
+        }
 
-            function updateUI(data) {
-                try {
-                    // Atualiza dropdowns de filtros E de modais.
-                    // Esta parte precisa rodar para ambos os perfis para que os formulários funcionem.
-                    updateDropdowns(data.filters);
+        function showToast(message, type = 'success') {
+            const toastContainer = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            toastContainer.appendChild(toast);
+            setTimeout(() => toast.classList.add('show'), 10);
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 500);
+            }, 3000);
+        }
 
-                    // SÓ executa as funções de admin SE os elementos visuais do dashboard existirem.
-                    if (ui.kpiTotalAtivos) {
-                        updateKPIs(data.kpi);
-                    }
-                    if (ui.chartCanvases.unidade) {
-                        renderCharts(data.chartData);
-                    }
-
-                    // Funções que rodam para todos os perfis (a tabela e a paginação)
-                    renderTable(data.tableData);
-                    renderPagination(data.pagination);
-                } catch (e) { console.error("ERRO DENTRO DE updateUI!", e); }
-            }
-
-            // Função unificada para popular todos os dropdowns
-            function updateDropdowns(filters) {
-                // Popula os <select> dos formulários (modal de adicionar e editar)
-                if (ui.unidadeModalSelect.options.length <= 1 && filters.unidades) {
-                    ui.unidadeModalSelect.innerHTML = '<option value="" disabled selected>Selecione uma Unidade</option>';
-                    filters.unidades.forEach(u => ui.unidadeModalSelect.add(new Option(u, u)));
+        function initializeSearchableDropdown(inputElement, optionsSourceUrl) {
+            if (!inputElement) return;
+            const parent = inputElement.parentElement;
+            if (parent.classList.contains('searchable-dropdown')) return;
+            parent.classList.add('searchable-dropdown');
+            const dropdownPanel = document.createElement('div');
+            dropdownPanel.className = 'searchable-dropdown-panel';
+            parent.appendChild(dropdownPanel);
+            let allOptions = [];
+            fetch(optionsSourceUrl)
+                .then(res => res.json())
+                .then(data => { allOptions = data; })
+                .catch(err => console.error(`Falha ao carregar opções de ${optionsSourceUrl}:`, err));
+            const renderOptions = (filter = '') => {
+                dropdownPanel.innerHTML = '';
+                const filteredOptions = allOptions.filter(opt => opt.toLowerCase().includes(filter.toLowerCase()));
+                if (filteredOptions.length === 0) {
+                    dropdownPanel.innerHTML = '<div class="searchable-dropdown-item" style="color: #888; cursor: default;">Nenhuma opção encontrada</div>';
+                    return;
                 }
-
-                // Popula os <select> dos filtros do dashboard, SE eles existirem
-                if(ui.unidadeFiltro) {
-                    const currentUnidade = ui.unidadeFiltro.value;
-                    if (ui.unidadeFiltro.options.length <= 1 && filters.unidades) {
-                        filters.unidades.forEach(u => ui.unidadeFiltro.add(new Option(u, u)));
-                    }
-                    ui.unidadeFiltro.value = currentUnidade;
-
-                    const currentSetor = ui.setorFiltro.value;
-                    ui.setorFiltro.innerHTML = '<option value="">Todos os Setores</option>';
-                    if (filters.setores && filters.setores.length > 0) {
-                        filters.setores.forEach(s => ui.setorFiltro.add(new Option(s, s)));
-                        ui.setorFiltro.disabled = false;
-                        ui.setorFiltro.value = currentSetor;
-                    } else {
-                        ui.setorFiltro.disabled = true;
-                    }
-                }
-            }
-
-            function updateKPIs(kpi) {
-                if (!ui.kpiTotalAtivos) return;
-                ui.kpiTotalAtivos.textContent = kpi.totalAtivos;
-                ui.kpiTotalIdsecure.textContent = kpi.totalIdsecure;
-                ui.kpiTurnover.textContent = kpi.turnover;
-                ui.kpiTempoMedio.textContent = kpi.tempoMedio;
-            }
-
-            function handleChartClick(event, elements, filterType) {
-                if (event.native) { event.native.stopPropagation(); }
-                if (elements.length === 0) return;
-                const chart = event.chart;
-                const elementIndex = elements[0].index;
-                const label = chart.data.labels[elementIndex];
-                if (filterType === 'unidade') {
-                    currentFilters.unidade = label;
-                    if(ui.unidadeFiltro) ui.unidadeFiltro.value = label;
-                    currentFilters.setor = '';
-                    currentFilters.page = 1;
-                    fetchAndRenderData();
-                }
-            }
-
-            function renderCharts(chartData) {
-                if (!ui.chartCanvases.unidade) return;
-                const textColor = getComputedStyle(document.documentElement).getPropertyValue('--text-color').trim() || '#000';
-                Chart.defaults.color = textColor;
-                Chart.defaults.borderColor = 'rgba(128, 128, 128, 0.1)';
-                const chartConfigs = {
-                    unidade: { type: 'bar', data: chartData.porUnidade, options: { onClick: (event, els) => handleChartClick(event, els, 'unidade') }},
-                    setor: { type: 'bar', data: chartData.porSetor, options: { indexAxis: 'y' }},
-                    faixaEtaria: { type: 'doughnut', data: chartData.porFaixaEtaria, options: { plugins: { legend: { position: 'right' }}} },
-                    tendencia: { type: 'line', data: chartData.tendenciaContratacoes, options: { scales: { y: { beginAtZero: true, ticks: { precision: 0 }}}, elements: { line: { tension: 0.3, fill: true }}}}
-                };
-                for (const key in chartConfigs) {
-                    if (charts[key]) charts[key].destroy();
-                    const canvas = ui.chartCanvases[key];
-                    if (!canvas) continue;
-                    const config = chartConfigs[key];
-                    charts[key] = new Chart(canvas, {
-                        type: config.type,
-                        data: {
-                            labels: config.data.labels,
-                            datasets: [{
-                                data: config.data.data,
-                                backgroundColor: config.type === 'line' ? 'rgba(0, 155, 196, 0.2)' : (config.type === 'doughnut' ? ['#FD4289', '#009BC4', '#FFC107', '#28A745', '#6F42C1'] : (key === 'unidade' ? '#FD4289' : '#009BC4')),
-                                borderColor: config.type === 'line' ? 'rgba(0, 155, 196, 1)' : undefined,
-                                borderWidth: config.type === 'line' ? 2 : 1,
-                                label: config.type === 'line' ? 'Contratações' : 'Colaboradores'
-                            }]
-                        },
-                        options: { ...config.options, responsive: true, maintainAspectRatio: false, plugins: { ...config.options.plugins, legend: { display: config.type !== 'line' && config.type !== 'bar' }}}
+                filteredOptions.forEach(opt => {
+                    const item = document.createElement('div');
+                    item.className = 'searchable-dropdown-item';
+                    item.textContent = opt;
+                    item.addEventListener('mousedown', () => {
+                        inputElement.value = opt;
+                        dropdownPanel.style.display = 'none';
                     });
-                }
-            }
-
-            function renderTable(colaboradores) {
-                ui.tableBody.innerHTML = '';
-                const placeholderAvatar = `{{ url_for('static', filename='images/placeholder-avatar.png') }}`;
-                const uploadsUrl = `{{ url_for('static', filename='uploads/fotos_colaboradores/') }}`.slice(0,-1);
-                if (!colaboradores || colaboradores.length === 0) { ui.tableBody.innerHTML = `<tr><td colspan="6" class="text-center">Nenhum colaborador encontrado.</td></tr>`; return; }
-                colaboradores.forEach(c => {
-                    const statusBadge = c.ativo ? '<span class="status-badge active">Ativo</span>' : '<span class="status-badge inactive">Inativo</span>';
-                    const actionButton = c.ativo ? `<button type="submit" class="btn-table-action danger" title="Desligar"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>` : `<button type="submit" class="btn-table-action success" title="Reativar"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg></button>`;
-                    const fotoUrl = c.foto_filename ? `${uploadsUrl}/${c.foto_filename}?v=${new Date().getTime()}` : placeholderAvatar;
-                    const rowHTML = `
-                        <tr data-id="${c.id}">
-                            <td data-label="Nome"><div class="stacked-photo-name"><img src="${fotoUrl}" alt="Foto de ${c.nome}" class="table-photo" onerror="this.onerror=null;this.src='${placeholderAvatar}';"> ${c.nome}</div></td>
-                            <td data-label="CPF">${c.cpf}</td>
-                            <td data-label="Setor / Cargo"><div class="stacked-text"><span>${c.setor || 'N/A'}</span><small>${c.cargo || 'N/A'}</small></div></td>
-                            <td data-label="Unidade">${c.unidade || 'N/A'}</td>
-                            <td data-label="Status">${statusBadge}</td>
-                            <td data-label="Ações"><div class="action-buttons-container"><button class="btn-table-action info edit-btn" title="Editar" data-id="${c.id}"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg></button><form class="toggle-status-form" action="/admin/colaborador/toggle-status/${c.id}" method="POST">${actionButton}</form></div></td>
-                        </tr>`;
-                    ui.tableBody.insertAdjacentHTML('beforeend', rowHTML);
+                    dropdownPanel.appendChild(item);
                 });
-            }
-
-            function renderPagination(pagination) {
-                if (!pagination) { ui.paginationInfo.textContent = ''; ui.paginationControls.innerHTML = ''; return; }
-                const { page, totalPages, totalItems } = pagination;
-                ui.paginationInfo.textContent = `Página ${page} de ${totalPages} (${totalItems} resultados)`;
-                ui.paginationControls.innerHTML = '';
-                if (totalPages <= 1) return;
-                const prevBtn = document.createElement('button');
-                prevBtn.innerHTML = '«'; prevBtn.disabled = page === 1;
-                prevBtn.addEventListener('click', () => { currentFilters.page--; fetchAndRenderData(); });
-                ui.paginationControls.appendChild(prevBtn);
-                for (let i = 1; i <= totalPages; i++) {
-                    if (i === 1 || i === totalPages || (i >= page - 1 && i <= page + 1)) {
-                        const pageBtn = document.createElement('button');
-                        pageBtn.textContent = i;
-                        if (i === page) pageBtn.classList.add('active');
-                        pageBtn.addEventListener('click', () => { currentFilters.page = i; fetchAndRenderData(); });
-                        ui.paginationControls.appendChild(pageBtn);
-                    } else if (i === page - 2 || i === page + 2) {
-                        const dots = document.createElement('span');
-                        dots.textContent = '...';
-                        ui.paginationControls.appendChild(dots);
+            };
+            inputElement.addEventListener('focus', () => {
+                renderOptions(inputElement.value);
+                dropdownPanel.style.display = 'block';
+            });
+            inputElement.addEventListener('input', () => {
+                renderOptions(inputElement.value);
+            });
+            inputElement.addEventListener('blur', () => {
+                setTimeout(() => {
+                    if (!allOptions.includes(inputElement.value)) {
+                        inputElement.value = '';
                     }
-                }
-                const nextBtn = document.createElement('button');
-                nextBtn.innerHTML = '»'; nextBtn.disabled = page === totalPages;
-                nextBtn.addEventListener('click', () => { currentFilters.page++; fetchAndRenderData(); });
-                ui.paginationControls.appendChild(nextBtn);
-            }
+                    dropdownPanel.style.display = 'none';
+                }, 150);
+            });
+        }
 
-            function showToast(message, type = 'success') {
-                const toastContainer = document.getElementById('toast-container');
-                const toast = document.createElement('div');
-                toast.className = `toast ${type}`; toast.textContent = message;
-                toastContainer.appendChild(toast);
-                setTimeout(() => toast.classList.add('show'), 10);
-                setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 500); }, 3000);
-            }
-            async function populateDatalists() {
+        function initializePhotoHandlers(prefix) {
+            const fotoSection = document.getElementById(`foto-section-${prefix}`);
+            if (!fotoSection) return null;
+
+            const parentForm = fotoSection.closest('form');
+            if (!parentForm) return null;
+
+            const placeholderAvatar = `{{ url_for('static', filename='images/placeholder-avatar.png') }}`;
+            const fotoPreview = fotoSection.querySelector(`#foto-preview-${prefix}`);
+            const fotoUploadInput = fotoSection.querySelector(`#foto-upload-${prefix}`);
+            const fotoBase64Input = fotoSection.querySelector(`#foto-base64-${prefix}`);
+            const btnLigarWebcam = fotoSection.querySelector(`#btn-ligar-webcam-${prefix}`);
+            const actionsInitialDiv = fotoSection.querySelector(`#photo-actions-${prefix}`);
+            const fileNameSpan = fotoSection.querySelector(`#file-name-${prefix}`);
+
+            const btnRemoverAnexoX = parentForm.querySelector('.btn-remover-anexo-x');
+
+            const webcamOverlay = document.getElementById(`webcam-overlay-${prefix}`);
+            const videoElement = document.getElementById(`webcam-video-${prefix}`);
+            const canvasElement = document.getElementById(`webcam-preview-canvas-${prefix}`);
+            const flashEffect = document.getElementById(`flash-effect-${prefix}`);
+            const btnDesligarWebcam = document.getElementById(`btn-desligar-webcam-${prefix}`);
+            const btnCapturarFoto = document.getElementById(`btn-capturar-foto-${prefix}`);
+            const btnConfirmarFoto = document.getElementById(`btn-confirmar-foto-${prefix}`);
+            const btnTentarNovamente = document.getElementById(`btn-tentar-novamente-${prefix}`);
+            const captureControls = document.getElementById(`capture-controls-${prefix}`);
+            const previewControls = document.getElementById(`preview-controls-${prefix}`);
+            let stream;
+
+            const setPhotoState = (hasPhoto, fileName = "") => {
+                if(actionsInitialDiv) actionsInitialDiv.style.display = hasPhoto ? 'none' : 'flex';
+                if(fileNameSpan) fileNameSpan.textContent = hasPhoto ? fileName : "Nenhum arquivo selecionado";
+                if (btnRemoverAnexoX) {
+                    btnRemoverAnexoX.style.display = hasPhoto ? 'inline-block' : 'none';
+                }
+            };
+
+            const ligarWebcam = async () => {
+                if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                    alert("Seu navegador não tem suporte para acessar a webcam."); return;
+                }
                 try {
-                    const [setoresRes, cargosRes] = await Promise.all([fetch('/admin/api/get-setores'), fetch('/admin/api/get-cargos')]);
-                    const setores = await setoresRes.json(); const cargos = await cargosRes.json();
-                    const setoresDatalist = document.getElementById('setores-list'); const cargosDatalist = document.getElementById('cargos-list');
-                    setoresDatalist.innerHTML = ''; cargosDatalist.innerHTML = '';
-                    setores.forEach(setor => setoresDatalist.insertAdjacentHTML('beforeend', `<option value="${setor}"></option>`));
-                    cargos.forEach(cargo => cargosDatalist.insertAdjacentHTML('beforeend', `<option value="${cargo}"></option>`));
-                } catch (error) { console.error("Erro ao popular listas de autocomplete:", error); }
-            }
-            function initializePhotoHandlers(modalType) {
-                const prefix = modalType;
-                const placeholderAvatar = `{{ url_for('static', filename='images/placeholder-avatar.png') }}`;
-                const form = document.getElementById(`${prefix}-colaborador-form`);
-                const fotoPreview = form.querySelector(`#foto-preview-${prefix}`);
-                const fotoUploadInput = form.querySelector(`#foto-upload-${prefix}`);
-                const fotoBase64Input = form.querySelector(`#foto-base64-${prefix}`);
-                const btnLigarWebcam = form.querySelector(`#btn-ligar-webcam-${prefix}`);
-                const btnDesligarWebcam = form.querySelector(`#btn-desligar-webcam-${prefix}`);
-                const btnCapturarFoto = form.querySelector(`#btn-capturar-foto-${prefix}`);
-                const btnRemoverFoto = form.querySelector(`#btn-remover-foto-${prefix}`);
-                const actionsInitialDiv = form.querySelector(`.foto-actions-initial`);
-                const webcamContainer = form.querySelector(`#webcam-container-${prefix}`);
-                const videoElement = form.querySelector(`#webcam-video-${prefix}`);
-                const fileNameSpan = form.querySelector(`#file-name-${prefix}`);
-                const removerFotoInput = form.querySelector(`#remover-foto-input-${prefix}`);
-                let stream;
-                const setPhotoState = (hasPhoto) => {
-                    actionsInitialDiv.style.display = hasPhoto ? 'none' : 'flex';
-                    btnRemoverFoto.style.display = hasPhoto ? 'block' : 'none';
-                };
-                const resetPhotoState = () => {
-                    fotoPreview.src = placeholderAvatar;
-                    fotoUploadInput.value = '';
-                    fotoBase64Input.value = '';
-                    fileNameSpan.textContent = 'Nenhum arquivo selecionado';
-                    setPhotoState(false);
-                    desligarWebcam();
-                    if (removerFotoInput) {
-                        removerFotoInput.value = '1';
+                    stream = await navigator.mediaDevices.getUserMedia({ video: { width: 1280, height: 720, facingMode: 'user' } });
+                    videoElement.srcObject = stream;
+                    videoElement.style.display = 'block';
+                    canvasElement.style.display = 'none';
+                    captureControls.style.display = 'block';
+                    previewControls.style.display = 'none';
+                    webcamOverlay.classList.add('active');
+                } catch (err) { console.error("Erro ao acessar a webcam:", err); alert("Não foi possível acessar a webcam. Verifique as permissões do navegador."); }
+            };
+
+            const desligarWebcam = () => {
+                if (stream) stream.getTracks().forEach(track => track.stop());
+                if(webcamOverlay) webcamOverlay.classList.remove('active');
+            };
+
+            const resetPhotoState = () => {
+                if(fotoPreview) fotoPreview.src = placeholderAvatar;
+                if(fotoUploadInput) fotoUploadInput.value = '';
+                if(fotoBase64Input) fotoBase64Input.value = '';
+
+                if (prefix === 'edit') {
+                    const removerFotoInput = document.getElementById(`remover-foto-input-edit`);
+                    if (removerFotoInput) removerFotoInput.value = '1';
+                }
+                setPhotoState(false);
+            };
+
+            if (btnLigarWebcam) btnLigarWebcam.addEventListener('click', ligarWebcam);
+            if (btnDesligarWebcam) btnDesligarWebcam.addEventListener('click', desligarWebcam);
+            if (btnRemoverAnexoX) btnRemoverAnexoX.addEventListener('click', resetPhotoState);
+
+            if(fotoUploadInput) fotoUploadInput.addEventListener('change', (event) => {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => { if(fotoPreview) fotoPreview.src = e.target.result; };
+                    reader.readAsDataURL(file);
+                    if(fotoBase64Input) fotoBase64Input.value = '';
+                    if (prefix === 'edit') {
+                         const removerFotoInput = document.getElementById(`remover-foto-input-edit`);
+                         if (removerFotoInput) removerFotoInput.value = '0';
                     }
-                };
-                fotoUploadInput.addEventListener('change', (event) => {
-                    const file = event.target.files[0];
-                    if (file) {
-                        if (removerFotoInput) removerFotoInput.value = '0';
-                        const reader = new FileReader();
-                        reader.onload = (e) => {
-                            fotoPreview.src = e.target.result;
-                            setPhotoState(true);
-                        };
-                        reader.readAsDataURL(file);
-                        fotoBase64Input.value = '';
-                        fileNameSpan.textContent = file.name;
-                    }
-                });
-                btnRemoverFoto.addEventListener('click', resetPhotoState);
-                btnLigarWebcam.addEventListener('click', async () => {
-                    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-                        try {
-                            stream = await navigator.mediaDevices.getUserMedia({ video: true });
-                            videoElement.srcObject = stream;
-                            webcamContainer.style.display = 'block';
-                        } catch (err) { alert("Não foi possível acessar a webcam."); }
-                    } else { alert("Seu navegador não suporta webcam."); }
-                });
-                const desligarWebcam = () => {
-                    if (stream) stream.getTracks().forEach(track => track.stop());
-                    webcamContainer.style.display = 'none';
-                };
-                btnDesligarWebcam.addEventListener('click', desligarWebcam);
-                btnCapturarFoto.addEventListener('click', () => {
+                    setPhotoState(true, file.name);
+                }
+            });
+
+            if(btnCapturarFoto) btnCapturarFoto.addEventListener('click', () => {
+                if (videoElement.readyState === videoElement.HAVE_ENOUGH_DATA) {
+                    if(flashEffect) flashEffect.classList.add('flash');
+                    const context = canvasElement.getContext('2d');
+                    canvasElement.width = videoElement.videoWidth;
+                    canvasElement.height = videoElement.videoHeight;
+                    context.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
+                    videoElement.style.display = 'none';
+                    canvasElement.style.display = 'block';
+                    if(captureControls) captureControls.style.display = 'none';
+                    if(previewControls) previewControls.style.display = 'flex';
+                    setTimeout(() => { if(flashEffect) flashEffect.classList.remove('flash') }, 400);
+                }
+            });
+
+            if(btnTentarNovamente) btnTentarNovamente.addEventListener('click', () => {
+                videoElement.style.display = 'block';
+                canvasElement.style.display = 'none';
+                if(captureControls) captureControls.style.display = 'block';
+                if(previewControls) previewControls.style.display = 'none';
+            });
+
+            if(btnConfirmarFoto) btnConfirmarFoto.addEventListener('click', () => {
+                const dataUrl = canvasElement.toDataURL('image/jpeg');
+                if(fotoPreview) fotoPreview.src = dataUrl;
+                if(fotoBase64Input) fotoBase64Input.value = dataUrl;
+                if(fotoUploadInput) fotoUploadInput.value = '';
+                if (prefix === 'edit') {
+                    const removerFotoInput = document.getElementById(`remover-foto-input-edit`);
                     if (removerFotoInput) removerFotoInput.value = '0';
-                    const canvas = document.createElement('canvas');
-                    canvas.width = videoElement.videoWidth;
-                    canvas.height = videoElement.videoHeight;
-                    canvas.getContext('2d').drawImage(videoElement, 0, 0, canvas.width, canvas.height);
-                    const dataUrl = canvas.toDataURL('image/jpeg');
-                    fotoPreview.src = dataUrl;
-                    fotoBase64Input.value = dataUrl;
-                    fotoUploadInput.value = '';
-                    fileNameSpan.textContent = 'Imagem capturada da webcam.';
-                    setPhotoState(true);
-                    desligarWebcam();
-                });
-                return { reset: resetPhotoState, setPhotoState: setPhotoState };
-            }
-            const addPhotoHandlers = initializePhotoHandlers('add');
-            const editPhotoHandlers = initializePhotoHandlers('edit');
-            const closeModal = () => {
-                ui.addModal.classList.remove('active');
-                document.documentElement.classList.remove('modal-open');
-                addPhotoHandlers.reset();
-            };
-            const closeEditModal = () => {
-                ui.editModal.classList.remove('active');
-                document.documentElement.classList.remove('modal-open');
-                editPhotoHandlers.reset();
-                if(ui.editForm.querySelector('#remover-foto-input-edit')) {
-                    ui.editForm.querySelector('#remover-foto-input-edit').value = '0';
                 }
-            };
-            if (ui.addBtn) ui.addBtn.addEventListener('click', () => {
-                ui.addModal.classList.add('active');
-                document.documentElement.classList.add('modal-open');
+                setPhotoState(true, 'Imagem da webcam');
+                desligarWebcam();
             });
-            const openEditModal = async (id) => {
-                try {
-                    const response = await fetch(`/admin/api/colaborador/${id}`);
-                    if (!response.ok) throw new Error('Falha ao buscar dados.');
-                    const result = await response.json();
-                    if (result.success) {
-                        editPhotoHandlers.reset();
-                        if(ui.editForm.querySelector('#remover-foto-input-edit')) {
-                            ui.editForm.querySelector('#remover-foto-input-edit').value = '0';
-                        }
-                        const data = result.data;
-                        const form = ui.editForm;
-                        form.action = `/admin/api/colaborador/edit/${data.id}`;
-                        form.querySelector('#edit-id').value = data.id;
-                        form.querySelector('#edit-nome-modal').value = data.nome;
-                        form.querySelector('#edit-cpf-modal').value = data.cpf;
-                        form.querySelector('#edit-nascimento-modal').value = data.data_nascimento;
-                        form.querySelector('#edit-pis-modal').value = data.pis || '';
-                        form.querySelector('#edit-cargo-modal').value = data.cargo;
-                        form.querySelector('#edit-setor-modal').value = data.setor;
-                        form.querySelector('#edit-admissao-modal').value = data.data_admissao;
-                        const fotoPreviewEdit = document.getElementById('foto-preview-edit');
-                        const placeholderAvatar = `{{ url_for('static', filename='images/placeholder-avatar.png') }}`;
-                        const uploadsUrl = `{{ url_for('static', filename='uploads/fotos_colaboradores/') }}`.slice(0,-1);
-                        if(data.foto_filename) {
-                            fotoPreviewEdit.src = `${uploadsUrl}/${data.foto_filename}`;
-                            document.getElementById('file-name-edit').textContent = data.foto_filename;
-                            editPhotoHandlers.setPhotoState(true);
-                        } else {
-                            editPhotoHandlers.setPhotoState(false);
-                        }
-                        const unidadeSelect = form.querySelector('#edit-unidade-modal');
-                        unidadeSelect.innerHTML = '';
-                        // Corrigido para buscar as unidades a partir da fonte da verdade (filtros de admin), se disponíveis
-                        const sourceUnidades = ui.unidadeFiltro || ui.unidadeModalSelect;
-                        sourceUnidades.querySelectorAll('option').forEach(option => {
-                            if (option.value) unidadeSelect.add(new Option(option.text, option.value));
-                        });
-                        unidadeSelect.value = data.unidade;
-                        ui.editModal.classList.add('active');
-                        document.documentElement.classList.add('modal-open');
-                    } else { showToast(result.message || 'Erro ao carregar dados.', 'error'); }
-                } catch (error) { showToast('Erro de conexão ao carregar dados para edição.', 'error'); }
-            };
-            if (ui.addModal) {
-                ui.addModal.querySelector('#close-modal-btn').addEventListener('click', closeModal);
-                ui.addModal.querySelector('#cancel-add-btn').addEventListener('click', closeModal);
-                ui.addModal.addEventListener('click', (e) => { if (e.target === ui.addModal) closeModal(); });
-            }
-            if (ui.addColaboradorForm) {
-                ui.addColaboradorForm.addEventListener('submit', async function(e) {
-                    e.preventDefault();
-                    const formData = new FormData(this);
-                    const submitButton = this.querySelector('button[type="submit"]');
-                    submitButton.disabled = true; submitButton.textContent = 'Salvando...';
-                    try {
-                        const response = await fetch(this.action, { method: 'POST', body: formData });
-                        const result = await response.json();
-                        if (result.success) {
-                            showToast('Colaborador cadastrado com sucesso!', 'success');
-                            closeModal(); this.reset(); fetchAndRenderData(); populateDatalists();
-                        } else { showToast(result.message || 'Ocorreu um erro no cadastro.', 'error'); }
-                    } catch (error) { showToast('Erro de conexão. Tente novamente.', 'error');
-                    } finally { submitButton.disabled = false; submitButton.textContent = 'Salvar Colaborador'; }
+
+            const previewContainer = fotoSection.querySelector(`#preview-container-${prefix}`);
+            if (previewContainer) {
+                previewContainer.addEventListener('click', () => {
+                    if ((!btnRemoverAnexoX || btnRemoverAnexoX.style.display === 'none') && fotoUploadInput) {
+                        fotoUploadInput.click();
+                    }
                 });
             }
-            ui.tableBody.addEventListener('click', (e) => {
-                const editButton = e.target.closest('.edit-btn');
-                if (editButton) { openEditModal(editButton.dataset.id); }
+
+            return { reset: resetPhotoState, setPhotoState: setPhotoState };
+        }
+
+        const addColaboradorPhotoHandlers = initializePhotoHandlers('colaborador-add');
+        const addMedicoPhotoHandlers = initializePhotoHandlers('medico-add');
+        const addEnfermagemPhotoHandlers = initializePhotoHandlers('enfermagem-add');
+        const editPhotoHandlers = initializePhotoHandlers('edit');
+
+        const resetAddModal = () => {
+            ui.addModalForms.forEach(form => { form.reset(); form.style.display = 'none'; });
+            if (addColaboradorPhotoHandlers) addColaboradorPhotoHandlers.reset();
+            if (addMedicoPhotoHandlers) addMedicoPhotoHandlers.reset();
+            if (addEnfermagemPhotoHandlers) addEnfermagemPhotoHandlers.reset();
+            ui.addModalSelectType.value = '';
+            ui.addModalSelectionDiv.style.display = 'block';
+        };
+
+        const closeModal = () => { ui.addModal.classList.remove('active'); document.documentElement.classList.remove('modal-open'); resetAddModal(); };
+        const closeEditModal = () => { ui.editModal.classList.remove('active'); document.documentElement.classList.remove('modal-open'); };
+
+        if (ui.addBtn) ui.addBtn.addEventListener('click', () => {
+            resetAddModal();
+            ui.addModal.classList.add('active');
+            document.documentElement.classList.add('modal-open');
+        });
+
+        ui.addModal.querySelector('#close-modal-btn').addEventListener('click', closeModal);
+        ui.addModalCancelBtn.addEventListener('click', closeModal);
+        ui.addModal.addEventListener('click', (e) => { if (e.target === ui.addModal) closeModal(); });
+
+        ui.addModalSelectType.addEventListener('change', () => {
+            const selection = ui.addModalSelectType.value;
+            ui.addModalSelectionDiv.style.display = 'none';
+            ui.addModalForms.forEach(form => { form.style.display = form.id === `form-${selection}-add` ? 'block' : 'none'; });
+        });
+
+        ui.addModalBackBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                ui.addModalForms.forEach(form => form.style.display = 'none');
+                ui.addModalSelectionDiv.style.display = 'block';
+                ui.addModalSelectType.value = '';
             });
-            ui.editModal.querySelector('#close-edit-modal-btn').addEventListener('click', closeEditModal);
-            ui.editModal.querySelector('#cancel-edit-btn').addEventListener('click', closeEditModal);
-            ui.editModal.addEventListener('click', (e) => { if (e.target === ui.editModal) closeEditModal(); });
-            ui.editForm.addEventListener('submit', async function(e) {
+        });
+
+        ui.addModalForms.forEach(form => {
+             form.addEventListener('submit', async function(e) {
                 e.preventDefault();
-                const formData = new FormData(this);
-                const colaboradorId = formData.get('id');
                 const submitButton = this.querySelector('button[type="submit"]');
-                submitButton.disabled = true; submitButton.textContent = 'Salvando...';
+                const originalButtonText = submitButton.textContent;
+                submitButton.disabled = true;
+                submitButton.textContent = 'Salvando...';
+                let response, result, isSuccess = false;
                 try {
-                    const response = await fetch(this.action, { method: 'POST', body: formData });
-                    const result = await response.json();
-                    if (result.success) {
-                        showToast('Colaborador atualizado com sucesso!', 'success');
-                        const row = ui.tableBody.querySelector(`tr[data-id="${colaboradorId}"]`);
-                        if (row) {
-                            const img = row.querySelector('.table-photo');
-                            if (img) {
-                                const placeholderAvatar = `{{ url_for('static', filename='images/placeholder-avatar.png') }}`;
-                                if (result.data && result.data.foto_filename) {
-                                    const uploadsUrl = `{{ url_for('static', filename='uploads/fotos_colaboradores/') }}`.slice(0,-1);
-                                    img.src = `${uploadsUrl}/${result.data.foto_filename}?v=${new Date().getTime()}`;
-                                } else {
-                                    img.src = placeholderAvatar;
-                                }
-                            }
-                        }
-                        closeEditModal();
-                        fetchAndRenderData();
-                        populateDatalists();
-                    } else {
-                        showToast(result.message || 'Ocorreu um erro ao salvar.', 'error');
-                    }
+                    const formData = new FormData(this);
+                    response = await fetch(this.action, { method: 'POST', body: formData });
+                    result = await response.json();
+                    isSuccess = response.ok || result.success === true;
                 } catch (error) {
-                    showToast('Erro de conexão. Tente novamente.', 'error');
+                    console.error("Erro na requisição fetch:", error);
+                    result = { message: 'Erro de conexão. Tente novamente.' };
+                    isSuccess = false;
                 } finally {
                     submitButton.disabled = false;
-                    submitButton.textContent = 'Salvar Alterações';
+                    submitButton.textContent = originalButtonText;
                 }
-            });
-            // Adiciona listeners aos elementos de admin somente se eles existirem
-            if (ui.unidadeFiltro) {
-                ui.unidadeFiltro.addEventListener('change', () => { currentFilters.unidade = ui.unidadeFiltro.value; currentFilters.setor = ''; currentFilters.page = 1; fetchAndRenderData(); });
-                ui.setorFiltro.addEventListener('change', () => { currentFilters.setor = ui.setorFiltro.value; currentFilters.page = 1; fetchAndRenderData(); });
-                ui.resetBtn.addEventListener('click', () => { currentFilters = { unidade: '', setor: '', search: '', inactive: false, page: 1 }; ui.unidadeFiltro.value = ''; ui.setorFiltro.value = ''; ui.searchInput.value = ''; ui.inactiveToggle.checked = false; fetchAndRenderData(); });
-            }
-            if(ui.exportBtn) {
-                ui.exportBtn.addEventListener('click', () => { const exportFilters = { ...currentFilters }; delete exportFilters.page; const params = new URLSearchParams(exportFilters); const exportUrl = `/admin/api/export-data?${params.toString()}`; window.location.href = exportUrl; });
-            }
-            // Listeners comuns
-            ui.searchInput.addEventListener('keyup', () => { clearTimeout(searchDebounceTimer); searchDebounceTimer = setTimeout(() => { currentFilters.search = ui.searchInput.value; currentFilters.page = 1; fetchAndRenderData(); }, 300); });
-            ui.inactiveToggle.addEventListener('change', (e) => { currentFilters.inactive = e.target.checked; currentFilters.page = 1; fetchAndRenderData(); });
-            ui.tableBody.addEventListener('submit', async (e) => {
-                if (e.target.classList.contains('toggle-status-form')) {
-                    e.preventDefault();
-                    const form = e.target;
-                    const row = form.closest('tr');
-                    const nome = row.querySelector('.stacked-photo-name').textContent.trim();
-                    const isActivating = form.querySelector('button').classList.contains('success');
-                    const actionText = isActivating ? 'reativar' : 'inativar';
-                    if (confirm(`Você tem certeza que deseja ${actionText} o colaborador ${nome}?`)) {
-                        try {
-                            const response = await fetch(form.action, { method: 'POST' });
-                            const result = await response.json();
-                            if (result.success) { showToast(`Colaborador ${result.data.nome} foi ${result.data.status_texto} com sucesso.`, 'success'); fetchAndRenderData(); }
-                            else { showToast(result.message || `Ocorreu um erro ao ${actionText}.`, 'error'); }
-                        } catch (err) { showToast('Erro de conexão. Tente novamente.', 'error'); }
+                if (isSuccess) {
+                    showToast(result.message || 'Operação realizada com sucesso!', 'success');
+                    closeModal();
+                    if (result.new_data) {
+                        const newRowHTML = generateRowHTML(result.new_data);
+                        ui.tableBody.insertAdjacentHTML('afterbegin', newRowHTML);
+                    } else {
+                        fetchMainData();
                     }
                 }
+                else {
+                    showToast(result.message || 'Ocorreu um erro desconhecido.', 'error');
+                }
             });
-
-            fetchAndRenderData();
-            populateDatalists(); // Datalists são necessárias para os formulários de TODOS os perfis.
-
         });
-    </script>
+
+        const openEditModal = async (id) => {
+            try {
+                const response = await fetch(`/admin/api/colaborador/${id}`);
+                if (!response.ok) throw new Error('Falha ao buscar dados.');
+                const result = await response.json();
+                if (result.success) {
+                    if (editPhotoHandlers) editPhotoHandlers.reset();
+                    const data = result.data;
+                    const form = ui.editForm;
+                    form.action = `/admin/api/colaborador/edit/${data.id}`;
+                    form.querySelector('#edit-id').value = data.id;
+                    form.querySelector('#edit-nome-modal').value = data.nome;
+                    form.querySelector('#edit-cpf-modal').value = data.cpf;
+                    form.querySelector('#edit-nascimento-modal').value = data.data_nascimento;
+                    form.querySelector('#edit-pis-modal').value = data.pis || '';
+                    form.querySelector('#edit-cargo-modal').value = data.cargo;
+                    form.querySelector('#edit-setor-modal').value = data.setor;
+                    form.querySelector('#edit-admissao-modal').value = data.data_admissao;
+                    if(data.foto_filename) {
+                        const fotoPreviewEdit = document.getElementById('foto-preview-edit');
+                        const uploadsUrl = `{{ url_for('admin.serve_foto_colaborador', filename='') }}`;
+                        fotoPreviewEdit.src = `${uploadsUrl}${data.foto_filename}?v=${new Date().getTime()}`;
+                        if (editPhotoHandlers) editPhotoHandlers.setPhotoState(true, data.foto_filename);
+                    } else {
+                        if (editPhotoHandlers) editPhotoHandlers.setPhotoState(false);
+                    }
+                    const unidadeSelect = form.querySelector('#edit-unidade-modal');
+                    unidadeSelect.innerHTML = '';
+                    const sourceUnidades = ui.unidadeFiltro;
+                    sourceUnidades.querySelectorAll('option').forEach(option => {
+                        if (option.value) unidadeSelect.add(new Option(option.text, option.value));
+                    });
+                    unidadeSelect.value = data.unidade;
+                    ui.editModal.classList.add('active');
+                    document.documentElement.classList.add('modal-open');
+                } else { showToast(result.message || 'Erro ao carregar dados.', 'error'); }
+            } catch (error) { showToast('Erro de conexão ao carregar para edição.', 'error'); }
+        };
+
+        ui.tableBody.addEventListener('click', (e) => {
+            const editButton = e.target.closest('.edit-btn');
+            if (editButton) openEditModal(editButton.dataset.id);
+        });
+
+        ui.editModal.querySelector('#close-edit-modal-btn').addEventListener('click', closeEditModal);
+        ui.editModal.querySelector('#cancel-edit-btn').addEventListener('click', closeEditModal);
+        ui.editModal.addEventListener('click', (e) => { if (e.target === ui.editModal) closeEditModal(); });
+
+        ui.editForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const submitButton = this.querySelector('button[type="submit"]');
+            submitButton.disabled = true; submitButton.textContent = 'Salvando...';
+            try {
+                const response = await fetch(this.action, { method: 'POST', body: new FormData(this) });
+                const result = await response.json();
+                if (result.success) {
+                    showToast('Colaborador atualizado com sucesso!', 'success');
+                    closeEditModal();
+                    if (result.updated_data) {
+                        const updatedRowHTML = generateRowHTML(result.updated_data);
+                        const rowToUpdate = ui.tableBody.querySelector(`tr[data-id="${result.updated_data.id}"]`);
+                        if (rowToUpdate) {
+                            rowToUpdate.outerHTML = updatedRowHTML;
+                        } else {
+                            fetchMainData();
+                        }
+                    } else {
+                        fetchMainData();
+                    }
+                }
+                else {
+                    showToast(result.message || 'Ocorreu um erro ao salvar.', 'error');
+                }
+            } catch (error) {
+                showToast('Erro de conexão. Tente novamente.', 'error');
+            } finally {
+                submitButton.disabled = false; submitButton.textContent = 'Salvar Alterações';
+            }
+        });
+
+        if (ui.unidadeFiltro) {
+            ui.unidadeFiltro.addEventListener('change', () => { currentFilters.unidade = ui.unidadeFiltro.value; currentFilters.setor = ''; currentFilters.page = 1; fetchMainData(); });
+            ui.setorFiltro.addEventListener('change', () => { currentFilters.setor = ui.setorFiltro.value; currentFilters.page = 1; fetchMainData(); });
+            ui.resetBtn.addEventListener('click', () => { currentFilters = { unidade: '', setor: '', search: '', inactive: false, page: 1 }; ui.unidadeFiltro.value = ''; ui.setorFiltro.value = ''; ui.searchInput.value = ''; ui.inactiveToggle.checked = false; fetchMainData(); });
+        }
+        if(ui.exportBtn) {
+            ui.exportBtn.addEventListener('click', () => { const exportFilters = { ...currentFilters }; delete exportFilters.page; const params = new URLSearchParams(exportFilters); window.location.href = `/admin/api/export-data?${params.toString()}`; });
+        }
+        ui.searchInput.addEventListener('keyup', () => { clearTimeout(searchDebounceTimer); searchDebounceTimer = setTimeout(() => { currentFilters.search = ui.searchInput.value; currentFilters.page = 1; fetchMainData(); }, 300); });
+        ui.inactiveToggle.addEventListener('change', (e) => { currentFilters.inactive = e.target.checked; currentFilters.page = 1; fetchMainData(); });
+        ui.tableBody.addEventListener('submit', async (e) => {
+            if (e.target.classList.contains('toggle-status-form')) {
+                e.preventDefault();
+                const form = e.target;
+                const row = form.closest('tr');
+                const nome = row.querySelector('.stacked-photo-name').textContent.trim();
+                const isActivating = form.querySelector('button').classList.contains('success');
+                const actionText = isActivating ? 'reativar' : 'inativar';
+                if (confirm(`Você tem certeza que deseja ${actionText} o colaborador ${nome}?`)) {
+                    try {
+                        const response = await fetch(form.action, { method: 'POST' });
+                        const result = await response.json();
+                        if (result.success) { showToast(`Colaborador ${result.data.nome} foi ${result.data.status_texto} com sucesso.`, 'success'); fetchMainData(); }
+                        else { showToast(result.message || `Ocorreu um erro.`, 'error'); }
+                    } catch (err) { showToast('Erro de conexão.', 'error'); }
+                }
+            }
+        });
+
+        fetchMainData();
+        if (typeof fetchIdSecureKPI === 'function') {
+            fetchIdSecureKPI();
+        }
+        document.querySelectorAll('input[name="cargo"]').forEach(el => initializeSearchableDropdown(el, '/admin/api/get-cargos'));
+        document.querySelectorAll('input[name="setor"]').forEach(el => initializeSearchableDropdown(el, '/admin/api/get-setores'));
+    });
+</script>
 </body>
 </html>
