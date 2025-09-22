@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('views.static', filename='base/base.css') }}">
-    <link rel="stylesheet" href="{{ url_for('views.static', filename='admin/admin.css', v='1.5') }}">
+    <link rel="stylesheet" href="{{ url_for('views.static', filename='admin/admin.css', v='1.7') }}">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body data-api-url="{{ url_for('admin.get_rh_data') }}">
@@ -545,14 +545,17 @@
             const parent = inputElement.parentElement;
             if (parent.classList.contains('searchable-dropdown')) return;
             parent.classList.add('searchable-dropdown');
+
             const dropdownPanel = document.createElement('div');
             dropdownPanel.className = 'searchable-dropdown-panel';
             parent.appendChild(dropdownPanel);
+
             let allOptions = [];
             fetch(optionsSourceUrl)
                 .then(res => res.json())
                 .then(data => { allOptions = data; })
                 .catch(err => console.error(`Falha ao carregar opções de ${optionsSourceUrl}:`, err));
+
             const renderOptions = (filter = '') => {
                 dropdownPanel.innerHTML = '';
                 const filteredOptions = allOptions.filter(opt => opt.toLowerCase().includes(filter.toLowerCase()));
@@ -571,20 +574,32 @@
                     dropdownPanel.appendChild(item);
                 });
             };
+
             inputElement.addEventListener('focus', () => {
                 renderOptions(inputElement.value);
                 dropdownPanel.style.display = 'block';
             });
+
             inputElement.addEventListener('input', () => {
                 renderOptions(inputElement.value);
             });
+
             inputElement.addEventListener('blur', () => {
                 setTimeout(() => {
-                    if (!allOptions.includes(inputElement.value)) {
+                    const currentValue = inputElement.value.trim();
+                    if (currentValue === '') {
+                        dropdownPanel.style.display = 'none';
+                        return;
+                    }
+                    const matchingOption = allOptions.find(opt => opt.toLowerCase() === currentValue.toLowerCase());
+
+                    if (matchingOption) {
+                        inputElement.value = matchingOption;
+                    } else {
                         inputElement.value = '';
                     }
                     dropdownPanel.style.display = 'none';
-                }, 150);
+                }, 200);
             });
         }
 
@@ -602,7 +617,6 @@
             const btnLigarWebcam = fotoSection.querySelector(`#btn-ligar-webcam-${prefix}`);
             const actionsInitialDiv = fotoSection.querySelector(`#photo-actions-${prefix}`);
             const fileNameSpan = fotoSection.querySelector(`#file-name-${prefix}`);
-
             const btnRemoverAnexoX = parentForm.querySelector('.btn-remover-anexo-x');
 
             const webcamOverlay = document.getElementById(`webcam-overlay-${prefix}`);
@@ -618,7 +632,6 @@
             let stream;
 
             const setPhotoState = (hasPhoto, fileName = "") => {
-
                 if(fileNameSpan) fileNameSpan.textContent = hasPhoto ? fileName : "Nenhum arquivo selecionado";
                 if (btnRemoverAnexoX) {
                     btnRemoverAnexoX.style.display = hasPhoto ? 'inline-block' : 'none';
@@ -800,6 +813,7 @@
             });
         });
 
+        // ****** INÍCIO DA CORREÇÃO ******
         const openEditModal = async (id) => {
             try {
                 const response = await fetch(`/admin/api/colaborador/${id}`);
@@ -844,17 +858,27 @@
                             activeSection.querySelector('input[name="especialidade"]').value = data.especialidade || '';
                         }
 
+                        // LÓGICA CORRIGIDA PARA PEGAR UNIDADES
                         const unidadeSelect = activeSection.querySelector('select[name="unidade"]');
                         if (unidadeSelect) {
-                            unidadeSelect.innerHTML = ''; // Limpa opções anteriores
-                            const sourceUnidades = ui.unidadeFiltro;
-                            sourceUnidades.querySelectorAll('option').forEach(option => {
-                                if (option.value) {
-                                    unidadeSelect.add(new Option(option.text, option.value));
-                                }
-                            });
+                            unidadeSelect.innerHTML = '';
+                            // Usa o dropdown do modal de ADIÇÃO como fonte segura, pois ele sempre existe
+                            const sourceUnidades = document.querySelector('.unidade-select-add');
+
+                            if (sourceUnidades) {
+                                sourceUnidades.querySelectorAll('option').forEach(option => {
+                                    if (option.value) { // Copia apenas as opções com valor
+                                        unidadeSelect.add(new Option(option.text, option.value));
+                                    }
+                                });
+                            } else {
+                                console.error("Fonte de unidades (.unidade-select-add) não encontrada.");
+                                // Como fallback, adiciona pelo menos a unidade atual para não ficar em branco
+                                unidadeSelect.add(new Option(data.unidade, data.unidade));
+                            }
                             unidadeSelect.value = data.unidade;
                         }
+
                     } else {
                         console.error(`Seção do formulário de edição para o tipo "${type}" não encontrada.`);
                         showToast(`Erro: Formulário para tipo "${type}" não encontrado.`, 'error');
@@ -881,6 +905,7 @@
                 showToast('Erro de conexão ao carregar dados para edição.', 'error');
             }
         };
+        // ****** FIM DA CORREÇÃO ******
 
         ui.tableBody.addEventListener('click', (e) => {
             const editButton = e.target.closest('.edit-btn');
@@ -957,6 +982,27 @@
         }
         document.querySelectorAll('input[name="cargo"]').forEach(el => initializeSearchableDropdown(el, '/admin/api/get-cargos'));
         document.querySelectorAll('input[name="setor"]').forEach(el => initializeSearchableDropdown(el, '/admin/api/get-setores'));
+
+        const validateDateYear = (event) => {
+            const input = event.target;
+            const value = input.value;
+
+            if (value) {
+                const parts = value.split('-');
+                let year = parts[0];
+
+                if (year.length > 4) {
+                    year = year.substring(0, 4);
+                    parts[0] = year;
+                    input.value = parts.join('-');
+                }
+            }
+        };
+
+        const dateInputs = document.querySelectorAll('input[name="data_nascimento"], input[name="data_admissao"]');
+        dateInputs.forEach(input => {
+            input.addEventListener('blur', validateDateYear);
+        });
     });
 </script>
 </body>
