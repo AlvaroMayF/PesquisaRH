@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('views.static', filename='base/base.css') }}">
-    <link rel="stylesheet" href="{{ url_for('views.static', filename='admin/admin.css') }}">
+    <link rel="stylesheet" href="{{ url_for('views.static', filename='admin/admin.css', v='1.5') }}">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body data-api-url="{{ url_for('admin.get_rh_data') }}">
@@ -94,7 +94,7 @@
                 <div id="tipo-cadastro-selecao-add">
                     <p>Para começar, selecione o tipo de cadastro que deseja realizar.</p>
                     <div class="form-group">
-                        <label for="select-tipo-cadastro-add">Tipo de Profissional</label>
+                        <label for="select-tipo-cadastro-add">Tipo de Profissional<span class="required-indicator">*</span></label>
                         <select id="select-tipo-cadastro-add" class="form-control">
                             <option value="" selected disabled>-- Escolha uma opção --</option>
                             <option value="colaborador">Colaborador (Administrativo/Apoio)</option>
@@ -108,14 +108,14 @@
                     <input type="hidden" name="tipo_cadastro" value="COLABORADOR">
                     <h5>Cadastro de Colaborador</h5>
                     <div class="form-grid">
-                        <div class="form-group full-width"><label>Nome Completo</label><input type="text" name="nome" required></div>
-                        <div class="form-group"><label>CPF</label><input type="text" name="cpf" required></div>
-                        <div class="form-group"><label>Data de Nascimento</label><input type="date" name="data_nascimento" required></div>
+                        <div class="form-group full-width"><label>Nome Completo<span class="required-indicator">*</span></label><input type="text" name="nome" required></div>
+                        <div class="form-group"><label>CPF<span class="required-indicator">*</span></label><input type="text" name="cpf" required></div>
+                        <div class="form-group"><label>Data de Nascimento<span class="required-indicator">*</span></label><input type="date" name="data_nascimento" required></div>
                         <div class="form-group"><label>PIS</label><input type="text" name="pis"></div>
-                        <div class="form-group"><label>Cargo</label><input type="text" name="cargo" required autocomplete="off"></div>
-                        <div class="form-group"><label>Setor</label><input type="text" name="setor" required autocomplete="off"></div>
-                        <div class="form-group"><label>Unidade</label><select name="unidade" required class="unidade-select-add"><option value="" disabled selected>Selecione</option></select></div>
-                        <div class="form-group"><label>Data de Admissão</label><input type="date" name="data_admissao" required></div>
+                        <div class="form-group"><label>Cargo<span class="required-indicator">*</span></label><input type="text" name="cargo" required autocomplete="off"></div>
+                        <div class="form-group"><label>Setor<span class="required-indicator">*</span></label><input type="text" name="setor" required autocomplete="off"></div>
+                        <div class="form-group"><label>Unidade<span class="required-indicator">*</span></label><select name="unidade" required class="unidade-select-add"><option value="" disabled selected>Selecione</option></select></div>
+                        <div class="form-group"><label>Data de Admissão<span class="required-indicator">*</span></label><input type="date" name="data_admissao" required></div>
                     </div>
                     <div class="foto-section" id="foto-section-colaborador-add">
                     </div>
@@ -130,14 +130,14 @@
                     <input type="hidden" name="tipo_cadastro" value="ENFERMAGEM">
                     <h5>Cadastro de Profissional de Enfermagem</h5>
                     <div class="form-grid">
-                        <div class="form-group full-width"><label>Nome Completo</label><input type="text" name="nome" required></div>
-                        <div class="form-group"><label>CPF</label><input type="text" name="cpf" required></div>
-                        <div class="form-group"><label>Data de Nascimento</label><input type="date" name="data_nascimento" required></div>
-                        <div class="form-group"><label>Registro Profissional (COREN)</label><input type="text" name="coren" required></div>
-                        <div class="form-group"><label>Cargo</label><input type="text" name="cargo" placeholder="Ex: Enfermeiro(a)" required autocomplete="off"></div>
-                        <div class="form-group"><label>Setor</label><input type="text" name="setor" required autocomplete="off"></div>
-                        <div class="form-group"><label>Unidade</label><select name="unidade" required class="unidade-select-add"><option value="" disabled selected>Selecione</option></select></div>
-                        <div class="form-group"><label>Data de Admissão</label><input type="date" name="data_admissao" required></div>
+                        <div class="form-group full-width"><label>Nome Completo<span class="required-indicator">*</span></label><input type="text" name="nome" required></div>
+                        <div class="form-group"><label>CPF<span class="required-indicator">*</span></label><input type="text" name="cpf" required></div>
+                        <div class="form-group"><label>Data de Nascimento<span class="required-indicator">*</span></label><input type="date" name="data_nascimento" required></div>
+                        <div class="form-group"><label>Registro Profissional (COREN)<span class="required-indicator">*</span></label><input type="text" name="coren" required></div>
+                        <div class="form-group"><label>Cargo<span class="required-indicator">*</span></label><input type="text" name="cargo" placeholder="Ex: Enfermeiro(a)" required autocomplete="off"></div>
+                        <div class="form-group"><label>Setor<span class="required-indicator">*</span></label><input type="text" name="setor" required autocomplete="off"></div>
+                        <div class="form-group"><label>Unidade<span class="required-indicator">*</span></label><select name="unidade" required class="unidade-select-add"><option value="" disabled selected>Selecione</option></select></div>
+                        <div class="form-group"><label>Data de Admissão<span class="required-indicator">*</span></label><input type="date" name="data_admissao" required></div>
                     </div>
                     <div class="foto-section" id="foto-section-enfermagem-add">
                     </div>
@@ -152,19 +152,17 @@
                     <input type="hidden" name="tipo_cadastro" value="MEDICO">
                     <h5>Cadastro de Médico</h5>
                     <div class="form-grid">
-                        <div class="form-group full-width"><label>Nome Completo</label><input type="text" name="nome" required></div>
-                        <div class="form-group"><label>CPF</label><input type="text" name="cpf" required></div>
-                        <div class="form-group"><label>Data de Nascimento</label><input type="date" name="data_nascimento" required></div>
-                        <div class="form-group"><label>Registro Profissional (CRM)</label><input type="text" name="crm" required></div>
-                        <div class="form-group"><label>Especialidade</label><input type="text" name="especialidade" required></div>
+                        <div class="form-group full-width"><label>Nome Completo<span class="required-indicator">*</span></label><input type="text" name="nome" required></div>
+                        <div class="form-group"><label>CPF<span class="required-indicator">*</span></label><input type="text" name="cpf" required></div>
+                        <div class="form-group"><label>Data de Nascimento<span class="required-indicator">*</span></label><input type="date" name="data_nascimento" required></div>
+                        <div class="form-group"><label>Registro Profissional (CRM)<span class="required-indicator">*</span></label><input type="text" name="crm" required></div>
+                        <div class="form-group"><label>Especialidade<span class="required-indicator">*</span></label><input type="text" name="especialidade" required></div>
 
-                        <!-- INÍCIO DA CORREÇÃO -->
-                        <div class="form-group"><label>Cargo</label><input type="text" name="cargo" placeholder="Digite ou selecione um cargo" required autocomplete="off"></div>
-                        <div class="form-group"><label>Setor</label><input type="text" name="setor" placeholder="Digite ou selecione um setor" required autocomplete="off"></div>
-                        <!-- FIM DA CORREÇÃO -->
+                        <div class="form-group"><label>Cargo<span class="required-indicator">*</span></label><input type="text" name="cargo" placeholder="Digite ou selecione um cargo" required autocomplete="off"></div>
+                        <div class="form-group"><label>Setor<span class="required-indicator">*</span></label><input type="text" name="setor" placeholder="Digite ou selecione um setor" required autocomplete="off"></div>
 
-                        <div class="form-group"><label>Unidade</label><select name="unidade" required class="unidade-select-add"><option value="" disabled selected>Selecione</option></select></div>
-                        <div class="form-group"><label>Data de Início (Contrato)</label><input type="date" name="data_admissao" required></div>
+                        <div class="form-group"><label>Unidade<span class="required-indicator">*</span></label><select name="unidade" required class="unidade-select-add"><option value="" disabled selected>Selecione</option></select></div>
+                        <div class="form-group"><label>Data de Início (Contrato)<span class="required-indicator">*</span></label><input type="date" name="data_admissao" required></div>
                     </div>
                     <div class="foto-section" id="foto-section-medico-add">
                     </div>
@@ -181,40 +179,93 @@
         </div>
     </div>
 
+    <!-- INÍCIO DA CORREÇÃO -->
     <div id="edit-colaborador-modal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 class="modal-title">Editar Colaborador</h2>
+                <h2 class="modal-title">Editar Cadastro do Profissional</h2>
                 <button id="close-edit-modal-btn" class="modal-close-btn" aria-label="Fechar modal">×</button>
             </div>
             <form id="edit-colaborador-form" method="POST" enctype="multipart/form-data">
                 <div class="modal-body-scrollable">
                     <input type="hidden" id="edit-id" name="id">
                     <input type="hidden" id="remover-foto-input-edit" name="remover_foto" value="0">
-                    <div class="form-grid">
-                        <div class="form-group full-width"><label for="edit-nome-modal">Nome Completo</label><input type="text" id="edit-nome-modal" name="nome" required></div>
-                        <div class="form-group">
-                            <label for="edit-cpf-modal">CPF</label>
-                            <input type="text" id="edit-cpf-modal" name="cpf" required readonly>
-                            <small class="form-text text-muted" style="font-size: 0.8em; color: #888; display: block; margin-top: 4px;">O CPF não pode ser alterado após o cadastro.</small>
+                    <input type="hidden" id="edit-tipo-cadastro" name="tipo_cadastro">
+
+                    <!-- Formulário para Colaborador -->
+                    <div id="edit-form-colaborador" class="cadastro-form" style="display:none;">
+                        <h5>Dados do Colaborador</h5>
+                        <div class="form-grid">
+                            <div class="form-group full-width"><label>Nome Completo<span class="required-indicator">*</span></label><input type="text" name="nome" required></div>
+                            <div class="form-group">
+                                <label>CPF<span class="required-indicator">*</span></label>
+                                <input type="text" name="cpf" required readonly>
+                                <small class="form-text text-muted" style="font-size: 0.8em; color: #888; display: block; margin-top: 4px;">O CPF não pode ser alterado.</small>
+                            </div>
+                            <div class="form-group"><label>Data de Nascimento<span class="required-indicator">*</span></label><input type="date" name="data_nascimento" required></div>
+                            <div class="form-group"><label>PIS</label><input type="text" name="pis"></div>
+                            <div class="form-group"><label>Cargo<span class="required-indicator">*</span></label><input type="text" name="cargo" required autocomplete="off"></div>
+                            <div class="form-group"><label>Setor<span class="required-indicator">*</span></label><input type="text" name="setor" required autocomplete="off"></div>
+                            <div class="form-group"><label>Unidade<span class="required-indicator">*</span></label><select name="unidade" required class="unidade-select-edit"><option value="" disabled selected>Selecione</option></select></div>
+                            <div class="form-group"><label>Data de Admissão<span class="required-indicator">*</span></label><input type="date" name="data_admissao" required></div>
                         </div>
-                        <div class="form-group"><label for="edit-nascimento-modal">Data de Nascimento</label><input type="date" id="edit-nascimento-modal" name="data_nascimento" required></div>
-                        <div class="form-group"><label for="edit-pis-modal">PIS</label><input type="text" id="edit-pis-modal" name="pis"></div>
-                        <div class="form-group"><label for="edit-cargo-modal">Cargo</label><input type="text" id="edit-cargo-modal" name="cargo" required list="cargos-list"></div>
-                        <div class="form-group"><label for="edit-setor-modal">Setor</label><input type="text" id="edit-setor-modal" name="setor" required list="setores-list"></div>
-                        <div class="form-group"><label for="edit-unidade-modal">Unidade</label><select id="edit-unidade-modal" name="unidade" required></select></div>
-                        <div class="form-group"><label for="edit-admissao-modal">Data de Admissão</label><input type="date" id="edit-admissao-modal" name="data_admissao" required></div>
                     </div>
+
+                    <!-- Formulário para Enfermagem -->
+                    <div id="edit-form-enfermagem" class="cadastro-form" style="display:none;">
+                        <h5>Dados do Profissional de Enfermagem</h5>
+                        <div class="form-grid">
+                            <div class="form-group full-width"><label>Nome Completo<span class="required-indicator">*</span></label><input type="text" name="nome" required></div>
+                             <div class="form-group">
+                                <label>CPF<span class="required-indicator">*</span></label>
+                                <input type="text" name="cpf" required readonly>
+                                <small class="form-text text-muted" style="font-size: 0.8em; color: #888; display: block; margin-top: 4px;">O CPF não pode ser alterado.</small>
+                            </div>
+                            <div class="form-group"><label>Data de Nascimento<span class="required-indicator">*</span></label><input type="date" name="data_nascimento" required></div>
+                            <div class="form-group"><label>Registro Profissional (COREN)<span class="required-indicator">*</span></label><input type="text" name="coren" required></div>
+                            <div class="form-group"><label>Cargo<span class="required-indicator">*</span></label><input type="text" name="cargo" placeholder="Ex: Enfermeiro(a)" required autocomplete="off"></div>
+                            <div class="form-group"><label>Setor<span class="required-indicator">*</span></label><input type="text" name="setor" required autocomplete="off"></div>
+                            <div class="form-group"><label>Unidade<span class="required-indicator">*</span></label><select name="unidade" required class="unidade-select-edit"><option value="" disabled selected>Selecione</option></select></div>
+                            <div class="form-group"><label>Data de Admissão<span class="required-indicator">*</span></label><input type="date" name="data_admissao" required></div>
+                        </div>
+                    </div>
+
+                    <!-- Formulário para Médico -->
+                    <div id="edit-form-medico" class="cadastro-form" style="display:none;">
+                        <h5>Dados do Médico</h5>
+                        <div class="form-grid">
+                            <div class="form-group full-width"><label>Nome Completo<span class="required-indicator">*</span></label><input type="text" name="nome" required></div>
+                             <div class="form-group">
+                                <label>CPF<span class="required-indicator">*</span></label>
+                                <input type="text" name="cpf" required readonly>
+                                <small class="form-text text-muted" style="font-size: 0.8em; color: #888; display: block; margin-top: 4px;">O CPF não pode ser alterado.</small>
+                            </div>
+                            <div class="form-group"><label>Data de Nascimento<span class="required-indicator">*</span></label><input type="date" name="data_nascimento" required></div>
+                            <div class="form-group"><label>Registro Profissional (CRM)<span class="required-indicator">*</span></label><input type="text" name="crm" required></div>
+                            <div class="form-group"><label>Especialidade<span class="required-indicator">*</span></label><input type="text" name="especialidade" required></div>
+                            <div class="form-group"><label>Cargo<span class="required-indicator">*</span></label><input type="text" name="cargo" placeholder="Digite ou selecione um cargo" required autocomplete="off"></div>
+                            <div class="form-group"><label>Setor<span class="required-indicator">*</span></label><input type="text" name="setor" placeholder="Digite ou selecione um setor" required autocomplete="off"></div>
+                            <div class="form-group"><label>Unidade<span class="required-indicator">*</span></label><select name="unidade" required class="unidade-select-edit"><option value="" disabled selected>Selecione</option></select></div>
+                            <div class="form-group"><label>Data de Início (Contrato)<span class="required-indicator">*</span></label><input type="date" name="data_admissao" required></div>
+                        </div>
+                    </div>
+
                     <div class="foto-section" id="foto-section-edit">
+                         <!-- O componente da foto/webcam será injetado aqui pelo JavaScript -->
                     </div>
-                </div>
-                <div class="form-actions">
-                    <button type="button" id="cancel-edit-btn" class="btn btn-secondary">Cancelar</button>
-                    <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+
+                    <!-- BOTÕES DE AÇÃO MOVIDOS PARA DENTRO DA ÁREA DE ROLAGEM -->
+                    <div class="form-actions">
+                        <!-- BOTÃO DE REMOVER FOTO ADICIONADO PARA CONSISTÊNCIA -->
+                        <button type="button" class="btn btn-danger btn-remover-anexo-x" style="display: none; margin-right: auto;" title="Remover anexo">&times;</button>
+                        <button type="button" id="cancel-edit-btn" class="btn btn-secondary">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+                    </div>
                 </div>
             </form>
         </div>
     </div>
+    <!-- FIM DA CORREÇÃO -->
 
     <datalist id="setores-list"></datalist>
     <datalist id="cargos-list"></datalist>
@@ -348,13 +399,17 @@
         }
 
         function updateDropdowns(filters) {
-            const addUnidadeSelects = document.querySelectorAll('.unidade-select-add');
-            if (addUnidadeSelects.length > 0 && addUnidadeSelects[0].options.length <= 1 && filters.unidades) {
-                addUnidadeSelects.forEach(select => {
-                    select.innerHTML = '<option value="" disabled selected>Selecione</option>';
-                    filters.unidades.forEach(u => select.add(new Option(u, u)));
-                });
-            }
+            const populateUnidadeSelects = (selects) => {
+                 if (selects.length > 0 && selects[0].options.length <= 1 && filters.unidades) {
+                    selects.forEach(select => {
+                        select.innerHTML = '<option value="" disabled selected>Selecione</option>';
+                        filters.unidades.forEach(u => select.add(new Option(u, u)));
+                    });
+                }
+            };
+            populateUnidadeSelects(document.querySelectorAll('.unidade-select-add'));
+            populateUnidadeSelects(document.querySelectorAll('.unidade-select-edit'));
+
             if(ui.unidadeFiltro) {
                 const currentUnidade = ui.unidadeFiltro.value;
                 if (ui.unidadeFiltro.options.length <= 1 && filters.unidades) {
@@ -563,7 +618,7 @@
             let stream;
 
             const setPhotoState = (hasPhoto, fileName = "") => {
-                if(actionsInitialDiv) actionsInitialDiv.style.display = hasPhoto ? 'none' : 'flex';
+
                 if(fileNameSpan) fileNameSpan.textContent = hasPhoto ? fileName : "Nenhum arquivo selecionado";
                 if (btnRemoverAnexoX) {
                     btnRemoverAnexoX.style.display = hasPhoto ? 'inline-block' : 'none';
@@ -693,7 +748,6 @@
 
         ui.addModal.querySelector('#close-modal-btn').addEventListener('click', closeModal);
         ui.addModalCancelBtn.addEventListener('click', closeModal);
-        ui.addModal.addEventListener('click', (e) => { if (e.target === ui.addModal) closeModal(); });
 
         ui.addModalSelectType.addEventListener('change', () => {
             const selection = ui.addModalSelectType.value;
@@ -749,22 +803,65 @@
         const openEditModal = async (id) => {
             try {
                 const response = await fetch(`/admin/api/colaborador/${id}`);
-                if (!response.ok) throw new Error('Falha ao buscar dados.');
+                if (!response.ok) throw new Error('Falha ao buscar dados do colaborador.');
                 const result = await response.json();
+
                 if (result.success) {
                     if (editPhotoHandlers) editPhotoHandlers.reset();
+
                     const data = result.data;
                     const form = ui.editForm;
                     form.action = `/admin/api/colaborador/edit/${data.id}`;
                     form.querySelector('#edit-id').value = data.id;
-                    form.querySelector('#edit-nome-modal').value = data.nome;
-                    form.querySelector('#edit-cpf-modal').value = data.cpf;
-                    form.querySelector('#edit-nascimento-modal').value = data.data_nascimento;
-                    form.querySelector('#edit-pis-modal').value = data.pis || '';
-                    form.querySelector('#edit-cargo-modal').value = data.cargo;
-                    form.querySelector('#edit-setor-modal').value = data.setor;
-                    form.querySelector('#edit-admissao-modal').value = data.data_admissao;
-                    if(data.foto_filename) {
+                    form.querySelector('#edit-tipo-cadastro').value = data.tipo_cadastro;
+
+                    const formSections = form.querySelectorAll('.cadastro-form');
+                    formSections.forEach(section => {
+                        section.style.display = 'none';
+                        section.querySelectorAll('input, select').forEach(input => input.disabled = true);
+                    });
+
+                    const type = (data.tipo_cadastro || 'COLABORADOR').toLowerCase();
+                    const activeSection = form.querySelector(`#edit-form-${type}`);
+
+                    if (activeSection) {
+                        activeSection.style.display = 'block';
+                        activeSection.querySelectorAll('input, select').forEach(input => input.disabled = false);
+
+                        activeSection.querySelector('input[name="nome"]').value = data.nome || '';
+                        activeSection.querySelector('input[name="cpf"]').value = data.cpf || '';
+                        activeSection.querySelector('input[name="data_nascimento"]').value = data.data_nascimento || '';
+                        activeSection.querySelector('input[name="cargo"]').value = data.cargo || '';
+                        activeSection.querySelector('input[name="setor"]').value = data.setor || '';
+                        activeSection.querySelector('input[name="data_admissao"]').value = data.data_admissao || '';
+
+                        if (type === 'colaborador') {
+                            activeSection.querySelector('input[name="pis"]').value = data.pis || '';
+                        } else if (type === 'enfermagem') {
+                            activeSection.querySelector('input[name="coren"]').value = data.coren || '';
+                        } else if (type === 'medico') {
+                            activeSection.querySelector('input[name="crm"]').value = data.crm || '';
+                            activeSection.querySelector('input[name="especialidade"]').value = data.especialidade || '';
+                        }
+
+                        const unidadeSelect = activeSection.querySelector('select[name="unidade"]');
+                        if (unidadeSelect) {
+                            unidadeSelect.innerHTML = ''; // Limpa opções anteriores
+                            const sourceUnidades = ui.unidadeFiltro;
+                            sourceUnidades.querySelectorAll('option').forEach(option => {
+                                if (option.value) {
+                                    unidadeSelect.add(new Option(option.text, option.value));
+                                }
+                            });
+                            unidadeSelect.value = data.unidade;
+                        }
+                    } else {
+                        console.error(`Seção do formulário de edição para o tipo "${type}" não encontrada.`);
+                        showToast(`Erro: Formulário para tipo "${type}" não encontrado.`, 'error');
+                        return;
+                    }
+
+                    if (data.foto_filename) {
                         const fotoPreviewEdit = document.getElementById('foto-preview-edit');
                         const uploadsUrl = `{{ url_for('admin.serve_foto_colaborador', filename='') }}`;
                         fotoPreviewEdit.src = `${uploadsUrl}${data.foto_filename}?v=${new Date().getTime()}`;
@@ -772,17 +869,17 @@
                     } else {
                         if (editPhotoHandlers) editPhotoHandlers.setPhotoState(false);
                     }
-                    const unidadeSelect = form.querySelector('#edit-unidade-modal');
-                    unidadeSelect.innerHTML = '';
-                    const sourceUnidades = ui.unidadeFiltro;
-                    sourceUnidades.querySelectorAll('option').forEach(option => {
-                        if (option.value) unidadeSelect.add(new Option(option.text, option.value));
-                    });
-                    unidadeSelect.value = data.unidade;
+
                     ui.editModal.classList.add('active');
                     document.documentElement.classList.add('modal-open');
-                } else { showToast(result.message || 'Erro ao carregar dados.', 'error'); }
-            } catch (error) { showToast('Erro de conexão ao carregar para edição.', 'error'); }
+
+                } else {
+                    showToast(result.message || 'Erro ao carregar dados do profissional.', 'error');
+                }
+            } catch (error) {
+                console.error("Erro ao abrir modal de edição:", error);
+                showToast('Erro de conexão ao carregar dados para edição.', 'error');
+            }
         };
 
         ui.tableBody.addEventListener('click', (e) => {
@@ -792,7 +889,6 @@
 
         ui.editModal.querySelector('#close-edit-modal-btn').addEventListener('click', closeEditModal);
         ui.editModal.querySelector('#cancel-edit-btn').addEventListener('click', closeEditModal);
-        ui.editModal.addEventListener('click', (e) => { if (e.target === ui.editModal) closeEditModal(); });
 
         ui.editForm.addEventListener('submit', async function(e) {
             e.preventDefault();
